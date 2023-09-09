@@ -340,6 +340,18 @@
                                         // var option = "<option value='"+ optVal +"' required>"+response[i].estate+"</option>";
                                         $('#oa_kpl_kayu').val(formatter.format(response[i].oa_kpl_kayu));
                                         $('#oa_container').val(formatter.format(response[i].oa_container));
+                                        var price_curah = response[i].oa_kpl_kayu;
+                                        var price_container = response[i].oa_container;
+
+                                        if (price_curah == 0) {
+                                            $('input[name=qty]').attr("readonly","readonly");
+                                            console.log('price_curah : '+ price_curah);
+                                        }
+                                        
+                                        if (price_container == 0) {
+                                            $('input[name=qty2]').attr("readonly","readonly");
+                                            console.log('price_container : '+ price_container);
+                                        }
                                         // $("#cb_estate").append(option);
                                     }
                                 }else{
@@ -403,9 +415,11 @@
                 });  
                 $('input[type="number"]').on('click', function() {
                     // Check if the current value is 0
-                    if ($(this).val() === '0') {
-                    // Clear the input field
-                    $(this).val('');
+                    if ($(this).val() === '0' && $(this).attr('readonly')) {
+                        // Clear the input field
+                        $(this).val('0');
+                    }else if($(this).val() === '0'){
+                        $(this).val('');
                     }
                 });
             });
