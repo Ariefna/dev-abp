@@ -447,13 +447,13 @@
                             <div class="col-md-6">
                                 <label for="validationCustom03" class="form-label">Upload File No Tiket</label>
                                 <div class="mb-3">
-                                    <input name="file_notiket" accept=".jpg, .png, .pdf" class="form-control file-upload-input" style="height: 48px; padding: 0.75rem 1.25rem;" type="file" id="formFile">
+                                    <input name="file_notiket" accept=".jpg, .png, .pdf" class="form-control file-upload-input" style="height: 48px; padding: 0.75rem 1.25rem;" type="file" id="formFile" required>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <label for="validationCustom03" class="form-label">Upload File Surat Jalan</label>
                                 <div class="mb-3">
-                                    <input name="file_nosj" accept=".jpg, .png, .pdf" class="form-control file-upload-input" style="height: 48px; padding: 0.75rem 1.25rem;" type="file" id="formFile">
+                                    <input name="file_nosj" accept=".jpg, .png, .pdf" class="form-control file-upload-input" style="height: 48px; padding: 0.75rem 1.25rem;" type="file" id="formFile" required>
                                 </div>
                             </div>                                                
                             
@@ -550,13 +550,13 @@
                             <div class="col-md-6">
                                 <label for="validationCustom03" class="form-label">Upload File No Tiket</label>
                                 <div class="mb-3">
-                                    <input name="file" accept=".jpg, .png, .pdf" class="form-control file-upload-input" style="height: 48px; padding: 0.75rem 1.25rem;" type="file" id="formFile">
+                                    <input name="file" accept=".jpg, .png, .pdf" class="form-control file-upload-input" style="height: 48px; padding: 0.75rem 1.25rem;" type="file" id="formFile" required>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <label for="validationCustom03" class="form-label">Upload File Surat Jalan</label>
                                 <div class="mb-3">
-                                    <input name="file" accept=".jpg, .png, .pdf" class="form-control file-upload-input" style="height: 48px; padding: 0.75rem 1.25rem;" type="file" id="formFile">
+                                    <input name="file" accept=".jpg, .png, .pdf" class="form-control file-upload-input" style="height: 48px; padding: 0.75rem 1.25rem;" type="file" id="formFile" required>
                                 </div>
                             </div>                                                
                             
