@@ -185,6 +185,7 @@ class DooringController extends Controller
                 ->get();    
         $lastcont = DetailTracking::where('status', 1)->whereNotNull('no_container')->latest()->first();
         $lastcurah = DetailDooring::where('status', 1)->where('tipe','Curah')->latest()->first();
+        $lastcontainer = DetailDooring::where('status', 1)->where('tipe','Container')->latest()->first();
         $zerocurah = DocDooring::select('*')
                     ->selectSub(function ($query) {
                         $query->selectRaw('SUM(qty_tonase)')
@@ -201,6 +202,23 @@ class DooringController extends Controller
                     ->whereNull('detail_tracking.no_container')
                     ->groupBy('detail_tracking.no_container')
                     ->get();
+        $zeroContainer = DocDooring::select('*')
+                    ->selectSub(function ($query) {
+                        $query->selectRaw('SUM(qty_tonase)')
+                            ->from('detail_tracking')
+                            ->whereColumn('detail_tracking.id_track', 'doc_tracking.id_track')
+                            ->where('detail_tracking.status', [2,3])
+                            ->whereNotNull('no_container')
+                            ->groupBy('detail_tracking.id_track');
+                    }, 'qty_container_tracking')
+                    ->join('doc_tracking','doc_tracking.id_track','=','doc_dooring.id_track')
+                    ->join('detail_tracking','detail_tracking.id_track','=','doc_dooring.id_track')
+                    ->join('purchase_orders', 'purchase_orders.po_muat', '=', 'doc_tracking.no_po')
+                    ->where('doc_dooring.status',1)
+                    ->whereNotNull('detail_tracking.no_container')
+                    ->groupBy('detail_tracking.no_container')
+                    ->limit(1)
+                    ->get();
         $estate = DocTracking::select('*')
                 ->join('purchase_orders','purchase_orders.po_muat','=','doc_tracking.no_po')
                 ->join('detail_p_h_s','detail_p_h_s.id_detail_ph','=','purchase_orders.id_detail_ph')
@@ -209,7 +227,7 @@ class DooringController extends Controller
                 ->get();
         $title = 'Adhipramana Bahari Perkasa';
         $breadcrumb = 'This Breadcrumb';
-        return view('pages.abp-page.dor', compact('title', 'breadcrumb','po','details','getcurahqty','getcontqty','track','doorzero','dtrack','lastcont','lastcurah','zerocurah','gudang','pol','pod','kapal','estate'));
+        return view('pages.abp-page.dor', compact('title', 'breadcrumb','po','details','getcurahqty','getcontqty','track','doorzero','dtrack','lastcont','lastcurah', 'lastcontainer','zerocurah', 'zeroContainer','gudang','pol','pod','kapal','estate'));
     }
 
     public function getKapalDooring($id) {
@@ -318,7 +336,7 @@ class DooringController extends Controller
             'status'=> 1
         ]);
 
-        $c = $request->qty_sisa_curah2;
+        $c = $request->qty_sisa_curah;
         $b = $request->qty;            
         if ($c !== $b) {
             DetailDooringSisa::where('id_dooring', $request->id_door)
@@ -335,6 +353,61 @@ class DooringController extends Controller
             ]);
         }
         
+        return redirect()->back();
+    }
+
+    public function savecontainer(Request $request)
+    {
+        $request->validate([
+            'file_notiket' => 'required|mimes:jpeg,png,pdf|max:2048',
+            'file_surat_jalan' => 'required|mimes:jpeg,png,pdf|max:2048',
+        ]);
+
+        $file1 = $request->file('file_notiket');
+        $fileName1 = time() . '_' . $file1->getClientOriginalName();
+        
+        $file2 = $request->file('file_notiket');
+        $fileName2 = time() . '_' . $file2->getClientOriginalName();
+
+        Storage::disk('public')->putFileAs('uploads/dooring', $file1, $fileName1);
+        Storage::disk('public')->putFileAs('uploads/dooring', $file2, $fileName2);
+
+        DetailDooring::create([
+            'id_dooring'    => $request->id_door, 
+            'tgl_muat'      => $request->tgl_brkt,
+            'tgl_tiba'      => $request->tgl_tiba,
+            'nopol'         => $request->nopol,
+            'qty_tonase'    => $request->qty_tonase,
+            'qty_timbang'   => $request->qty_timbang,
+            'jml_sak'       => $request->simb,
+            'no_tiket'      => $request->notiket,
+            'st_file_name'  => $fileName1,
+            'st_file_path'  => 'uploads/dooring'.$fileName1,
+            'no_sj'         => $request->no_surat,
+            'sj_file_name'  => $fileName2,
+            'sj_file_path'  => 'uploads/dooring'.$fileName2,
+            'tipe'          => 'Container',
+            'status'        => 1
+        ]);
+
+        $c = $request->qty_sisa_container;
+        $b = $request->qty;
+
+        if ($c !== $b) {
+            DetailDooringSisa::create([
+                'id_dooring'        => $request->id_door,
+                'qty_tonase_sisa'   => $request->qty_sisa_container,
+                'qty_total_tonase'  => $request->qty_container_total,
+                'status'            => 1,
+                'tipe'              => 'Container'
+            ]);
+        } else if($c === $b){
+            DetailDooringSisa::where('id_dooring', $request->id_door)
+            ->where('tipe','Container')->update([
+                'qty_tonase_sisa' => $request->qty,
+            ]);
+        }
+
         return redirect()->back();
     }
 }

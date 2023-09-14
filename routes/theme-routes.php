@@ -152,6 +152,7 @@ foreach ($prefixRouters as $prefixRouter) {
             Route::get('/dooring/dr/getContainer/{id}', [\App\Http\Controllers\DooringController::class, 'getContainer'])->name('getContainer');            
             Route::get('/dooring/dr/getPoDooring/{id}', [\App\Http\Controllers\DooringController::class, 'getPoDooring'])->name('getPoDooring');
             Route::match(['get', 'post'], '/dooring/savecurah', [\App\Http\Controllers\DooringController::class, 'savecurah'])->name('dooring.savecurah');
+            Route::match(['get', 'post'], '/dooring/savecontainer', [\App\Http\Controllers\DooringController::class, 'savecontainer'])->name('dooring.savecontainer');
         });
 
         /**

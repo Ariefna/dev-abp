@@ -103,13 +103,13 @@
                         <div class="col-md-6">
                             <label for="validationCustom03" class="form-label">Upload File Surat BAP</label>
                             <div class="mb-3">
-                                <input name="file_bap" accept=".jpg, .png, .pdf" class="form-control file-upload-input" style="height: 48px; padding: 0.75rem 1.25rem;" type="file" id="formFile">
+                                <input name="file_bap" accept=".jpg, .png, .pdf" class="form-control file-upload-input" style="height: 48px; padding: 0.75rem 1.25rem;" type="file" id="formFile" required>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <label for="validationCustom03" class="form-label">Upload File Rekap Kebun</label>
                             <div class="mb-3">
-                                <input name="file_rekap" accept=".jpg, .png, .pdf" class="form-control file-upload-input" style="height: 48px; padding: 0.75rem 1.25rem;" type="file" id="formFile">
+                                <input name="file_rekap" accept=".jpg, .png, .pdf" class="form-control file-upload-input" style="height: 48px; padding: 0.75rem 1.25rem;" type="file" id="formFile" required>
                             </div>
                         </div>
 
@@ -126,7 +126,7 @@
                     <div class="row">
                         <div class="col-xl-12 col-md-12 col-sm-12 col-12">
                             <h4>Tabel Dooring</h4>
-                            <p> {{ $details }} </p>
+                            <!-- <p> {{ $details }} </p> -->
                         </div>
                     </div>
                 </div>
@@ -188,10 +188,18 @@
                                                 <td class="text-center"><span class="shadow-none badge badge-danger">{{ $trac->status == 1 ? 'Pending' : '' }}</span></td>
                                                 <td class="text-center">
                                                     @if($trac->qty != 0)
-                                                        <a href="#detailcur" class="btn btn-outline-primary bs-tooltip me-2" data-bs-toggle="modal" data-placement="top" title="Add Curah">Curah</a>
+                                                        @if(count($doorzero) > 0)
+                                                            <a href="#detailcur" class="btn btn-outline-primary bs-tooltip me-2" data-bs-toggle="modal" data-placement="top" title="Add Curah">Curah</a>
+                                                        @else                                            
+                                                            <button class="btn btn-outline-primary bs-tooltip me-2" data-placement="top" title="Add Curah" disabled>Curah</button>
+                                                        @endif                                            
                                                     @endif                                            
                                                     @if($trac->qty2 != 0)
-                                                        <a href="#detailcont" class="btn btn-outline-primary bs-tooltip me-2" data-bs-toggle="modal" data-placement="top" title="Add Container">Container</a>
+                                                        @if(count($doorzero) > 0)
+                                                            <a href="#detailcont" class="btn btn-outline-primary bs-tooltip me-2" data-bs-toggle="modal" data-placement="top" title="Add Container">Container</a>
+                                                            @else
+                                                            <button type="button" class="btn btn-outline-primary bs-tooltip me-2" data-toggle="tooltip" data-placement="top" title="Add Container" disabled>Container</button>
+                                                        @endif
                                                     @endif
                                                 </td>
                                             </tr>
@@ -439,13 +447,13 @@
                             <div class="col-md-6">
                                 <label for="validationCustom03" class="form-label">Upload File No Tiket</label>
                                 <div class="mb-3">
-                                    <input name="file_notiket" accept=".jpg, .png, .pdf" class="form-control file-upload-input" style="height: 48px; padding: 0.75rem 1.25rem;" type="file" id="formFile">
+                                    <input name="file_notiket" accept=".jpg, .png, .pdf" class="form-control file-upload-input" style="height: 48px; padding: 0.75rem 1.25rem;" type="file" id="formFile" required>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <label for="validationCustom03" class="form-label">Upload File Surat Jalan</label>
                                 <div class="mb-3">
-                                    <input name="file_nosj" accept=".jpg, .png, .pdf" class="form-control file-upload-input" style="height: 48px; padding: 0.75rem 1.25rem;" type="file" id="formFile">
+                                    <input name="file_nosj" accept=".jpg, .png, .pdf" class="form-control file-upload-input" style="height: 48px; padding: 0.75rem 1.25rem;" type="file" id="formFile" required>
                                 </div>
                             </div>                                                
                             
@@ -465,10 +473,11 @@
                 <div class="modal-content">
                     <div class="modal-body">
                         <h5>Tambah Detail Dooring Kapal Container</h5>
-                        <form name="modal-tracking-ada" class="row g-3 needs-validation" action="{{ route('tracking.savecurah') }}"  method="POST" enctype="multipart/form-data" novalidate>
+                        <form name="modal-tracking-ada" class="row g-3 needs-validation" action="{{ route('dooring.savecontainer') }}"  method="POST" enctype="multipart/form-data" novalidate>
                             @csrf
                             @foreach ($doorzero as $tra)
-                                <input name="id_track" value="{{ $tra->id_track }}" type="hidden" class="form-control" id="validationCustom01" required>
+                                <!-- <input name="id_track" value="{{ $tra->id_track }}" type="hidden" class="form-control" id="validationCustom01" required> -->
+                                <input name="id_door" value="{{ $tra->id_dooring }}" type="hidden" class="form-control" id="validationCustom01" required>
                             @endforeach
                             <div class="col-md-6">
                                 <label for="validationCustom03" class="form-label">Date Berangkat</label>
@@ -512,11 +521,31 @@
                                 <input name="nopol" type="text" class="form-control" id="validationCustom01" placeholder="Nopol">
                             </div>
                             <div class="col-md-3">
-                                <label for="validationCustom01" class="form-label">QTY Tonase Dooring</label>
-                                <div class="input-group">
-                                    <input type="text" class="form-control" placeholder="QTY Tonase">
-                                    <span class="input-group-text" id="inputGroupPrepend">KG</span>
-                                </div>
+                                @if($lastcontainer)
+                                    @foreach($track->where('id_dooring',$tra->id_dooring) as $zc)
+                                            <label for="validationCustom01" class="form-label">QTY Tonase Dooring</label>
+                                            <div class="input-group">
+                                                <input type="number" name="qty_tonase" id="qty_container" class="form-control qty_container" placeholder="QTY Tonase">
+                                                <span class="input-group-text" id="inputGroupPrepend">KG</span>
+                                            </div>
+                                            <span class="shadow-none badge badge-danger mt-2">Sisa: {{ $zc->qty_tonase_sisa }}</span>
+                                            <input name="qty_container_total" id="qty_container_total" value="{{ $zc->qty_tonase_sisa }}" type="hidden" step="any" min="0">
+                                            <input name="qty" id="qty_sisa_container" value="0" type="hidden" step="any" min="0">
+                                            <div class="validationMessage"></div>
+                                        @endforeach
+                                @elseif($lastcontainer==0)
+                                    @foreach($zeroContainer->where('id_track',$tra->id_track) as $zc)
+                                        <label for="validationCustom01" class="form-label">QTY Tonase Dooring</label>
+                                        <div class="input-group">
+                                            <input type="number" name="qty_tonase" id="qty_container" class="form-control qty_container" placeholder="QTY Tonase">
+                                            <span class="input-group-text" id="inputGroupPrepend">KG</span>
+                                        </div>
+                                        <span class="shadow-none badge badge-danger mt-2">Sisa: {{ $zc->qty_container_tracking }}</span>
+                                        <input name="qty_container_total" id="qty_container_total" value="{{ $zc->qty_container_tracking }}" type="hidden" step="any" min="0">
+                                        <input name="qty_sisa_container" id="qty_sisa_container" value="0" type="hidden" step="any" min="0">
+                                        <div class="validationMessage"></div>
+                                    @endforeach
+                                @endif
                             </div>           
                             <div class="col-md-3">
                                 <label for="validationCustom01" class="form-label">SAK</label>
@@ -525,7 +554,7 @@
                             <div class="col-md-3">
                                 <label for="validationCustom01" class="form-label">QTY Timbang Dooring</label>
                                 <div class="input-group">
-                                    <input type="text" class="form-control" placeholder="QTY Timbang">
+                                    <input type="text" name="qty_timbang" class="form-control" placeholder="QTY Timbang">
                                     <span class="input-group-text" id="inputGroupPrepend">KG</span>
                                 </div>
                             </div>                            
@@ -536,25 +565,25 @@
                             <div class="col-md-6">
                                 <label for="validationCustom01" class="form-label">No Surat Jalan</label>
                                 <div class="input-group">
-                                    <input name="nota_tbg" type="text" class="form-control" placeholder="Surat Jalan">
+                                    <input name="no_surat" type="text" class="form-control" placeholder="Surat Jalan">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <label for="validationCustom03" class="form-label">Upload File No Tiket</label>
                                 <div class="mb-3">
-                                    <input name="file" accept=".jpg, .png, .pdf" class="form-control file-upload-input" style="height: 48px; padding: 0.75rem 1.25rem;" type="file" id="formFile">
+                                    <input name="file_notiket" accept=".jpg, .png, .pdf" class="form-control file-upload-input" style="height: 48px; padding: 0.75rem 1.25rem;" type="file" id="formFile" required>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <label for="validationCustom03" class="form-label">Upload File Surat Jalan</label>
                                 <div class="mb-3">
-                                    <input name="file" accept=".jpg, .png, .pdf" class="form-control file-upload-input" style="height: 48px; padding: 0.75rem 1.25rem;" type="file" id="formFile">
+                                    <input name="file_surat_jalan" accept=".jpg, .png, .pdf" class="form-control file-upload-input" style="height: 48px; padding: 0.75rem 1.25rem;" type="file" id="formFile" required>
                                 </div>
                             </div>                                                
                             
                             
                             <div class="modal-footer justify-content-center">
-                                <button id ="btn-modal-curah" type="submit" class="btn btn-primary">Tambah</button>
+                                <button id ="btn-modal-container" type="submit" class="btn btn-primary">Tambah</button>
                                 <button type="button" class="btn btn btn-light-dark" data-bs-dismiss="modal"><i class="flaticon-cancel-12"></i>Batal</button>
                             </div>
                         </form>
@@ -710,7 +739,7 @@
         
                     if (isNaN(inputVal)) {
                         $validationMessage.text('Please enter a valid number');
-                        $('#btn-modal-curah').attr('disabled', false);
+                        $('#btn-modal-curah').attr('disabled', true);
                         parseFloat($('#qty_sisa_curah').val(totalQtyCurah - inputVal));
                     }else if (inputVal > totalQtyCurah) {
                         $validationMessage.text('Tonase lebih dari sisa muat');
@@ -720,6 +749,26 @@
                         $validationMessage.text('');
                         $('#btn-modal-curah').attr('disabled', false);
                         parseFloat($('#qty_sisa_curah').val(totalQtyCurah - inputVal));
+                    }
+                });
+                
+                $('.qty_container').on('input', function(){
+                    var inputVal = parseFloat($(this).val());
+                    var totalQtyContainer = parseFloat($('#qty_container_total').val()) || 0;
+                    var $validationMessage = $(this).closest('.input-group').siblings('.validationMessage');
+
+                    if (isNaN(inputVal)) {
+                        $validationMessage.text('Please enter a valid number');
+                        $('#btn-modal-container').attr('disabled', true);
+                        parseFloat($('#qty_sisa_container').val(totalQtyContainer - inputVal));
+                    } else if (inputVal > totalQtyContainer) {
+                        $validationMessage.text('Tonase lebih dari sisa muat');
+                        $('#btn-modal-container').attr('disabled', true);
+                        parseFloat($('#qty_sisa_container').val(totalQtyContainer - inputVal));
+                    } else {
+                        $validationMessage.text('');
+                        $('#btn-modal-container').attr('disabled', false);
+                        parseFloat($('#qty_sisa_container').val(totalQtyContainer - inputVal));
                     }
                 });
             });
