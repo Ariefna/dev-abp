@@ -188,10 +188,18 @@
                                                 <td class="text-center"><span class="shadow-none badge badge-danger">{{ $trac->status == 1 ? 'Pending' : '' }}</span></td>
                                                 <td class="text-center">
                                                     @if($trac->qty != 0)
-                                                        <a href="#detailcur" class="btn btn-outline-primary bs-tooltip me-2" data-bs-toggle="modal" data-placement="top" title="Add Curah">Curah</a>
+                                                        @if(count($doorzero) > 0)
+                                                            <a href="#detailcur" class="btn btn-outline-primary bs-tooltip me-2" data-bs-toggle="modal" data-placement="top" title="Add Curah">Curah</a>
+                                                        @else                                            
+                                                            <button class="btn btn-outline-primary bs-tooltip me-2" data-placement="top" title="Add Curah" disabled>Curah</button>
+                                                        @endif                                            
                                                     @endif                                            
                                                     @if($trac->qty2 != 0)
-                                                        <a href="#detailcont" class="btn btn-outline-primary bs-tooltip me-2" data-bs-toggle="modal" data-placement="top" title="Add Container">Container</a>
+                                                        @if(count($doorzero) > 0)
+                                                            <a href="#detailcont" class="btn btn-outline-primary bs-tooltip me-2" data-bs-toggle="modal" data-placement="top" title="Add Container">Container</a>
+                                                            @else
+                                                            <button type="button" class="btn btn-outline-primary bs-tooltip me-2" data-toggle="tooltip" data-placement="top" title="Add Container" disabled>Container</button>
+                                                        @endif
                                                     @endif
                                                 </td>
                                             </tr>
