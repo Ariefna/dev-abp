@@ -213,14 +213,26 @@ class DooringController extends Controller
     }
 
     public function getKapalDooring($id) {
-        $kapal = Kapal::select('*')
+        $kapal = Kapal::select('*','detail_tracking.id_track')
                 ->join('c_ports', 'c_ports.id_company_port', '=', 'kapals.id_company_port')
                 ->join('detail_tracking','detail_tracking.id_kapal','=','kapals.id')
                 ->where('kapals.status', 1)
                 ->whereIn('detail_tracking.status',[2,3])
-                ->where('detail_tracking.id_kapal',$id)
-                ->groupBy('detail_tracking.id_kapal');
+                ->where('detail_tracking.id_track',$id)
+                ->whereNotNull('detail_tracking.no_container');
+                // ->groupBy('detail_tracking.id_kapal');
         $getdata = $kapal->get();
+        return response()->json($getdata);
+    }
+    public function getContainer($id){
+        $cont = DetailTracking::select('detail_tracking.no_container','detail_tracking.id_detail_track',
+                'detail_tracking.no_segel')
+                ->join('doc_tracking','doc_tracking.id_track','=','detail_tracking.id_track')
+                ->join('doc_dooring','doc_dooring.id_track','=','doc_tracking.id_track')
+                ->whereIn('detail_tracking.status',[2,3])
+                ->where('detail_tracking.id_detail_track',$id)
+                ->whereNotNull('detail_tracking.no_container');
+        $getdata = $cont->get();
         return response()->json($getdata);
     }
     public function getPoDooring($id) {

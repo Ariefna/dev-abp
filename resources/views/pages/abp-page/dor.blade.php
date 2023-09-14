@@ -459,7 +459,7 @@
                 </div>
             </div>
         </div>
-        @endforeach
+        {{-- container --}}
         <div class="modal fade bd-example-modal-xl" id="detailcont" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-xl" role="document">
                 <div class="modal-content">
@@ -483,18 +483,23 @@
                                 <select class="form-select" name="kpl_id" id="cb_kplcont" required>
                                     <option selected disabled value="">Pilih...</option>                                
                                     @foreach ($kapal->where('id_track', $tra->id_track)->whereNotNull('no_container') as $kp)
-                                        <option value="{{ $kp->id_kapal }}">{{ $kp->nama_kapal }}</option>
+                                        <option value="{{ $kp->id_track }}">{{ $kp->nama_kapal }}</option>
                                     @endforeach
                                 </select>
                             </div>                        
                             <div class="col-md-3">
+                                <label for="validationCustom03" class="form-label">No Cont</label>
+                                {{-- <input disabled name="nocont" id="nocont" type="text" class="form-control" id="validationCustom01" placeholder="No Cont"> --}}
+                                <select class="form-select" name="kpl_id" id="cb_cont" required>
+                                    <option selected disabled value="">Pilih...</option>                                
+                                    {{-- @foreach ($kapal->where('id_track', $tra->id_track)->whereNotNull('no_container') as $kp)
+                                        <option value="{{ $kp->id_kapal }}">{{ $kp->nama_kapal }}</option>
+                                    @endforeach --}}
+                                </select>
+                            </div>
+                            <div class="col-md-3">
                                 <label for="validationCustom04" class="form-label">No Segel</label>
                                 <input disabled name="no_segel" id="no_segel" class="form-control" type="text" placeholder="No Segel">
-                            </div>
-    
-                            <div class="col-md-3">
-                                <label for="validationCustom03" class="form-label">No Cont</label>
-                                <input disabled name="nocont" id="nocont" type="text" class="form-control" id="validationCustom01" placeholder="No Cont">
                             </div>
                             <div class="col-lg-3 col-md-6 col-sm-12">                       
                                 <label for="validationCustom03" class="form-label">Estate</label>
@@ -557,6 +562,7 @@
                 </div>
             </div>
         </div>
+        @endforeach
     </div>            
 
     <!--  BEGIN CUSTOM SCRIPTS FILE  -->
@@ -646,12 +652,43 @@
                                 dataType: 'json',
                                 success: function(response) {
                                     var data = response[0];
+                                    $("#cb_cont").empty();
+                                    if (response.length > 0) {
+                                        var defaultOption = "<option value='0' disabled selected required>Pilih...</option>";
+                                        $('#cb_cont').append(defaultOption);
+                                        for (var i=0; i<response.length; i++) {
+                                            var optVal = response[i].id_detail_track;
+                                            var option = "<option value='"+ optVal +"' required>"+response[i].no_container+"</option>";
+                                            $('#cb_cont').append(option);
+                                            console.log(optVal);
+                                        }
+                                    }else{
+                                        console.log("no data");
+                                    }
+                                },
+                                error: function(xhr, status, error) {
+                                    console.log("AJAX Error: " + error);
+                                }
+                            });
+                        } else {
+                            $("#cb_cont").empty();
+                        }
+                });
+                $('#cb_cont').change(function(){
+                        var selectedId = $(this).val();
+                        // $('#sel_emp').find('option').not(':first').remove();
+                        if (selectedId !== '') {
+                            $.ajax({
+                                url: "{{ route('getContainer', ['id' => ':id']) }}"
+                                    .replace(':id', selectedId),
+                                type: 'GET',
+                                dataType: 'json',
+                                success: function(response) {
+                                    var data = response[0];
                                     $("#no_segel").empty();
-                                    $("#nocont").empty();
                                     if (response.length > 0) {
                                         for (var i=0; i<response.length; i++) {
                                             $('#no_segel').val(response[i].no_segel);
-                                            $('#nocont').val(response[i].no_container);
                                         }
                                     }else{
                                         console.log("no data");
@@ -663,10 +700,8 @@
                             });
                         } else {
                             $("#no_segel").empty();
-                            $("#nocont").empty();
                         }
                 });
-
                 $('.qty_curah').on('input', function(){
                     var inputVal = parseFloat($(this).val()); // Get the value of the input field as a number
                     // var totalQtyCurah = parseFloat($(this).data('total-qty-curah'));

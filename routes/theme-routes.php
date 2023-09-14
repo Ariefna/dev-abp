@@ -149,6 +149,7 @@ foreach ($prefixRouters as $prefixRouter) {
             })->name('dooring.index');            
             Route::resource('/dooring', \App\Http\Controllers\DooringController::class);
             Route::get('/dooring/dr/getKapalDooring/{id}', [\App\Http\Controllers\DooringController::class, 'getKapalDooring'])->name('getKapalDooring');
+            Route::get('/dooring/dr/getContainer/{id}', [\App\Http\Controllers\DooringController::class, 'getContainer'])->name('getContainer');            
             Route::get('/dooring/dr/getPoDooring/{id}', [\App\Http\Controllers\DooringController::class, 'getPoDooring'])->name('getPoDooring');
             Route::match(['get', 'post'], '/dooring/savecurah', [\App\Http\Controllers\DooringController::class, 'savecurah'])->name('dooring.savecurah');
         });
