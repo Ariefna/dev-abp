@@ -43,8 +43,8 @@
                             </div>
                         </a>
                         <ul class="dropdown-menu submenu list-unstyled" id="dashboard" data-bs-parent="#accordionExample">
-                            <li class="{{ Request::routeIs('analytics') ? 'active' : '' }}">
-                                <a href="{{getRouterValue();}}/dashboard/analytics"> Analytics </a>
+                            <li class="{{ Request::routeIs('dashboard.index') ? 'active' : '' }}">
+                                <a href="{{getRouterValue();}}/dashboard/DashboardController"> Analytics </a>
                             </li>
                             {{-- <li class="{{ Request::routeIs('sales') ? 'active' : '' }}">
                                 <a href="{{getRouterValue();}}/dashboard/sales"> Sales </a>
@@ -155,11 +155,11 @@
                             </div>
                         </a>
                         <ul class="dropdown-menu submenu list-unstyled" id="elements" data-bs-parent="#accordionExample">
-                            <li class="{{ Request::routeIs('alerts') ? 'active' : '' }}">
-                                <a href="{{getRouterValue();}}*alerts"> Invoice DP </a>
+                            <li class="{{ Request::routeIs('invoice-dp.index') ? 'active' : '' }}">
+                                <a href="{{getRouterValue();}}/finance/invoice-dp"> Invoice DP </a>
                             </li>
-                            <li class="{{ Request::routeIs('alerts') ? 'active' : '' }}">
-                                <a href="{{getRouterValue();}}*alerts"> Invoice Pelunasan </a>
+                            <li class="{{ Request::routeIs('invoice-pelunasan.index') ? 'active' : '' }}">
+                                <a href="{{getRouterValue();}}/finance/invoice-pelunasan"> Invoice Pelunasan </a>
                             </li>
                             <li class="{{ Request::routeIs('alerts') ? 'active' : '' }}">
                                 <a href="{{getRouterValue();}}*alerts"> Laporan Keuangan </a>

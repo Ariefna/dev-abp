@@ -22,7 +22,7 @@
 
     <div class="row layout-top-spacing">
 
-        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 layout-spacing">
+        {{-- <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 layout-spacing">
             <x-widgets._w-card-five title="Profit" balance="$41,741.42" percentage="+ 13.6%" button="View Report" link="javascript:void(0);"/>
         </div>
         
@@ -36,7 +36,7 @@
 
         <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 layout-spacing">
             <x-widgets._w-card-five title="Outcome" balance="$41,741.42" percentage="+ 13.6%" button="View Report" link="javascript:void(0);"/>
-        </div>
+        </div> --}}
     
         {{-- <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12 layout-spacing">
             <x-widgets._w-card-five title="Total Balance" balance="$41,741.42" percentage="+ 13.6%" button="View Report" link="javascript:void(0);"/>
@@ -49,10 +49,43 @@
         <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12 layout-spacing">
             <x-widgets._w-activity-five title="Daily Activity"/>
         </div>
-    
+        
         <div class="col-xl-6 col-lg-12 col-md-12 col-sm-12 col-12 layout-spacing">
-            <x-widgets._w-table-two title="Monitoring Tracking"/>
+            <div class="widget widget-table-two">
+    
+                <div class="widget-heading">
+                    <h5 class="">Monitoring Tracking</h5>
+                </div>
+            
+                <div class="widget-content">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th><div class="th-content">No PO</div></th>
+                                    <th><div class="th-content">Total Belum Muat</div></th>
+                                    <th><div class="th-content">Status</div></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><a href="https://saritsurabaya.com" target="_blank" rel="noopener noreferrer"><div class="td-content"><span class="">161616</span></div></a></td>
+                                    <td><a href="https://saritsurabaya.com" target="_blank" rel="noopener noreferrer"><div class="td-content"><span class="">100</span></div></a></td>
+                                    <td><div class="td-content"><span class="badge badge-success">Paid</span></div></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="d-grid gap-4 col-12 mx-auto">
+                    <a href="" class="btn btn-outline-secondary mb-4">View All</a>
+                </div>
+            </div>
         </div>
+
+        {{-- <div class="col-xl-6 col-lg-12 col-md-12 col-sm-12 col-12 layout-spacing">
+            <x-widgets._w-table-two title="Monitoring Tracking"/>
+        </div> --}}
 
         <div class="col-xl-6 col-lg-12 col-md-12 col-sm-12 col-12 layout-spacing">
             <x-widgets._w-table-two title="Monitoring Dooring"/>

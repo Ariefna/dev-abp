@@ -1,4 +1,4 @@
-<x-base-layout :scrollspy="true">
+<x-base-layout :scrollspy="false">
 
     <x-slot:pageTitle>
         {{$title}} 
@@ -388,7 +388,6 @@
 
                 $('#t_qty, #t_qty2, #oa_kpl_kayu, #oa_container').on('input', updateValues);
 
-                // Initial calculation when the page loads
                 updateValues();                
                 $('#approve-link').click(function() {
 

@@ -26,4 +26,23 @@ class GudangMuatController extends Controller
         ]);
         return redirect()->back();
     }
+    public function update(Request $request, GudangMuat $gudang_muat) {
+        GudangMuat::where('id_gudang', $gudang_muat->id_gudang)
+            ->update([
+                'nama_gudang' => $request->nama_gd,
+                'kota' => $request->kota_gd,
+                'alamat' => $request->alamat_gd,
+                'status' => '1'
+            ]);
+        return redirect()->back();
+    }
+    
+    
+    public function destroy($id_gudang) {
+        $gudang = GudangMuat::find($id_gudang);
+        $gudang->update([
+            'status' => '0'
+        ]);
+        return redirect()->back();
+    }    
 }

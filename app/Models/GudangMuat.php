@@ -8,5 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class GudangMuat extends Model
 {
     use HasFactory;
-    protected $fillable = ['nama_gudang','kota','alamat','status'];
+    protected $fillable = ['id_gudang','nama_gudang','kota','alamat','status'];
+    protected $table = 'gudang_muats';
+    protected $primaryKey = 'id_gudang';
 }

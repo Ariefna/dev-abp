@@ -24,4 +24,19 @@ class PODController extends Controller
         ]);
         return redirect()->back();
     }
+    public function update(Request $request, PortOfDestination $pod) {
+        $pod->update([
+            'nama_pod'     => $request->nama_pod,
+            'status' => '1'
+        ]);
+        return redirect()->back();
+    }
+    
+    public function destroy($id) {
+        $barang = PortOfDestination::find($id);
+        $barang->update([
+            'status' => '0'
+        ]);
+        return redirect()->back();
+    }    
 }

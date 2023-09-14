@@ -1,4 +1,4 @@
-<x-base-layout :scrollspy="true">
+<x-base-layout :scrollspy="false">
 
     <x-slot:pageTitle>
         {{$title}} 
@@ -153,7 +153,7 @@
             </div>
         </div>
         @endif        
-        <div id="basic" class="col-lg-12 col-sm-12 col-12 layout-spacing">
+        <div id="basic" class="col-xl-12 col-lg-12 col-sm-12 col-12 layout-spacing">
             <div class="statbox widget box box-shadow">
                 <div class="widget-header">                                
                     <div class="row">
@@ -185,8 +185,8 @@
                                             <tr>
                                                 <td>{{ $tra->no_po }}</td>
                                                 <td>{{ $tra->nama_pol }} - {{ $tra->nama_pod }}</td>
-                                                <td>0</td>
-                                                <td>0</td>
+                                                <td>{{ $tra->qty }}</td>
+                                                <td>{{ $tra->qty2 }}</td>
                                                 <td>0</td>
                                                 <td>{{ $tra->total_qty }}</td>
                                                 <td class="text-center"><span class="shadow-none badge badge-danger">{{ $tra->status == 1 ? 'Pending' : '' }}</span></td>
@@ -206,8 +206,8 @@
                                             <tr>
                                                 <td>{{ $trac->no_po }}</td>
                                                 <td>{{ $trac->nama_pol }} - {{ $trac->nama_pod }}</td>
-                                                <td>{{ $trac->muat_curah }}</td>
-                                                <td>{{ $trac->muat_container }}</td>
+                                                <td>{{ $trac->muat_curah ?? '0' }}</td>
+                                                <td>{{ $trac->muat_container ?? '0' }}</td>
                                                 <td>{{ $trac->muat_container + $trac->muat_curah }}</td>
                                                 <td>{{ ($trac->total_qty) - ($trac->muat_curah + $trac->muat_container)}}</td>
                                                 <td class="text-center"><span class="shadow-none badge badge-danger">{{ $trac->status == 1 ? 'Pending' : '' }}</span></td>
@@ -290,18 +290,19 @@
                 <div class="modal-content">
                     <div class="modal-body">
                         <h5>Tambah Detail Tracking Kapal Container</h5>
-                        @if ($lastcont)
+                        {{-- @if ($lastcont) --}}
                         <form class="row g-3 needs-validation" action="{{ route('tracking.savecontainer') }}"  method="POST" enctype="multipart/form-data" novalidate>
                             @csrf
-                            @foreach ($track as $tra)
-                            <input name="id_track" style="display: none;" value="{{ $tra->id_track }}" type="text" class="form-control" id="validationCustom01" required>
+                            @foreach ($trackzero as $tra)
+                                <input name="id_track" value="{{ $tra->id_track }}" type="hidden" class="form-control" id="validationCustom01" required>
                             @endforeach
                             <div class="col-md-3">
                                 <label for="validationCustom04" class="form-label">Tanggal Muat</label>
                                 <div class="input-group has-validation">
                                     <input name="tgl_muat" id="basicFlatpickr" value="2022-09-04" class="form-control flatpickr flatpickr-input active" type="text" placeholder="Select Date..">
                                 </div>
-                            </div>        
+                            </div>      
+                            @if ($lastcont)
                             <div class="col-md-3">                       
                                 <label for="validationCustom03" class="form-label">Gudang Muat</label>
                                 <select class="form-select" name="id_gudang" id="validationDefault01" required>
@@ -337,70 +338,15 @@
                             <div class="col-md-4">
                                 <label for="validationCustom03" class="form-label">No Segel</label>
                                 <input name="no_segel" value="{{ $lastcont->no_segel }}" type="text" class="form-control" id="validationCustom01" placeholder="Masukkan No Segel" required>
-                            </div>                            
-                            <div class="col-md-3">
-                                @foreach ($getcontqty as $tra)
-                                    <label for="notAllowCont" class="form-label">Quantity Tonase <span class="shadow-none badge badge-danger">Sisa: {{ $tra->qty - $tra->total_qty_cont }}</span></label>
-                                    <div class="input-group">
-                                        <input name="qty_tonase" step="any" min="0" data-total-qty-cont="{{ $tra->qty - $tra->total_qty_cont }}" id="qty_cont" type="number" class="form-control qty_cont" placeholder="QTY Tonase" required>
-                                        <span class="input-group-text" id="inputGroupPrepend">KG</span>
-                                    </div>          
-                                    <div class="notAllowCont"></div>
-                                @endforeach                                                     
                             </div>
-                            <div class="col-md-3">
-                                <label for="validationCustom03" class="form-label">Jumlah Sak</label>
-                                <input name="jml_sak" type="number" class="form-control" id="validationCustom01" placeholder="Jumlah Sak" required>
-                            </div>                            
-                            <div class="col-md-3">
-                                <label for="validationCustom03" class="form-label">Quantity Timbangan</label>
-                                <div class="input-group">
-                                    <input name="qty_timbang" step="any" min="0" type="number" class="form-control" placeholder="QTY Timbang" required>
-                                    <span class="input-group-text" id="inputGroupPrepend">KG</span>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <label for="validationCustom03" class="form-label">Upload File Surat Timbang</label>
-                                <div class="mb-3">
-                                    <input name="file_tbg" accept=".jpg, .png, .pdf" class="form-control file-upload-input" style="height: 48px; padding: 0.75rem 1.25rem;" type="file" id="formFile">
-                                </div>
-                            </div>                            
-                            <div class="col-md-6">
-                                <label for="validationCustom04" class="form-label">No Surat Jalan</label>
-                                <div class="input-group has-validation">
-                                    <input name="no_sj" type="text" value="" class="form-control" id="validationCustom01" placeholder="Masukkan Nomor Container" required>
-                                </div>
-                            </div>                            
-                            <div class="col-md-6">
-                                <label for="validationCustom03" class="form-label">Upload File Surat Jalan</label>
-                                <div class="mb-3">
-                                    <input name="file" accept=".jpg, .png, .pdf" class="form-control file-upload-input" style="height: 48px; padding: 0.75rem 1.25rem;" type="file" id="formFile">
-                                </div>
-                            </div>                            
-                            <div class="modal-footer justify-content-center">
-                                <button type="submit" class="btn btn-primary">Tambah</button>
-                                <button type="button" class="btn btn btn-light-dark" data-bs-dismiss="modal"><i class="flaticon-cancel-12"></i>Batal</button>
-                            </div>
-                        </form>
-                        @else
-                        <form class="row g-3 needs-validation" action="{{ route('tracking.savecontainer') }}"  method="POST" enctype="multipart/form-data" novalidate>
-                            @csrf
-                            @foreach ($track as $tra)
-                            <input name="id_track" style="display: none;" value="{{ $tra->id_track }}" type="text" class="form-control" id="validationCustom01" required>
-                            @endforeach
-                            <div class="col-md-3">
-                                <label for="validationCustom04" class="form-label">Tanggal Muat</label>
-                                <div class="input-group has-validation">
-                                    <input name="tgl_muat" id="basicFlatpickr" value="2022-09-04" class="form-control flatpickr flatpickr-input active" type="text" placeholder="Select Date..">
-                                </div>
-                            </div>        
+                            @elseif ($lastcont==0)
                             <div class="col-md-3">                       
                                 <label for="validationCustom03" class="form-label">Gudang Muat</label>
                                 <select class="form-select" name="id_gudang" id="validationDefault01" required>
                                     <option selected disabled value="">Pilih...</option>                                    
                                         @foreach ($gudang as $gd)
                                             <option value="{{ $gd->id_gudang }}">{{ $gd->nama_gudang }}</option>
-                                        @endforeach                                    
+                                        @endforeach
                                 </select>
                             </div>                                                
                             <div class="col-md-3">
@@ -414,7 +360,7 @@
                             </div>
                             <div class="col-md-3">
                                 <label for="validationCustom03" class="form-label">Voyage</label>
-                                <input name="voyage" type="text" class="form-control" id="validationCustom01" placeholder="Masukkan Voyage" required>
+                                <input name="voyage" type="text" value="" class="form-control" id="validationCustom01" placeholder="Masukkan Voyage" required>
                             </div>
                             <div class="col-md-4">
                                 <label for="validationCustom03" class="form-label">Nopol</label>
@@ -423,27 +369,38 @@
                             <div class="col-md-4">
                                 <label for="validationCustom04" class="form-label">No Container</label>
                                 <div class="input-group has-validation">
-                                    <input name="no_container" type="text" value="" class="form-control" id="validationCustom01" placeholder="Masukkan Nomor Container" required>
+                                    <input name="no_container" value="" type="text" value="" class="form-control" id="validationCustom01" placeholder="Masukkan Nomor Container" required>
                                 </div>
                             </div>                                                
                             <div class="col-md-4">
                                 <label for="validationCustom03" class="form-label">No Segel</label>
-                                <input name="no_segel" type="text" class="form-control" id="validationCustom01" placeholder="Masukkan No Segel" required>
-                            </div>                            
+                                <input name="no_segel" value="" type="text" class="form-control" id="validationCustom01" placeholder="Masukkan No Segel" required>
+                            </div>
+                            @endif
                             <div class="col-md-3">
-                                {{-- @foreach ($getcontqty as $tra)
-                                    <label for="notAllowCont" class="form-label">Quantity Tonase <span class="shadow-none badge badge-danger">Sisa: {{ $tra->qty - $tra->total_qty_cont }}</span></label>
-                                    <div class="input-group">
-                                        <input name="qty_tonase" step="any" min="0" data-total-qty-cont="{{ $tra->qty - $tra->total_qty_cont }}" id="qty_cont" type="number" class="form-control qty_cont" placeholder="QTY Tonase" required>
-                                        <span class="input-group-text" id="inputGroupPrepend">KG</span>
-                                    </div>          
-                                    <div class="notAllowCont"></div>
-                                @endforeach          --}}
-                                <label for="notAllowCont" class="form-label">Quantity Tonase <span class="shadow-none badge badge-danger"></span></label>
-                                <div class="input-group">
-                                    <input name="qty_tonase" step="any" min="0" id="qty_cont" type="number" class="form-control qty_cont" placeholder="QTY Tonase" required>
-                                    <span class="input-group-text" id="inputGroupPrepend">KG</span>
-                                </div>                           
+                                @if ($lastcont)
+                                    @foreach ($getcontqty as $tra)
+                                        <label for="notAllowCont" class="form-label">Quantity Tonase</label>
+                                        <div class="input-group">
+                                            <input name="qty_tonase" step="any" min="0" id="qty_cont" type="number" class="form-control qty_cont" placeholder="QTY Tonase" required>
+                                            <span class="input-group-text" id="inputGroupPrepend">KG</span>
+                                        </div>          
+                                        <span class="shadow-none badge badge-danger mt-2">Sisa: {{ $tra->qty_tonase_sisa }}</span><div class="notAllowCont"></div>
+                                        <input name="qty_cont_total" id="qty_cont_total" value="{{ $tra->qty_tonase_sisa }}" type="hidden" step="any" min="0">
+                                        <input type="hidden" name="qty_cont_ada" id="qty_sisa_cont" value="0" step="any" min="0">
+                                    @endforeach
+                                @elseif($lastcont==0)
+                                    @foreach ($zerocont as $tra)
+                                        <label for="notAllowCont" class="form-label">Quantity Tonase</label>
+                                        <div class="input-group">
+                                            <input name="qty_tonase" step="any" min="0" id="qty_cont" type="number" class="form-control qty_cont" placeholder="QTY Tonase" required>
+                                            <span class="input-group-text" id="inputGroupPrepend">KG</span>
+                                        </div>          
+                                        <span class="shadow-none badge badge-danger mt-2">Sisa: {{ $tra->qty2 }}</span><div class="notAllowCont"></div>
+                                        <input name="qty_cont_total" id="qty_cont_total" value="{{ $tra->qty2 }}" type="hidden" step="any" min="0">
+                                        <input name="qty_cont_emp" id="qty_sisa_cont" value="0" type="hidden" step="any" min="0">
+                                    @endforeach
+                                @endif                                                 
                             </div>
                             <div class="col-md-3">
                                 <label for="validationCustom03" class="form-label">Jumlah Sak</label>
@@ -475,11 +432,10 @@
                                 </div>
                             </div>                            
                             <div class="modal-footer justify-content-center">
-                                <button type="submit" class="btn btn-primary">Tambah</button>
+                                <button type="submit" id="btn-modal-cont" class="btn btn-primary">Tambah</button>
                                 <button type="button" class="btn btn btn-light-dark" data-bs-dismiss="modal"><i class="flaticon-cancel-12"></i>Batal</button>
                             </div>
                         </form>
-                        @endif
                     </div>
                 </div>
             </div>
@@ -489,19 +445,19 @@
                 <div class="modal-content">
                     <div class="modal-body">
                         <h5>Tambah Detail Tracking Kapal Curah</h5>
-                        @if ($lastcurah)
                         <form name="modal-tracking-ada" class="row g-3 needs-validation" action="{{ route('tracking.savecurah') }}"  method="POST" enctype="multipart/form-data" novalidate>
                             @csrf
                             @foreach ($trackzero as $tra)
-                                <input name="id_track" style="display: none;" value="{{ $tra->id_track }}" type="text" class="form-control" id="validationCustom01" required>
+                                <input name="id_track" value="{{ $tra->id_track }}" type="hidden" class="form-control" id="validationCustom01" required>
                             @endforeach
-                            <div class="col-md-3">
+                            <div class="col-lg-3 col-md-6 col-sm-12">
                                 <label for="validationCustom04" class="form-label">Tanggal Muat</label>
                                 <div class="input-group has-validation">
                                     <input name="tgl_muat" id="basicFlatpickr" value="2022-09-04" class="form-control flatpickr flatpickr-input active" type="text" placeholder="Select Date..">
                                 </div>
-                            </div>        
-                            <div class="col-md-3">                       
+                            </div>
+                            @if ($lastcurah)     
+                            <div class="col-lg-3 col-md-6 col-sm-12">                       
                                 <label for="validationCustom03" class="form-label">Gudang Muat</label>
                                 <select class="form-select" name="id_gudang" id="validationDefault01" required>
                                     <option selected disabled value="">Pilih...</option>                                    
@@ -510,7 +466,7 @@
                                         @endforeach                                    
                                 </select>
                             </div>                                                
-                            <div class="col-md-3">
+                            <div class="col-lg-3 col-md-6 col-sm-12">
                                 <label for="validationCustom03" class="form-label">Kapal</label>
                                 <select class="form-select" name="id_kapal" id="validationDefault01" required>
                                     <option selected disabled value="">Pilih...</option>
@@ -519,69 +475,8 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-md-3">
-                                <label for="validationCustom03" class="form-label">Nopol</label>
-                                <input name="nopol" type="text" class="form-control" id="validationCustom01" placeholder="Masukkan Nopol" required>
-                            </div>                            
-                            <div class="col-md-3">
-                                @foreach ($getcurahqty as $tra)
-                                    <label for="validationMessage" class="form-label">Quantity Tonase <span class="shadow-none badge badge-danger">Sisa: {{ $tra->qty_tonase_sisa }}</span></label>
-                                    <div class="input-group">
-                                        <input name="qty_tonase" data-total-qty-curah="{{ $tra->qty_tonase_sisa }}" id="qty_curah2" type="number" step="any" min="0" class="form-control qty_curah" placeholder="QTY Tonase" required>
-                                        <span class="input-group-text" id="inputGroupPrepend">KG</span>
-                                    </div>
-                                    <input name="qty_tonase_curah_sisa2" id="qty_curah_total2" value="{{ $tra->qty }}" type="text" step="any" min="0" class="form-control qty_curah" placeholder="QTY Tonase" required>
-                                    <input name="qty_sisa2" id="qty_sisa2" value="0" type="text">        
-                                    <div class="validationMessage"></div>
-                                @endforeach                                             
-                            </div>
-                            <div class="col-md-3">
-                                <label for="validationCustom03" class="form-label">Jumlah Sak</label>
-                                <input name="jml_sak" type="number" class="form-control" id="validationCustom01" placeholder="Jumlah Sak" required>
-                            </div>                            
-                            <div class="col-md-3">
-                                <label for="validationCustom03" class="form-label">Quantity Timbangan</label>
-                                <div class="input-group">
-                                    <input name="qty_timbang" step="any" min="0" type="number" class="form-control" placeholder="QTY Timbang" required>
-                                    <span class="input-group-text" id="inputGroupPrepend">KG</span>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <label for="validationCustom03" class="form-label">Upload File Surat Timbang</label>
-                                <div class="mb-3">
-                                    <input name="file_tbg" accept=".jpg, .png, .pdf" class="form-control file-upload-input" style="height: 48px; padding: 0.75rem 1.25rem;" type="file" id="formFile">
-                                </div>
-                            </div>                            
-                            <div class="col-md-6">
-                                <label for="validationCustom04" class="form-label">No Surat Jalan</label>
-                                <div class="input-group has-validation">
-                                    <input name="no_sj" type="text" value="" class="form-control" id="validationCustom01" placeholder="Masukkan Nomor Container" required>
-                                </div>
-                            </div>                            
-                            <div class="col-md-6">
-                                <label for="validationCustom03" class="form-label">Upload File Surat Jalan</label>
-                                <div class="mb-3">
-                                    <input name="file" accept=".jpg, .png, .pdf" class="form-control file-upload-input" style="height: 48px; padding: 0.75rem 1.25rem;" type="file" id="formFile">
-                                </div>
-                            </div>                            
-                            <div class="modal-footer justify-content-center">
-                                <button id ="btn-modal-tracking-ada" type="submit" class="btn btn-primary">Tambah</button>
-                                <button type="button" class="btn btn btn-light-dark" data-bs-dismiss="modal"><i class="flaticon-cancel-12"></i>Batal</button>
-                            </div>
-                        </form>
-                        @elseif($lastcurah==0)
-                        <form name="modal-tracking-empty" class="row g-3 needs-validation" action="{{ route('tracking.savecurah') }}"  method="POST" enctype="multipart/form-data" novalidate>
-                            @csrf
-                            @foreach ($trackzero as $tra)
-                            <input name="id_track" style="display: none;" value="{{ $tra->id_track }}" type="text" class="form-control" id="validationCustom01" required>
-                            @endforeach
-                            <div class="col-md-3">
-                                <label for="validationCustom04" class="form-label">Tanggal Muat</label>
-                                <div class="input-group has-validation">
-                                    <input name="tgl_muat" id="basicFlatpickr" value="2022-09-04" class="form-control flatpickr flatpickr-input active" type="text" placeholder="Select Date..">
-                                </div>
-                            </div>        
-                            <div class="col-md-3">                       
+                            @elseif($lastcurah==0)
+                            <div class="col-lg-3 col-md-6 col-sm-12">                       
                                 <label for="validationCustom03" class="form-label">Gudang Muat</label>
                                 <select class="form-select" name="id_gudang" id="validationDefault01" required>
                                     <option selected disabled value="">Pilih...</option>                                    
@@ -590,7 +485,7 @@
                                         @endforeach                                    
                                 </select>
                             </div>                                                
-                            <div class="col-md-3">
+                            <div class="col-lg-3 col-md-6 col-sm-12">
                                 <label for="validationCustom03" class="form-label">Kapal</label>
                                 <select class="form-select" name="id_kapal" id="validationDefault01" required>
                                     <option selected disabled value="">Pilih...</option>
@@ -599,42 +494,50 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-md-3">
+                            @endif
+                            <div class="col-lg-3 col-md-6 col-sm-12">
                                 <label for="validationCustom03" class="form-label">Nopol</label>
                                 <input name="nopol" type="text" class="form-control" id="validationCustom01" placeholder="Masukkan Nopol" required>
-                            </div>                           
-                            <div class="col-md-3">
-                                @foreach ($zerocurah as $tra)
-                                    <label for="validationMessage" class="form-label">Quantity Tonase <span class="shadow-none badge badge-danger">Sisa: {{ $tra->qty }}</span></label>
-                                    <div class="input-group">
-                                        <input name="qty_tonase" id="qty_curah" type="number" step="any" min="0" class="form-control qty_curah" placeholder="QTY Tonase" required>
-                                        {{-- <input name="qty_tonase_curah_sisa" id="qty_curah_total" value="{{ $tra->qty }}" type="text" step="any" min="0" class="form-control qty_curah" placeholder="QTY Tonase" required>
-                                        <input name="qty_sisa" id="qty_sisa" value="0" type="text"> --}}
-                                        <span class="input-group-text" id="inputGroupPrepend">KG</span>
-                                    </div>          
-                                    <input name="qty_tonase_curah_sisa" id="qty_curah_total" value="{{ $tra->qty }}" type="text" step="any" min="0" class="form-control qty_curah" placeholder="QTY Tonase" required>
-                                    <input name="qty_sisa" id="qty_sisa" value="0" type="text">
-                                    <div class="validationMessage"></div>
-                                @endforeach                              
-                                {{-- <label for="validationMessage" class="form-label">Quantity Tonase <span class="shadow-none badge badge-danger"></span></label>
-                                <div class="input-group">
-                                    <input name="qty_tonase" id="qty_curah" type="number" step="any" min="0" class="form-control qty_curah" placeholder="QTY Tonase" required>
-                                    <span class="input-group-text" id="inputGroupPrepend">KG</span>
-                                </div>          
-                                <div class="validationMessage"></div>                                 --}}
+                            </div>                            
+                            <div class="col-lg-3 col-md-6 col-sm-12">
+                                @if ($lastcurah)
+                                    @foreach ($getcurahqty as $tra)
+                                        <label for="validationMessage" class="form-label">Quantity Tonase </label>
+                                        <div class="input-group">
+                                            <input name="qty_tonase" id="qty_curah" type="number" step="any" min="0" class="form-control qty_curah" placeholder="QTY Tonase" required>
+                                            <span class="input-group-text" id="inputGroupPrepend">KG</span>
+                                        </div>
+                                        <span class="shadow-none badge badge-danger mt-2">Sisa: {{ $tra->qty_tonase_sisa }}</span><div class="validationMessage"></div>
+                                        <input name="qty_curah_total" id="qty_curah_total" value="{{ $tra->qty_tonase_sisa }}" type="hidden" step="any" min="0">
+                                        <input type="hidden" name="qty" id="qty_sisa_curah" step="any" min="0">
+                                        
+                                    @endforeach
+                                @elseif($lastcurah==0)
+                                    @foreach ($zerocurah as $tra)
+                                        <label for="validationMessage" class="form-label">Quantity Tonase</label>
+                                        <div class="input-group">
+                                            <input name="qty_tonase" id="qty_curah" type="number" value="0" step="any" min="0" class="form-control qty_curah" placeholder="QTY Tonase" required>
+                                            <span class="input-group-text" id="inputGroupPrepend">KG</span>
+                                        </div>
+                                        <span class="shadow-none badge badge-danger mt-2">Sisa: {{ $tra->qty }}</span>
+                                        <input name="qty_curah_total" id="qty_curah_total" value="{{ $tra->qty }}" type="hidden" step="any" min="0">
+                                        <input name="qty_sisa_curah" id="qty_sisa_curah" value="0" type="hidden" step="any" min="0">
+                                        <div class="validationMessage"></div>
+                                    @endforeach
+                                @endif
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-lg-3 col-md-6 col-sm-12">
                                 <label for="validationCustom03" class="form-label">Jumlah Sak</label>
                                 <input name="jml_sak" type="number" class="form-control" id="validationCustom01" placeholder="Jumlah Sak" required>
                             </div>                            
-                            <div class="col-md-3">
+                            <div class="col-lg-3 col-md-6 col-sm-12">
                                 <label for="validationCustom03" class="form-label">Quantity Timbangan</label>
                                 <div class="input-group">
-                                    <input name="qty_timbang" type="number" class="form-control" placeholder="QTY Timbang" required>
+                                    <input name="qty_timbang" step="any" min="0" type="number" class="form-control" placeholder="QTY Timbang" required>
                                     <span class="input-group-text" id="inputGroupPrepend">KG</span>
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-lg-3 col-md-6 col-sm-12">
                                 <label for="validationCustom03" class="form-label">Upload File Surat Timbang</label>
                                 <div class="mb-3">
                                     <input name="file_tbg" accept=".jpg, .png, .pdf" class="form-control file-upload-input" style="height: 48px; padding: 0.75rem 1.25rem;" type="file" id="formFile">
@@ -653,11 +556,10 @@
                                 </div>
                             </div>                            
                             <div class="modal-footer justify-content-center">
-                                <button id ="btn-modal-tracking-empty" type="submit" class="btn btn-primary">Tambah</button>
+                                <button id ="btn-modal-curah" type="submit" class="btn btn-primary">Tambah</button>
                                 <button type="button" class="btn btn btn-light-dark" data-bs-dismiss="modal"><i class="flaticon-cancel-12"></i>Batal</button>
                             </div>
                         </form>
-                        @endif
                     </div>
                 </div>
             </div>
@@ -669,6 +571,7 @@
                     @method('DELETE')
                     @csrf
                     @if (count($track->where('status', 1)) >= 1 && count($dtrack->where('status', 1 )) >= 1)
+                        <input type="hidden" value="{{ $tra->total_all_sisa }}" name="qty_sisa_simpan">
                         <button class="btn btn-success mb-4" type="submit">Simpan Tracking Ini</button>
                     @else
                         <button disabled class="btn btn-success mb-4" type="submit">Simpan Tracking Ini</button>
@@ -783,56 +686,79 @@
         </script>
         <script type='text/javascript'>
             $(document).ready(function() {
-                $('#btn-modal-tracking-empty').click(function(e){
-                    e.preventDefault();
-                    var qty_curah_input = $('#qty_curah').val();
-                    var qty_curah_total = $('#qty_curah_total').val();
-                    if (qty_curah_input < qty_curah_total) {
-                        var sisa = qty_curah_total-qty_curah_input;
-                        $('#qty_sisa').val(sisa);
-                    }
-                    console.log(qty_curah_input);
-                    console.log(qty_curah_total);
-                    $('form[name="modal-tracking-empty"]').submit();
-                });
-                $('#btn-modal-tracking-ada').click(function(e){
-                    e.preventDefault();
-                    var qty_curah_input2 = $('#qty_curah2').val();
-                    var qty_curah_total2 = $('#qty_curah_total2').val();
-                    if (qty_curah_input2 < qty_curah_total2) {
-                        var sisa = qty_curah_total2-qty_curah_input2;
-                        $('#qty_sisa2').val(sisa);
-                    }
-                    console.log(qty_curah_input2);
-                    console.log(qty_curah_total2);
-                    $('form[name="modal-tracking-ada"]').submit();
-                });                
+                // $('#btn-modal-curah').click(function(e){
+                //     e.preventDefault();
+                //     var qty_curah_input = $('#qty_curah').val();
+                //     var qty_curah_total = $('#qty_curah_total').val();
+                //     console.log(qty_curah_input);
+                //     console.log(qty_curah_total);
+                //     var sisa = qty_curah_total - qty_curah_input;
+                //     console.log(parseFloat(sisa));
+                //     parseFloat($('#qty_sisa_curah').val(sisa));
+                //     $('form[name="modal-tracking-empty"]').submit();
+                // });
+                // $('#btn-modal-tracking-ada').click(function(e){
+                //     e.preventDefault();
+                //     var qty_curah_input2 = $('#qty_curah2').val();
+                //     var qty_curah_total2 = $('#qty_curah_total2').val();
+                //     if (qty_curah_input2 < qty_curah_total2) {
+                //         var sisa = qty_curah_total2-qty_curah_input2;
+                //         $('#qty_sisa2').val(sisa);
+                //         $('#qty_sisa').val(sisa);
+                //     }
+                //     console.log(qty_curah_input2);
+                //     console.log(qty_curah_total2);
+                //     $('form[name="modal-tracking-ada"]').submit();
+                // });                
                 $('.qty_curah').on('input', function(){
                     var inputVal = parseFloat($(this).val()); // Get the value of the input field as a number
-                    var totalQtyCurah = parseFloat($(this).data('total-qty-curah'));
+                    // var totalQtyCurah = parseFloat($(this).data('total-qty-curah'));
+                    var totalQtyCurah = parseFloat($('#qty_curah_total').val()) || 0;
                     var $validationMessage = $(this).closest('.input-group').siblings('.validationMessage'); // Find the validation message div
         
                     if (isNaN(inputVal)) {
                         $validationMessage.text('Please enter a valid number');
+                        $('#btn-modal-curah').attr('disabled', false);
+                        parseFloat($('#qty_sisa_curah').val(totalQtyCurah - inputVal));
                     }else if (inputVal > totalQtyCurah) {
                         $validationMessage.text('Tonase lebih dari sisa muat');
+                        $('#btn-modal-curah').attr('disabled', true);
+                        parseFloat($('#qty_sisa_curah').val(totalQtyCurah - inputVal));
                     } else {
                         $validationMessage.text('');
+                        $('#btn-modal-curah').attr('disabled', false);
+                        parseFloat($('#qty_sisa_curah').val(totalQtyCurah - inputVal));
                     }
                 });
+
+                $('.qty_curah').on('click', function() {
+                    $(this).val('');
+                });
+
+
                 $('.qty_cont').on('input', function(){
-                    var inputVal = parseFloat($(this).val()); // Get the value of the input field as a number
-                    var totalQtyCont = parseFloat($(this).data('total-qty-cont'));
-                    var $validationMessage = $(this).closest('.input-group').siblings('.notAllowCont'); // Find the validation message div
+                    var inputVal = parseFloat($(this).val());
+                    var totalQtyCont = parseFloat($('#qty_cont_total').val()) || 0;
+                    var $validationMessage = $(this).closest('.input-group').siblings('.notAllowCont');
         
                     if (isNaN(inputVal)) {
                         $validationMessage.text('Please enter a valid number');
+                        $('#btn-modal-cont').attr('disabled', false);                        
+                        parseFloat($('#qty_sisa_cont').val(totalQtyCont - inputVal));                        
                     }else if (inputVal > totalQtyCont) {
                         $validationMessage.text('Tonase lebih dari sisa muat');
+                        $('#btn-modal-cont').attr('disabled', true);                        
+                        parseFloat($('#qty_sisa_cont').val(totalQtyCont - inputVal));                                                
                     } else {
                         $validationMessage.text('');
+                        $('#btn-modal-cont').attr('disabled', false);                        
+                        parseFloat($('#qty_sisa_cont').val(totalQtyCont - inputVal));                                                
                     }
-                });                       
+                });
+
+                $('.qty_cont').on('click', function() {
+                    $(this).val('');
+                });                                       
                 
                 $('#cb_po').change(function() {
                         var selectedId = $(this).val();

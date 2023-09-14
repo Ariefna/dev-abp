@@ -46,12 +46,11 @@ class DocTrackingController extends Controller
                 ->get();
         $track = DocTracking::select('*', 'doc_tracking.status', 'doc_tracking.id_track')
                 ->selectSub(function ($query) {
-                    $query->selectRaw('SUM(qty_tonase)')
-                        ->from('detail_tracking')
-                        ->whereColumn('detail_tracking.id_track', 'doc_tracking.id_track')
-                        ->where('detail_tracking.status', 1)
+                    $query->selectRaw('SUM(qty_tonase_sisa)')
+                        ->from('detail_tracking_sisa')
+                        ->whereColumn('detail_tracking_sisa.id_track', 'doc_tracking.id_track')
                         ->groupBy('detail_tracking.id_track');
-                }, 'total_qty_tonase')
+                }, 'total_all_sisa')
                 ->selectSub(function ($query) {
                     $query->selectRaw('SUM(qty_tonase)')
                         ->from('detail_tracking')
@@ -72,6 +71,7 @@ class DocTrackingController extends Controller
                 ->join('port_of_destination', 'port_of_destination.id', '=', 'doc_tracking.id_pod')
                 ->join('purchase_orders', 'purchase_orders.po_muat', '=', 'doc_tracking.no_po')
                 ->join('detail_tracking', 'detail_tracking.id_track', '=', 'doc_tracking.id_track')
+                ->join('detail_tracking_sisa','detail_tracking_sisa.id_track','=','doc_tracking.id_track')
                 ->where('doc_tracking.status', 1)
                 ->groupBy('doc_tracking.id_track')
                 ->orderBy('doc_tracking.id_track', 'desc')
@@ -91,23 +91,18 @@ class DocTrackingController extends Controller
                     ->join('detail_tracking', 'detail_tracking.id_track', '=', 'doc_tracking.id_track')
                     ->join('detail_tracking_sisa','detail_tracking_sisa.id_track','=','doc_tracking.id_track')
                     ->where('doc_tracking.status', 1)
+                    ->where('detail_tracking_sisa.tipe', 'Curah')
                     ->groupBy('doc_tracking.id_track')
                     ->orderBy('doc_tracking.id_track', 'desc')
                     ->get();
         $getcontqty = DocTracking::select('*', 'doc_tracking.status', 'doc_tracking.id_track')
-                    ->selectSub(function ($query) {
-                        $query->selectRaw('SUM(qty_tonase)')
-                            ->from('detail_tracking')
-                            ->whereColumn('detail_tracking.id_track', 'doc_tracking.id_track')
-                            ->where('detail_tracking.status', 1)
-                            ->whereNotNull('no_container')
-                            ->groupBy('detail_tracking.id_track');
-                    }, 'total_qty_cont')
                     ->join('port_of_loading', 'port_of_loading.id', '=', 'doc_tracking.id_pol')
                     ->join('port_of_destination', 'port_of_destination.id', '=', 'doc_tracking.id_pod')
                     ->join('purchase_orders', 'purchase_orders.po_muat', '=', 'doc_tracking.no_po')
                     ->join('detail_tracking', 'detail_tracking.id_track', '=', 'doc_tracking.id_track')
+                    ->join('detail_tracking_sisa','detail_tracking_sisa.id_track','=','doc_tracking.id_track')
                     ->where('doc_tracking.status', 1)
+                    ->where('detail_tracking_sisa.tipe', 'Container')
                     ->groupBy('doc_tracking.id_track')
                     ->orderBy('doc_tracking.id_track', 'desc')
                     ->get();                    
@@ -129,7 +124,7 @@ class DocTrackingController extends Controller
                 ->count();
         $dtrack = DetailTracking::select('*')
                 ->join('gudang_muats', 'gudang_muats.id_gudang', '=', 'detail_tracking.id_gudang')
-                ->join('kapals', 'kapals.id', '=', 'detail_tracking.id_kapal')                
+                ->join('kapals', 'kapals.id', '=', 'detail_tracking.id_kapal')
                 ->where('detail_tracking.status', 1)
                 ->orderBy('detail_tracking.id_detail_track', 'desc')
                 ->get();    
@@ -139,6 +134,10 @@ class DocTrackingController extends Controller
                     ->join('purchase_orders', 'purchase_orders.po_muat', '=', 'doc_tracking.no_po')
                     ->where('doc_tracking.status',1)
                     ->get();
+        $zerocont = DocTracking::select('*')
+                    ->join('purchase_orders', 'purchase_orders.po_muat', '=', 'doc_tracking.no_po')
+                    ->where('doc_tracking.status',1)
+                    ->get();                    
         // $tbl_po = Tracking::select('purchase_orders.po_muat', 'purchase_orders.po_kebun', 
         //         'purchase_orders.total_qty', 'port_of_loading.nama_pol', 'port_of_destination.nama_pod',
         //         'trackings.status', 'kapals.kode_kapal','kapals.nama_kapal','pt_penerima.nama_penerima',
@@ -161,7 +160,7 @@ class DocTrackingController extends Controller
         //         ->get();
         $title = 'Adhipramana Bahari Perkasa';
         $breadcrumb = 'This Breadcrumb';
-        return view('pages.abp-page.tra', compact('title', 'breadcrumb','po','details','getcurahqty','getcontqty','track','trackzero','dtrack','lastcont','lastcurah','zerocurah','gudang','pol','pod','kapal'));
+        return view('pages.abp-page.tra', compact('title', 'breadcrumb','po','details','getcurahqty','getcontqty','track','trackzero','dtrack','lastcont','lastcurah','zerocurah','zerocont','gudang','pol','pod','kapal'));
     }
     
 
@@ -230,6 +229,22 @@ class DocTrackingController extends Controller
             'st_file_path'     => 'uploads/tracking' . $fileName2,                                    
             'status' => '1'
         ]);
+        $c = $request->qty_cont_emp2;
+        $b = $request->qty_cont_ada;            
+        if ($c !== $b) {
+            DetailTrackingSisa::where('id_track', $request->id_track)->
+            where('tipe','Container')->update([
+                'qty_tonase_sisa' => $request->qty_cont_ada,
+            ]);
+        } else if($c === $b){
+            DetailTrackingSisa::create([
+                'id_track'          => $request->id_track,
+                'qty_tonase_sisa'   => $request->qty_cont_emp,
+                'qty_total_tonase'  => $request->qty_cont_total,
+                'status'            => 1,
+                'tipe'              => 'Container'
+            ]);
+        }
         return redirect()->back();
     }
     public function savecurah(Request $request) {
@@ -273,35 +288,52 @@ class DocTrackingController extends Controller
             'st_file_path'     => 'uploads/tracking' . $fileName2,                                    
             'status' => '1'
         ]);
-        if ($request->qty_sisa > 0) {
-            $countersisa = DetailTrackingSisa::where('id_track',$request->id_track)->first();
-            dd ([
-                '$countersisa' => $countersisa,
-                '$idtrack' => $request->id_track,
+
+        $c = $request->qty_sisa_curah2;
+        $b = $request->qty;            
+        if ($c !== $b) {
+            DetailTrackingSisa::where('id_track', $request->id_track)->
+            where('tipe','Curah')->update([
+                'qty_tonase_sisa' => $request->qty,
             ]);
-            if ($countersisa > 0) {
-               DetailTrackingSisa::where('id_track',$request->id_track)->update([
-                'qty_tonase_sisa'=> $request->qty_sisa2,
-               ]);
-            }else{
-                DetailTrackingSisa::create([
-                    'id_track'     => $request->id_track,
-                    'qty_tonase_sisa'     => $request->qty_sisa,
-                    'qty_total_tonase' => $request->qty_tonase_curah_sisa,
-                    'status' => '1',
-                    'tipe' => 'Curah'
-                ]);
-            }
+        } else if($c === $b){
+            DetailTrackingSisa::create([
+                'id_track'          => $request->id_track,
+                'qty_tonase_sisa'   => $request->qty_sisa_curah,
+                'qty_total_tonase'  => $request->qty_curah_total,
+                'status'            => 1,
+                'tipe'              => 'Curah'
+            ]);
         }
-        // return redirect()->back();
-    }           
-    public function destroy($id) {
-        DocTracking::where('id_track', $id)->update([
-            'status' => '3'
-        ]);
-        DetailTracking::where('id_track', $id)->update([
-            'status' => '3'
-        ]);
+        
         return redirect()->back();
+    }           
+    public function destroy(Request $request, $id) {
+        // $idtracking = DetailTrackingSisa::select('qty_tonase_sisa')->where('id_track',$id)->get();
+        $qty_sisa = $request->qty_sisa_simpan;
+        // echo $qty_sisa;
+        if ($qty_sisa > 0) {
+            // echo 'ada';
+            DocTracking::where('id_track', $id)->update([
+                'status' => '2'
+            ]);
+            DetailTracking::where('id_track', $id)->update([
+                'status' => '2'
+            ]);
+        }else if($qty_sisa == 0){
+            // echo 'tidak';
+            DocTracking::where('id_track', $id)->update([
+                'status' => '3'
+            ]);
+            DetailTracking::where('id_track', $id)->update([
+                'status' => '3'
+            ]);
+        }
+        return redirect()->back();
+        // $getdata = $idtracking->get();
+        // return response()->json($getdata);
+        // dd ([
+        //     'idtracksisa'=>$idtracking ?? null,
+        // ]);
     }    
 }

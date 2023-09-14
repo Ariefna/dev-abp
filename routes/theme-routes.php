@@ -142,13 +142,15 @@ foreach ($prefixRouters as $prefixRouter) {
             Route::resource('/tracking', \App\Http\Controllers\DocTrackingController::class);
             Route::get('/tracking/tr/getPo/{id}', [\App\Http\Controllers\DocTrackingController::class, 'getPo'])->name('getPo');
             Route::match(['get', 'post'], '/tracking/savecontainer', [\App\Http\Controllers\DocTrackingController::class, 'savecontainer'])->name('tracking.savecontainer');
-            Route::match(['get', 'post'], '/tracking/savecurah', [\App\Http\Controllers\DocTrackingController::class, 'savecurah'])->name('tracking.savecurah');            
+            Route::match(['get', 'post'], '/tracking/savecurah', [\App\Http\Controllers\DocTrackingController::class, 'savecurah'])->name('tracking.savecurah');
 
             Route::get('/dooring', function () {
                 return view('pages.abp-page.dor', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
             })->name('dooring.index');            
             Route::resource('/dooring', \App\Http\Controllers\DooringController::class);
+            Route::get('/dooring/dr/getKapalDooring/{id}', [\App\Http\Controllers\DooringController::class, 'getKapalDooring'])->name('getKapalDooring');
             Route::get('/dooring/dr/getPoDooring/{id}', [\App\Http\Controllers\DooringController::class, 'getPoDooring'])->name('getPoDooring');
+            Route::match(['get', 'post'], '/dooring/savecurah', [\App\Http\Controllers\DooringController::class, 'savecurah'])->name('dooring.savecurah');
         });
 
         /**
@@ -165,6 +167,22 @@ foreach ($prefixRouters as $prefixRouter) {
             Route::get('/mon-dooring', function () {
                 return view('pages.abp-page.mondooring', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
             })->name('mon-dooring.index');            
+        });
+
+        Route::prefix('finance')->group(function () {
+            Route::get('/invoice-dp', function () {
+                return view('pages.abp-page.idp', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
+            })->name('invoice-dp.index');
+            Route::resource('/invoice-dp', \App\Http\Controllers\InvoiceDPController::class);
+            Route::get('/invoice-dp/dp/getOptionsPO/{id_track}', [\App\Http\Controllers\InvoiceDPController::class, 'getOptionsPO'])->name('getOptionsPO');
+            Route::get('/invoice-dp/dp/getDetailPO/{id_track}', [\App\Http\Controllers\InvoiceDPController::class, 'getDetailPO'])->name('getDetailPO');
+            Route::get('/invoice-dp/gen/generate', [\App\Http\Controllers\InvoiceDPController::class, 'generate'])->name('generate');
+            Route::match(['get', 'post'], '/invoice-dp/approve/{id_invoice_dp}', [\App\Http\Controllers\InvoiceDPController::class, 'approve'])->name('invoice-dp.approve');
+
+            Route::get('/invoice-pelunasan', function () {
+                return view('pages.abp-page.ipl', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
+            })->name('invoice-pelunasan.index');            
+            Route::resource('/invoice-pelunasan', \App\Http\Controllers\InvoiceLunasController::class);
         });
         
         /**
