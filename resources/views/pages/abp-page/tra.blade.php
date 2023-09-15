@@ -185,10 +185,22 @@
                                             <tr>
                                                 <td>{{ $tra->no_po }}</td>
                                                 <td>{{ $tra->nama_pol }} - {{ $tra->nama_pod }}</td>
-                                                <td>{{ $tra->qty }}</td>
-                                                <td>{{ $tra->qty2 }}</td>
-                                                <td>0</td>
-                                                <td>{{ $tra->total_qty }}</td>
+                                                @if ($tra->qty_curah_track==null)
+                                                    <td>{{ $tra->qty }}</td>
+                                                @else
+                                                    <td>{{ $tra->qty_curah_track }}</td>
+                                                @endif
+                                                @if ($tra->qty_curah_cont==null)
+                                                    <td>{{ $tra->qty2 }}</td>
+                                                @else
+                                                    <td>{{ $tra->qty_curah_cont }}</td>
+                                                @endif
+                                                <td>{{ $tra->qty_curah_track + $tra->qty_curah_cont }}</td>
+                                                @if($tra->qty_curah_cont==null && $tra->qty_curah_track==null)
+                                                    <td>{{ $tra->total_qty }}</td>
+                                                @else
+                                                    <td>{{ $tra->qty_curah_track + $tra->qty_curah_cont }}</td>
+                                                @endif
                                                 <td class="text-center"><span class="shadow-none badge badge-danger">{{ $tra->status == 1 ? 'Pending' : '' }}</span></td>
                                                 {{-- <td class="text-center">{!! $tra->status == 1 ? '<span class="shadow-none badge badge-success">Proses Muat</span>' : ($tra->status == 2 ? '<span class="shadow-none badge badge-warning">Selesai Muat</span>' : '') !!}</td> --}}
                                                 <td class="text-center">
@@ -508,8 +520,8 @@
                                             <span class="input-group-text" id="inputGroupPrepend">KG</span>
                                         </div>
                                         <span class="shadow-none badge badge-danger mt-2">Sisa: {{ $tra->qty_tonase_sisa }}</span><div class="validationMessage"></div>
-                                        <input name="qty_curah_total" id="qty_curah_total" value="{{ $tra->qty_tonase_sisa }}" type="hidden" step="any" min="0">
-                                        <input type="hidden" name="qty" id="qty_sisa_curah" step="any" min="0">
+                                        <input name="qty_curah_total" id="qty_curah_total" value="{{ $tra->qty_tonase_sisa }}" type="text" step="any" min="0">
+                                        <input type="text" name="qty" id="qty_sisa_curah" step="any" min="0">
                                         
                                     @endforeach
                                 @elseif($lastcurah==0)
@@ -520,8 +532,8 @@
                                             <span class="input-group-text" id="inputGroupPrepend">KG</span>
                                         </div>
                                         <span class="shadow-none badge badge-danger mt-2">Sisa: {{ $tra->qty }}</span>
-                                        <input name="qty_curah_total" id="qty_curah_total" value="{{ $tra->qty }}" type="hidden" step="any" min="0">
-                                        <input name="qty_sisa_curah" id="qty_sisa_curah" value="0" type="hidden" step="any" min="0">
+                                        <input name="qty_curah_total" id="qty_curah_total" value="{{ $tra->qty }}" type="text" step="any" min="0">
+                                        <input name="qty_sisa_curah" id="qty_sisa_curah" value="0" type="text" step="any" min="0">
                                         <div class="validationMessage"></div>
                                     @endforeach
                                 @endif

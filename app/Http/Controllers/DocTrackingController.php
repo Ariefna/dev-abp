@@ -77,9 +77,26 @@ class DocTrackingController extends Controller
                 ->orderBy('doc_tracking.id_track', 'desc')
                 ->get();
         $trackzero = DocTracking::select('*', 'doc_tracking.status', 'doc_tracking.id_track')
+                    ->selectSub(function ($query) {
+                        $query->selectRaw('SUM(qty_tonase)')
+                            ->from('detail_tracking')
+                            ->whereColumn('detail_tracking.id_track', 'doc_tracking.id_track')
+                            ->where('status',[2,3])
+                            ->whereNull('no_container')
+                            ->groupBy('detail_tracking.id_track');
+                    }, 'qty_curah_track')
+                    ->selectSub(function ($query) {
+                        $query->selectRaw('SUM(qty_tonase)')
+                            ->from('detail_tracking')
+                            ->whereColumn('detail_tracking.id_track', 'doc_tracking.id_track')
+                            ->where('status',[2,3])
+                            ->whereNotNull('no_container')
+                            ->groupBy('detail_tracking.id_track');
+                    }, 'qty_curah_cont')
                     ->join('port_of_loading', 'port_of_loading.id', '=', 'doc_tracking.id_pol')
                     ->join('port_of_destination', 'port_of_destination.id', '=', 'doc_tracking.id_pod')
                     ->join('purchase_orders', 'purchase_orders.po_muat', '=', 'doc_tracking.no_po')
+                    ->join('detail_tracking', 'detail_tracking.id_track', '=', 'doc_tracking.id_track')
                     ->join('detail_tracking_sisa','detail_tracking_sisa.id_track','=','doc_tracking.id_track')
                     ->where('doc_tracking.status', 1)
                     ->groupBy('doc_tracking.id_track')
