@@ -304,13 +304,28 @@
                                             <th>No CONT</th>
                                             <th>Nopol</th>
                                             <th>Qty Timbang Kebun</th>
+                                            <th>Susut</th>
                                             <th>Nama Kapal</th>
                                             <th>TD</th>
                                             <th class="text-center">Status</th>
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        @php
+                                            $totalTimbang = 0;
+                                            $susut = 0;
+                                        @endphp
+
                                         @foreach ($monitoringDooring[0]->detailDooring as $md)
+                                            @if (!isset($totalQty))
+                                                @php
+                                                    $totalQty = $md->docDooring->docTracking->po->total_qty;
+                                                @endphp
+                                            @endif
+                                            
+                                            @php
+                                                $susut = $md->qty_timbang - $totalQty;
+                                            @endphp
                                         <tr>
                                             <td>{{ $md->docDooring->docTracking->po->detailPhs->penawaran->customer->nama_customer ?? '' }}</td>
                                             <td>{{ $md->docDooring->docTracking->no_po ?? '' }}</td>
@@ -328,10 +343,15 @@
                                             <td>{{ $md->no_container }}</td>
                                             <td>{{ $md->nopol }}</td>
                                             <td>{{ $md->qty_timbang }}</td>                                            
+                                            <td>{{ $susut }}</td>
                                             <td>{{ $md->docDooring->docTracking->detailTracking->kapal->nama_kapal }}</td>
                                             <td>{{ $md->docDooring->docTracking->detailTracking->td }}</td>
                                             <td class="text-center">{!! $md->status == 1 ? '<span class="shadow-none badge badge-success">Proses Muat</span>' : ($md->status == 2 ? '<span class="shadow-none badge badge-warning">Selesai Muat</span>' : '') !!}</td>
                                         </tr>
+
+                                        @php
+                                            $totalQty = $md->docDooring->docTracking->po->total_qty;
+                                        @endphp
                                         @endforeach
                                     </tbody>
                                 </table>
