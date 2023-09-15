@@ -32,4 +32,14 @@ class DetailDooring extends Model
     {
         return $this->hasOne(DetailTracking::class,'id_kapal','id_kapal');
     }
+    
+    public function sisa()
+    {
+        return $this->hasOne(DetailDooringSisa::class,'id_dooring','id_dooring');
+    }
+    
+    public function docDooring()
+    {
+        return $this->hasOne(DocDooring::class,'id_dooring','id_dooring');
+    }
 }

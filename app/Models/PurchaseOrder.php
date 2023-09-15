@@ -14,4 +14,9 @@ class PurchaseOrder extends Model
     {
         return $this->hasOne(DetailPH::class,'id_detail_ph','id_detail_ph');
     }
+    
+    public function barang()
+    {
+        return $this->hasOne(Barang::class,'id','id');
+    }
 }

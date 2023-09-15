@@ -15,4 +15,9 @@ class DetailTracking extends Model
     {
         return $this->belongsTo(DocTracking::class,'id_track','id_track');
     }
+    
+    public function kapal()
+    {
+        return $this->hasOne(Kapal::class,'id','id_kapal');
+    }
 }

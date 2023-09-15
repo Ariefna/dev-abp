@@ -9,4 +9,9 @@ class PenawaranHarga extends Model
 {
     use HasFactory;
     protected $fillable = ['id_customer','nama_pic', 'ketentuan', 'status'];
+
+    public function customer()
+    {
+        return $this->hasOne(Customer::class,'id','id_customer');
+    }
 }
