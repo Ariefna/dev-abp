@@ -68,11 +68,13 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                @foreach($tbl_po as $trab)
                                 <tr>
-                                    <td><a href="https://saritsurabaya.com" target="_blank" rel="noopener noreferrer"><div class="td-content"><span class="">161616</span></div></a></td>
-                                    <td><a href="https://saritsurabaya.com" target="_blank" rel="noopener noreferrer"><div class="td-content"><span class="">100</span></div></a></td>
-                                    <td><div class="td-content"><span class="badge badge-success">Paid</span></div></td>
+                                    <td><a href="{{ route('analytics.addsisatrack', ['no_po' => $trab->no_po]) }}"><div class="td-content"><span class="">{{ $trab->no_po }}</span></div></a></td>
+                                    <td><a href="{{ route('analytics.addsisatrack', ['no_po' => $trab->no_po]) }}"><div class="td-content"><span class="">{{ $trab->qty_sisa }}</span></div></a></td>
+                                    <td><div class="td-content"><span class="badge badge-danger">Sisa Muat</span></div></td>
                                 </tr>
+                                @endforeach
                             </tbody>
                         </table>
                     </div>

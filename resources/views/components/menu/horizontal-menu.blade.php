@@ -44,7 +44,7 @@
                         </a>
                         <ul class="dropdown-menu submenu list-unstyled" id="dashboard" data-bs-parent="#accordionExample">
                             <li class="{{ Request::routeIs('dashboard.index') ? 'active' : '' }}">
-                                <a href="{{getRouterValue();}}/dashboard/DashboardController"> Analytics </a>
+                                <a href="{{getRouterValue();}}/dashboard/analytics"> Analytics </a>
                             </li>
                             {{-- <li class="{{ Request::routeIs('sales') ? 'active' : '' }}">
                                 <a href="{{getRouterValue();}}/dashboard/sales"> Sales </a>

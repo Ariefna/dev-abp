@@ -86,6 +86,7 @@
                                             <th>TD JKT</th>
                                             <th>TA</th>
                                             <th class="text-center">Status</th>
+                                            <th class="text-center">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -98,19 +99,36 @@
                                             <td>{{ $tra->nama_penerima }}</td>
                                             <td>{{ $tra->nama_barang }}</td>
                                             <td>{{ $tra->no_pl }}</td>
-                                            <td>{{ $tra->po_muat }}</td>
+                                            <td>{{ $tra->no_po }}</td>
                                             <td>{{ $tra->po_kebun }}</td>
-                                            <td>{{ $tra->qty_muat }}</td>
-                                            <td>{{ $tra->jml_bag }}</td>
+                                            <td>{{ $tra->qty_tonase }}</td>
+                                            <td>{{ $tra->jml_sak }}</td>
                                             <td>{{ $tra->qty_timbang }}</td>
                                             <td>{{ $tra->nopol }}</td>
-                                            <td>{{ $tra->no_container }}</td>
+                                            @if($tra->no_container !== null)
+                                                <td>{{ $tra->no_container }}</td>
+                                            @else
+                                                <td>-</td>
+                                            @endif
                                             <td>{{ $tra->kode_kapal }} {{ $tra->nama_kapal }} {{ $tra->voyage }}</td>
                                             <td>{{ $tra->tgl_muat }}</td>                                            
                                             <td>{{ $tra->td }}</td>
                                             <td>{{ $tra->td_jkt }}</td>
-                                            <td>{{ $tra->eta }}</td>
-                                            <td class="text-center">{!! $tra->status == 1 ? '<span class="shadow-none badge badge-success">Proses Muat</span>' : ($tra->status == 2 ? '<span class="shadow-none badge badge-warning">Selesai Muat</span>' : '') !!}</td>
+                                            <td>{{ $tra->ta }}</td>
+                                            <td class="text-center">
+                                                @if ($tra->status_kapal == 1)
+                                                    <span class="shadow-none badge badge-success">Proses Muat</span>
+                                                @elseif ($tra->status_kapal == 2)
+                                                    <span class="shadow-none badge badge-warning">Selesai Muat</span>
+                                                @elseif ($tra->status_kapal == 3)
+                                                    <span class="shadow-none badge badge-info">Kapal Berangkat</span>
+                                                @elseif ($tra->status_kapal == 4)
+                                                    <span class="shadow-none badge badge-primary">Kapal Tiba di Port Dooring</span>
+                                                @else
+                                                    <span class="shadow-none badge badge-danger">Kapal TD Jakarta</span>
+                                                @endif
+                                            </td>
+                                            <td><button class="btn btn-outline-primary mb-2 me-4">Update</button></td>
                                         </tr>
                                         @endforeach                                                                    
                                     </tbody>
@@ -130,6 +148,7 @@
         <script type="module" src="{{asset('plugins/flatpickr/custom-flatpickr.js')}}"></script>
         @vite(['resources/assets/js/forms/bootstrap_validation/bs_validation_script.js'])
         <script type="module" src="{{asset('plugins/global/vendors.min.js')}}"></script>
+        {{-- <script type="module" src="{{asset('plugins/table/datatable/datatables.js')}}"></script> --}}
         @vite(['resources/assets/js/custom.js'])
         {{-- <script type="module" src="{{asset('plugins/table/datatable/datatables.js')}}"></script> --}}
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -137,8 +156,8 @@
         <script src="{{asset('plugins/global/vendors.min.js')}}"></script>
         <script src="{{asset('plugins/table/datatable/datatables.js')}}"></script>
         <script src="{{asset('plugins/table/datatable/button-ext/dataTables.buttons.min.js')}}"></script>
-        <script src="{{asset('plugins/table/datatable/button-ext/jszip.min.js')}}"></script>
         <script src="{{asset('plugins/table/datatable/button-ext/buttons.html5.min.js')}}"></script>
+        <script src="{{asset('plugins/table/datatable/button-ext/jszip.min.js')}}"></script>
         <script src="{{asset('plugins/table/datatable/button-ext/buttons.print.min.js')}}"></script>
         {{-- <script src="{{asset('plugins/table/datatable/custom_miscellaneous.js')}}"></script> --}}
 
@@ -202,7 +221,8 @@
                     "sSearchPlaceholder": "Search...",
                 "sLengthMenu": "Results :  _MENU_",
                 },
-                buttons: [                 
+                buttons: [
+                    { extend: 'excel', className: 'btn btn-success' },
                     {
                         text: 'Customer',
                         className: 'btn btn-secondary toggle-vis mb-1',
@@ -356,9 +376,11 @@
                         }
                     },                                                                                                                                                                                                                                                                
                 ],
+
                 "stripeClasses": [],
                 "lengthMenu": [7, 10, 20, 50],
-                "pageLength": 7,
+                "pageLength": 10,
+                "responsive": true
             });
         </script>
         

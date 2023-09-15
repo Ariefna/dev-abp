@@ -80,6 +80,7 @@ class DocTrackingController extends Controller
                     ->join('port_of_loading', 'port_of_loading.id', '=', 'doc_tracking.id_pol')
                     ->join('port_of_destination', 'port_of_destination.id', '=', 'doc_tracking.id_pod')
                     ->join('purchase_orders', 'purchase_orders.po_muat', '=', 'doc_tracking.no_po')
+                    ->join('detail_tracking_sisa','detail_tracking_sisa.id_track','=','doc_tracking.id_track')
                     ->where('doc_tracking.status', 1)
                     ->groupBy('doc_tracking.id_track')
                     ->orderBy('doc_tracking.id_track', 'desc')
@@ -184,7 +185,8 @@ class DocTrackingController extends Controller
             'no_po'     => $request->no_po,
             'id_pol'     => $request->id_pol,
             'id_pod'     => $request->id_pod,
-            'status' => '1'
+            'status' => '1',
+            'status_kapal'=> 1
         ]);
         return redirect()->back();
     }
