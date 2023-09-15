@@ -230,36 +230,40 @@
                                     <thead style="border-bottom: none;">
                                         <tr>
                                             <th>Tgl Muat</th>
-                                            <th>Gudang Muat</th>
+                                            <th>Tgl Tiba</th>
                                             <th>Nopol</th>
                                             <th>No Container</th>
                                             <th>No Segel</th>
                                             <th>Tonase</th>
                                             <th>SAK</th>
                                             <th>Timbangan</th>
+                                            <th>No Tiket Timbang</th>
                                             <th>No Surat Jalan</th>
+                                            <th>Estate</th>
                                             <th class="text-center">Status</th>
                                             <th class="text-center">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {{-- @foreach ($dtrack as $tra)
+                                        @foreach ($docDooring[0]->detailDooring as $dd)
                                         <tr>
-                                            <td>{{ $tra->tgl_muat }}</td>
-                                            <td>{{ $tra->nama_gudang }}</td>
-                                            <td>{{ $tra->nopol }}</td>
-                                            <td>{{ $tra->no_container }}</td>
-                                            <td>{{ $tra->no_segel }}</td>
-                                            <td>{{ $tra->qty_tonase }}</td>
-                                            <td>{{ $tra->jml_sak }}</td>
-                                            <td>{{ $tra->qty_timbang }}</td>
-                                            <td>{{ $tra->no_sj }}</td>
-                                            <td class="text-center"><span class="shadow-none badge badge-danger">{{ $tra->status == 1 ? 'Pending' : '' }}</span></td>
+                                            <td>{{ $dd->tgl_muat }}</td>
+                                            <td>{{ $dd->tgl_tiba }}</td>
+                                            <td>{{ $dd->nopol }}</td>
+                                            <td>{{ $dd->detailTracking->no_container ?? '-' }}</td>
+                                            <td>{{ $dd->detailTracking->no_segel ?? '-' }}</td>
+                                            <td>{{ $dd->qty_tonase }}</td>
+                                            <td>{{ $dd->jml_sak }}</td>
+                                            <td>{{ $dd->qty_timbang }}</td>
+                                            <td>{{ $dd->no_tiket }}</td>
+                                            <td>{{ $dd->no_sj }}</td>
+                                            <td>{{ $dd->detailTracking->docTracking->po->detailPhs->penerima->estate ?? '-' }}</td>
+                                            <td class="text-center"><span class="shadow-none badge badge-danger">{{ $dd->status == 1 ? 'Pending' : '' }}</span></td>
                                             <td class="text-center">
                                                 <a href="" class="bs-tooltip" data-bs-toggle="modal" data-bs-placement="top" title="Delete" data-original-title="Delete"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash p-1 br-8 mb-1"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></a>
                                             </td>
                                         </tr>
-                                        @endforeach                                                                     --}}
+                                        @endforeach
                                     </tbody>
                                 </table>
                             </div>

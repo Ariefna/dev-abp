@@ -11,4 +11,14 @@ class DocTracking extends Model
     protected $fillable = ['no_po','id_pol','id_pod', 'status'];
     protected $table = 'doc_tracking';
     // d_tracking
+
+    public function detailTracking()
+    {
+        return $this->hasMany(DetailTracking::class,'id_track','id_track');
+    }
+
+    public function po()
+    {
+        return $this->hasOne(PurchaseOrder::class,'po_muat','no_po');
+    }
 }
