@@ -14,4 +14,9 @@ class DetailPH extends Model
     {
         return $this->hasOne(Penerima::class,'id_penerima','id_penerima');
     }
+    
+    public function penawaran()
+    {
+        return $this->hasOne(PenawaranHarga::class,'id_penawaran','id_penawaran');
+    }
 }
