@@ -170,7 +170,8 @@ foreach ($prefixRouters as $prefixRouter) {
             Route::resource('/mon-tracking', \App\Http\Controllers\MTrackingController::class);
             Route::get('/mon-dooring', function () {
                 return view('pages.abp-page.mondooring', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
-            })->name('mon-dooring.index');            
+            })->name('mon-dooring.index');
+            Route::resource('/mon-dooring', \App\Http\Controllers\MDooringController::class);
         });
 
         Route::prefix('finance')->group(function () {

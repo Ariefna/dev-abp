@@ -89,30 +89,29 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {{-- @foreach ($tbl_po as $tra)
+                                        @foreach ($monitoringDooring[0]->detailDooring as $md)
                                         <tr>
-                                            <td>{{ $tra->nama_customer }}</td>
-                                            <td>{{ $tra->total_qty }}</td>
-                                            <td>{{ $tra->nama_pol }} - {{ $tra->nama_pod }}</td>
-                                            <td>{{ $tra->nama_gudang }}</td>
-                                            <td>{{ $tra->nama_penerima }}</td>
-                                            <td>{{ $tra->nama_barang }}</td>
-                                            <td>{{ $tra->no_pl }}</td>
-                                            <td>{{ $tra->po_muat }}</td>
-                                            <td>{{ $tra->po_kebun }}</td>
-                                            <td>{{ $tra->qty_muat }}</td>
-                                            <td>{{ $tra->jml_bag }}</td>
-                                            <td>{{ $tra->qty_timbang }}</td>
-                                            <td>{{ $tra->nopol }}</td>
-                                            <td>{{ $tra->no_container }}</td>
-                                            <td>{{ $tra->kode_kapal }} {{ $tra->nama_kapal }} {{ $tra->voyage }}</td>
-                                            <td>{{ $tra->tgl_muat }}</td>                                            
-                                            <td>{{ $tra->td }}</td>
-                                            <td>{{ $tra->td_jkt }}</td>
-                                            <td>{{ $tra->eta }}</td>
-                                            <td class="text-center">{!! $tra->status == 1 ? '<span class="shadow-none badge badge-success">Proses Muat</span>' : ($tra->status == 2 ? '<span class="shadow-none badge badge-warning">Selesai Muat</span>' : '') !!}</td>
+                                            <td>{{ $md->docDooring->docTracking->po->detailPhs->penawaran->customer->nama_customer ?? '' }}</td>
+                                            <td>{{ $md->docDooring->docTracking->no_po ?? '' }}</td>
+                                            <td>{{ $md->docDooring->docTracking->portOfLoading->nama_pol ?? '' }} - {{ $md->docDooring->docTracking->portOfDestination->nama_pod ?? '' }}</td>
+                                            <td>{{ $md->docDooring->docTracking->po->po_kebun ?? '' }}</td>
+                                            <td>{{ $md->docDooring->docTracking->po->detailPhs->penerima->ptPenerima->nama_penerima ?? '' }}</td>
+                                            <td>{{ $md->docDooring->docTracking->po->detailPhs->penerima->estate ?? '' }}</td>
+                                            <td>{{ $md->docDooring->docTracking->po->barang->nama_barang ?? '' }}</td>
+                                            <td>{{ $md->qty_tonase ?? '' }}</td>
+                                            <td>KG</td>
+                                            <td>{{ $md->jml_sak }}</td>
+                                            <td>{{ $md->tgl_muat }}</td>
+                                            <td>{{ $md->tgl_tiba }}</td>
+                                            <td>{{ $md->no_tiket }}</td>
+                                            <td>{{ $md->no_container }}</td>
+                                            <td>{{ $md->nopol }}</td>
+                                            <td>{{ $md->qty_timbang }}</td>                                            
+                                            <td>{{ $md->docDooring->docTracking->detailTracking->kapal->nama_kapal }}</td>
+                                            <td>{{ $md->docDooring->docTracking->detailTracking->td }}</td>
+                                            <td class="text-center">{!! $md->status == 1 ? '<span class="shadow-none badge badge-success">Proses Muat</span>' : ($md->status == 2 ? '<span class="shadow-none badge badge-warning">Selesai Muat</span>' : '') !!}</td>
                                         </tr>
-                                        @endforeach                                                                     --}}
+                                        @endforeach                                                                    --}}
                                     </tbody>
                                 </table>
                             </div>

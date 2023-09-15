@@ -307,7 +307,6 @@
                                             <th>Nama Kapal</th>
                                             <th>TD</th>
                                             <th class="text-center">Status</th>
-                                            <th class="text-center">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -331,7 +330,6 @@
                                             <td>{{ $md->qty_timbang }}</td>                                            
                                             <td>{{ $md->docDooring->docTracking->detailTracking->kapal->nama_kapal }}</td>
                                             <td>{{ $md->docDooring->docTracking->detailTracking->td }}</td>
-                                            <td class="text-center"><span class="shadow-none badge badge-danger">{{ $md->status == 1 ? 'Pending' : '' }}</span></td>
                                             <td class="text-center">{!! $md->status == 1 ? '<span class="shadow-none badge badge-success">Proses Muat</span>' : ($md->status == 2 ? '<span class="shadow-none badge badge-warning">Selesai Muat</span>' : '') !!}</td>
                                         </tr>
                                         @endforeach
