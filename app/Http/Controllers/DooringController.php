@@ -227,7 +227,25 @@ class DooringController extends Controller
                 ->get();
         $title = 'Adhipramana Bahari Perkasa';
         $breadcrumb = 'This Breadcrumb';
-        return view('pages.abp-page.dor', compact('title', 'breadcrumb','po','details','getcurahqty','getcontqty','track','doorzero','dtrack','lastcont','lastcurah', 'lastcontainer','zerocurah', 'zeroContainer','gudang','pol','pod','kapal','estate'));
+
+        $docDooring = DocDooring::with([
+            'detailDooring' => function($query) {
+                $query->where('status', 1);
+            },
+            'detailDooring.detailTracking',
+            'detailDooring.detailTracking.docTracking',
+            'detailDooring.detailTracking.docTracking.po',
+            'detailDooring.detailTracking.docTracking.po.detailPhs',
+            'detailDooring.detailTracking.docTracking.po.detailPhs.penerima',
+        ])
+        ->get();
+        // return response()->json($docDooring);
+        return view('pages.abp-page.dor', 
+            compact('title', 'breadcrumb','po','details','getcurahqty','getcontqty','track','doorzero','dtrack',
+                'lastcont','lastcurah', 'lastcontainer','zerocurah', 'zeroContainer','gudang','pol','pod','kapal','estate'
+                ,'docDooring'
+            )
+        );
     }
 
     public function getKapalDooring($id) {
@@ -300,6 +318,10 @@ class DooringController extends Controller
     }    
 
     public function savecurah(Request $request){
+        // dd([
+        //     'request' => $request->all(),
+        // ]);
+        
         $request->validate([
             'file_notiket' => 'required|mimes:jpeg,png,pdf|max:2048',
         ]);
@@ -320,6 +342,7 @@ class DooringController extends Controller
         
         DetailDooring::create([
             'id_dooring'=>$request->id_door, 
+            'id_kapal'=>$request->kpl_id, 
             'tgl_muat'=>$request->tgl_brkt,
             'tgl_tiba'=>$request->tgl_tiba,
             'nopol'     => $request->nopol,
