@@ -208,7 +208,7 @@
                                 <input type="hidden" name="id_track_i" id="id_track_i" value="{{ $tdp->id_track }}">
                                 <div class="col-md-3">
                                     <label for="validationCustom04" class="form-label">PO Muat</label>
-                                    <select class="form-select" name="cb_bypo" id="cb_bypo" required>
+                                    <select class="form-select cb_bypo" name="cb_bypo" required>
                                         <option selected disabled value="">Pilih...</option>
                                         @foreach($getval->where('no_po',$tdp->no_po) as $gv)
                                             <option>{{ $gv->no_po }}({{ $gv->formatted_tgl_muat }})</option>
@@ -568,7 +568,7 @@
                             $(this).hide();
                         }
                     });
-                    $('#cb_bypo').change(function() {
+                    $('.cb_bypo').change(function() {
                         var selectedId = $(this).val();
                         var url = "{{ route('getDetailPO', [':id_track']) }}"
                                 .replace(':id_track', selectedId);
@@ -585,12 +585,12 @@
                                     if (response.length > 0) {
                                         for (var i=0; i<response.length; i++) {
                                             var text = (response[i].no_container === null) ? response[i].oa_kpl_kayu : response[i].oa_container;
-                                            $('#ttdb').val(response[i].total_muat);
-                                            $('#hrg_freight').val(text);
+                                            $('input[name=ttdb]').val(response[i].total_muat);
+                                            $('input[name=hrg_freight]').val(text);
                                             var muat = parseFloat($('#ttdb').val());
                                             var harga = parseFloat($('#hrg_freight').val());
                                             var total = harga * muat;
-                                            $('#total_harga').val(formatter.format(total).replace('Rp', ''));
+                                            $('input[name=total_harga]').val(formatter.format(total).replace('Rp', ''));
                                             console.log(muat);
                                             console.log(harga);
                                             console.log(total);
