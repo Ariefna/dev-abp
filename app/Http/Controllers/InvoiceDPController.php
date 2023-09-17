@@ -198,8 +198,7 @@ class InvoiceDPController extends Controller
         }
     }
 
-    public function savecurahidp() {
+    public function savecurahidp(Request $request) {
         
     }
-
 }
