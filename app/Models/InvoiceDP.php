@@ -20,4 +20,9 @@ class InvoiceDP extends Model
         'status'
     ];
     protected $table = 'invoice_dp';
+
+    public function docTracking()
+    {
+        return $this->hasOne(DocTracking::class,'id_track','id_track');
+    }
 }

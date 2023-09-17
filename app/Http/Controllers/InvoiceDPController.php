@@ -20,6 +20,8 @@ use App\Models\Bank;
 use App\Http\Controllers\DB;
 use Illuminate\Http\Request;
 
+use PDF;
+
 class InvoiceDPController extends Controller
 {
     public function index() {
@@ -199,7 +201,47 @@ class InvoiceDPController extends Controller
     }
 
     public function savecurahidp() {
+
+    }
         
+    public function printInvoiceDp($id_invoice_dp) {
+        $invoiceDp = InvoiceDP::with([
+            'docTracking',
+            'docTracking.po',
+            'docTracking.po.detailPhs',
+            'docTracking.po.detailPhs.penawaran',
+            'docTracking.po.detailPhs.penawaran.customer',
+        ])
+        ->where('id_invoice_dp', $id_invoice_dp)
+        ->first();
+
+        $data = [];
+        
+        if (!is_null($invoiceDp)) {
+            $data = [
+                'nama_customer' => $invoiceDp->docTracking->po->detailPhs->penawaran->customer->nama_customer ?? null,
+                'kota_customer' => $invoiceDp->docTracking->po->detailPhs->penawaran->customer->kota ?? null,
+            ];
+        }
+
+        $title = 'Print Invoice DP';
+        $breadcrumb = 'This breadcrumb';
+        
+        // $pdf = PDF::loadview('pages.abp-page.print.invoice_dp', compact(
+        //     'title', 'breadcrumb',
+        //     'data'
+        // ));
+    	// return $pdf->download('invoice-dp-pdf');
+
+        return view('pages.abp-page.print.invoice_dp', compact(
+            'title', 'breadcrumb',
+            'data'
+        ));
+
+        // return response()->json([
+        //     'data' => $data,
+        //     'invoiceDp' => $invoiceDp
+        // ]);
     }
 
 }
