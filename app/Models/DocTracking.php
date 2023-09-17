@@ -16,6 +16,11 @@ class DocTracking extends Model
     {
         return $this->hasOne(DetailTracking::class,'id_track','id_track');
     }
+    
+    public function detailTrackingMultiple()
+    {
+        return $this->hasMany(DetailTracking::class,'id_track','id_track');
+    }
 
     public function po()
     {
