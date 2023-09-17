@@ -203,15 +203,16 @@
                             <h5 class="modal-title" id="modalIDPcur">Tambah Detail Invoice DP Kapal Curah</h5>
                         </div>
                         <div class="modal-body">
-                            <form name="modal-detail" class="row g-3 needs-validation" action=""  method="POST" enctype="multipart/form-data" novalidate>
+                            <form name="modal-detail" class="row g-3 needs-validation" action="{{ route('invoice-dp.savecurahidp') }}"  method="POST" enctype="multipart/form-data" novalidate>
                                 @csrf
-                                <input type="hidden" name="id_track_i" id="id_track_i" value="{{ $tdp->id_track }}">
+                                <input type="text" name="id_track_i" id="id_track_i" value="{{ $tdp->id_track }}">
+                                <input type="text" name="id_invdp" id="id_invdp" value="{{ $tdp->id_invoice_dp }}">
                                 <div class="col-md-3">
                                     <label for="validationCustom04" class="form-label">PO Muat</label>
                                     <select class="form-select cb_bypo" name="cb_bypo" required>
                                         <option selected disabled value="">Pilih...</option>
                                         @foreach($getval->where('no_po',$tdp->no_po) as $gv)
-                                            <option>{{ $gv->no_po }}({{ $gv->formatted_tgl_muat }})</option>
+                                            <option value="{{ $gv->no_po }}({{ $gv->formatted_tgl_muat }})">{{ $gv->no_po }}({{ $gv->formatted_tgl_muat }})</option>
                                         @endforeach
                                     </select>
                                     <div class="invalid-feedback">
@@ -229,7 +230,7 @@
                                     <label for="notAllowCont" class="form-label">Harga Freight</label>
                                     <div class="input-group">
                                         <span class="input-group-text" id="inputGroupPrepend">Rp</span>
-                                        <input name="hrg_freight" step="any" min="0" id="hrg_freight" type="number" class="form-control hrg_freight" readonly required>
+                                        <input name="hrg_freight" step="any" min="0" id="hrg_freight" type="text" class="form-control hrg_freight" readonly required>
                                     </div>     
                                 </div>                                
                                 <div class="col-md-3">
@@ -530,12 +531,11 @@
                                     $("#hrg_freight").empty();
                                     if (response.length > 0) {
                                         for (var i=0; i<response.length; i++) {
-                                            var text = (response[i].no_container === null) ? response[i].oa_kpl_kayu : response[i].oa_container;
                                             $('input[name=ttdb]').val(response[i].total_muat);
-                                            $('input[name=hrg_freight]').val(text);
-                                            var muat = parseFloat($('#ttdb').val());
-                                            var harga = parseFloat($('#hrg_freight').val());
-                                            var total = harga * muat;
+                                            $('input[name=hrg_freight]').val(formatter.format(response[i].oa_kpl_kayu).replace('Rp', ''));
+                                            var hrg_freight = response[i].oa_kpl_kayu;
+                                            var total_tonase = response[i].total_muat;
+                                            var total = hrg_freight * total_tonase;
                                             $('input[name=total_harga]').val(formatter.format(total).replace('Rp', ''));
                                             console.log(muat);
                                             console.log(harga);

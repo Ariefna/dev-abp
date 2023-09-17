@@ -16,6 +16,7 @@ use App\Models\DocTracking;
 use App\Models\DetailTracking;
 use App\Models\DetailTrackingSisa;
 use App\Models\InvoiceDP;
+use App\Models\DetailInvoiceDP;
 use App\Models\Bank;
 use App\Http\Controllers\DB;
 use Illuminate\Http\Request;
@@ -49,7 +50,7 @@ class InvoiceDPController extends Controller
         //         ->whereIn('doc_tracking.status', [2, 3])
         //         ->groupBy('detail_tracking.tgl_muat')
         //         ->get();
-        $getval = DocTracking::select('detail_tracking.tgl_muat','invoice_dp.id_track', 'doc_tracking.no_po')
+        $getval = DocTracking::select('detail_tracking.tgl_muat','invoice_dp.id_track', 'doc_tracking.no_po','detail_tracking.tgl_muat')
                 ->selectRaw('SUM(detail_tracking.qty_tonase) as total_muat')
                 ->selectRaw("DATE_FORMAT(detail_tracking.tgl_muat, '%e-%M-%Y') as formatted_tgl_muat")
                 ->join('detail_tracking', 'doc_tracking.id_track', '=', 'detail_tracking.id_track')
@@ -199,6 +200,27 @@ class InvoiceDPController extends Controller
     }
 
     public function savecurahidp(Request $request) {
-        
+        $hrg_fr = (int)str_replace(".", "", $request->input('hrg_freight'));
+        $total_hrg = (int)str_replace(".", "", $request->input('total_harga'));
+        $total_dp = (int)str_replace(".", "", $request->input('todp'));
+        $total_ppn = (int)str_replace(".", "", $request->input('toppn'));
+
+        DetailInvoiceDP::create([
+            'id_invoice_dp'=>$request->id_invdp, 
+            'id_track'=>$request->id_track_i,
+            'po_muat_date'=>$request->cb_bypo,
+            'total_tonase'=>$request->ttdb,
+            'harga_brg'=>$hrg_fr,
+            'total_harga'=>$total_hrg,
+            'sub_total'=>$request->total_harga,
+            'prosentase_dp'=>$request->prodp,
+            'total_dp'=>$total_dp,
+            'prosentase_ppn'=>$request->proppn,
+            'total_ppn'=>$total_ppn,
+            'tipe'=>'Curah',
+            'status'=>1
+        ]);
+
+        return redirect()->back();
     }
 }

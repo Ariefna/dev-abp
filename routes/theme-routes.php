@@ -183,6 +183,8 @@ foreach ($prefixRouters as $prefixRouter) {
             Route::get('/invoice-dp/dp/getDetailPO/{id_track}', [\App\Http\Controllers\InvoiceDPController::class, 'getDetailPO'])->name('getDetailPO');
             Route::get('/invoice-dp/gen/generate', [\App\Http\Controllers\InvoiceDPController::class, 'generate'])->name('generate');
             Route::match(['get', 'post'], '/invoice-dp/approve/{id_invoice_dp}', [\App\Http\Controllers\InvoiceDPController::class, 'approve'])->name('invoice-dp.approve');
+            Route::match(['get', 'post'], '/invoice-dp/savecurahidp', [\App\Http\Controllers\InvoiceDPController::class, 'savecurahidp'])->name('invoice-dp.savecurahidp');
+            Route::match(['get', 'post'], '/invoice-dp/savecontaineridp', [\App\Http\Controllers\InvoiceDPController::class, 'savecontaineridp'])->name('invoice-dp.savecontaineridp');
 
             Route::get('/invoice-pelunasan', function () {
                 return view('pages.abp-page.ipl', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
