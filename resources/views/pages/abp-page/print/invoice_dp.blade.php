@@ -1,55 +1,21 @@
-<x-base-layout :scrollspy="false">
+    <link rel="stylesheet" href="{{asset('plugins/table/datatable/datatables.css')}}">
+    <link rel="stylesheet" href="{{asset('plugins/flatpickr/flatpickr.css')}}">
+    <link rel="stylesheet" href="{{asset('plugins/noUiSlider/nouislider.min.css')}}">
+    <style>
+        .toggle-code-snippet { margin-bottom: 0px; }
+        body.dark .toggle-code-snippet { margin-bottom: 0px; }
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
 
-    <x-slot:pageTitle>
-        {{$title}} 
-    </x-slot>
-
-    <!-- BEGIN GLOBAL MANDATORY STYLES -->
-    <x-slot:headerFiles>
-        <!--  BEGIN CUSTOM STYLE FILE  -->
-        <link rel="stylesheet" href="{{asset('plugins/table/datatable/datatables.css')}}">
-        <link rel="stylesheet" href="{{asset('plugins/flatpickr/flatpickr.css')}}">
-        <link rel="stylesheet" href="{{asset('plugins/noUiSlider/nouislider.min.css')}}">
-        @vite(['resources/scss/light/plugins/flatpickr/custom-flatpickr.scss'])
-        @vite(['resources/scss/dark/plugins/flatpickr/custom-flatpickr.scss'])
-        @vite(['resources/scss/dark/plugins/table/datatable/dt-global_style.scss'])
-        @vite(['resources/scss/dark/plugins/table/datatable/custom_dt_miscellaneous.scss'])
-        @vite(['resources/scss/light/assets/components/timeline.scss'])
-        @vite(['resources/scss/dark/assets/components/modal.scss'])
-        
-        <!--  END CUSTOM STYLE FILE  -->
-        
-        <style>
-            .toggle-code-snippet { margin-bottom: 0px; }
-            body.dark .toggle-code-snippet { margin-bottom: 0px; }
-            input::-webkit-outer-spin-button,
-            input::-webkit-inner-spin-button {
-                -webkit-appearance: none;
-                margin: 0;
-            }
-
-            /* Firefox */
-            input[type=number] {
-                -moz-appearance: textfield;
-            }
-        </style>
-    </x-slot>
-    <!-- END GLOBAL MANDATORY STYLES -->
-
-    <x-slot:scrollspyConfig>
-        data-bs-spy="scroll" data-bs-target="#navSection" data-bs-offset="100"
-    </x-slot>
-
-    <!-- BREADCRUMB -->
-    <div class="page-meta">
-        <nav class="breadcrumb-style-one" aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item">Finance</li>
-                <li class="breadcrumb-item active" aria-current="page">Invoice DP</li>
-            </ol>
-        </nav>
-    </div>
-    <!-- /BREADCRUMB -->        
+        /* Firefox */
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+    </style>
+    
     <div class="row layout-top-spacing">
         <h1>PT Adhipramana Bahari Perkasa</h1>
         <p>
@@ -103,15 +69,15 @@
                                     <tbody>
                                         <tr>
                                             <td>INVOICE DATE</td>
-                                            <td>15 Sept 2023</td>
+                                            <td>{{ $data['invoice_date'] ?? '-'}}</td>
                                         </tr>
                                         <tr>
                                             <td>INVOICE No</td>
-                                            <td>ABP/2023/09/0031</td>
+                                            <td>{{ $data['invoice_no'] ?? '-'}}</td>
                                         </tr>
                                         <tr>
                                             <td>TERMS</td>
-                                            <td>30 Days</td>
+                                            <td>{{ $data['terms'] ?? '-'}}</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -131,35 +97,47 @@
                                     <tbody>
                                         <tr>
                                             <td>JOB #</td>
-                                            <td>: JO23</td>
+                                            <td>: {{ $data['no_po'] ?? '-'}}</td>
                                             <td>Pelayaran</td>
-                                            <td>: PT Anugrah Jaya Indah</td>
+                                            <td>: {{ $data['pelayaran'] }}</td>
                                         </tr>
                                         <tr>
                                             <td>Tujuan</td>
-                                            <td>: GRESIK-PANGKALAN BUN</td>
+                                            <td>: {{ $data['tujuan1'] ?? ''}} - {{ $data['tujuan2'] ?? ''}}</td>
                                             <td>Tipe Job</td>
-                                            <td>: DOOR TO DOOR</td>
+                                            <td>: {{ $data['tipe_job'] }}</td>
                                         </tr>
-                                        <tr>
+                                        @foreach ($data['kapal'] as $key => $kapal)
+                                            <tr>
+                                                <td>
+                                                    @if ($key == 0)
+                                                        VOY #
+                                                    @endif
+                                                </td>
+                                                <td>: {{ $kapal['name'] }}</td>
+                                                <td>
+                                                    @if ($key == 0)
+                                                        ETD
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    @if ($key == 0)
+                                                        :
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                        <!-- <tr>
                                             <td></td>
-                                            <td>: GRESIK-PANGKALAN BUN</td>
-                                            <td>ETD</td>
-                                            <td></td>
-                                        </tr>
-                                        <tr>
-                                            <td>VOY #</td>
                                             <td>: KLM Budi Jaya</td>
-                                            <td>Stuff Date</td>
-                                            <td></td>
-                                        </tr>
+                                        </tr> -->
                                         <tr>
-                                            <td></td>
-                                            <td>: KLM Budi Jaya</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Total Count</td>
-                                            <td>: 1.170.850 KG</td>
+                                            <td>Total Cont.</td>
+                                            <td>: {{ $data['total-cont'] }} KG</td>
+                                            <td>
+                                                Stuff Date
+                                            </td>
+                                            <td>: </td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -256,9 +234,11 @@
                             <div class="widget-content widget-content-area">
                                 <table id="style-3" class="table style-3 dt-table-hover" style="width:100%;">
                                     <tbody>
-                                        <tr>
-                                            <td>Freight PO 1620000</td>
-                                        </tr>
+                                        @foreach ($data['description'] as $desc)
+                                            <tr>
+                                                <td>{{ $desc['name'] }}</td>
+                                            </tr>
+                                        @endforeach
                                     </tbody>
                                 </table>
                             </div>
@@ -282,30 +262,30 @@
                             <div class="widget-content widget-content-area">
                                 <table id="style-3" class="table style-3 dt-table-hover" style="width:100%;">
                                     <tbody>
-                                        <tr>
-                                            <td>Harga Cont.</td>
-                                            <td>Rp. 200.868.000</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Harga Cont.</td>
-                                            <td>Rp. 200.868.000</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Harga Cont.</td>
-                                            <td>Rp. 200.868.000</td>
-                                        </tr>
+                                        @php
+                                            $subtotal = 0;
+                                        @endphp
+                                        @foreach ($data['description'] as $desc)
+                                            <tr>
+                                                <td>Harga Cont.</td>
+                                                <td>Rp. {{ $desc['total_tonase'] * $desc['harga_brg'] }}</td>
+                                            </tr>
+                                            @php
+                                                $subtotal += $desc['total_tonase'] * $desc['harga_brg'];
+                                            @endphp
+                                        @endforeach
                                         <tr>
                                             <td>Subtotal</td>
-                                            <td>Rp. 200.868.000</td>
+                                            <td>Rp. {{ $subtotal }}</td>
                                         </tr>
                                         <tr>
                                             <td>PPN 1,1%</td>
-                                            <td>Rp. 200.868.000</td>
+                                            <td>Rp. {{ $desc['prosentase_ppn'] * $subtotal / 100 }}</td>
                                         </tr>
                                         <tr>
                                             <td>Total Invoice</td>
                                             <td>
-                                                <b>Rp. 200.868.000</b>
+                                                <b>Rp. {{ $desc['prosentase_ppn'] * $subtotal / 100 + $subtotal}}</b>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -320,23 +300,21 @@
             <p>
                 <h5>Note :</h5>
                 <h5><b>
-                    BCA KCP Pucang Anom Surabaya <br />
-                    a/c 064.22.77.888<br />
-                    a/n PT. Adhipramana Perkasa<br />
+                    {{ $data['bank']['nama_bank'] }} <br />
+                    a/c {{ $data['bank']['account_number'] }} <br />
+                    a/n {{ $data['bank']['a/n'] }}<br />
                 </b></h5>
             </p>
         </div>
         <div id="basic" class="col-lg-6 col-sm-6 col-6 layout-spacing">
             <p>
-                Surabaya, 15 September 2023 <br/>
+                Surabaya, {{ date('d F Y', strtotime($data['invoice_date'])) }} <br/>
                 Hormat Kami,
             </p>
         </div>
     </div>            
 
     <!--  BEGIN CUSTOM SCRIPTS FILE  -->
-    <x-slot:footerFiles>
-        
         <script type="module" src="{{asset('plugins/flatpickr/flatpickr.js')}}"></script>
         <script type="module" src="{{asset('plugins/flatpickr/custom-flatpickr.js')}}"></script>
         @vite(['resources/assets/js/forms/bootstrap_validation/bs_validation_script.js'])
@@ -363,7 +341,3 @@
 
             });
         </script>
-        
-    </x-slot>
-    <!--  END CUSTOM SCRIPTS FILE  -->
-</x-base-layout>    

@@ -211,6 +211,12 @@ class InvoiceDPController extends Controller
             'docTracking.po.detailPhs',
             'docTracking.po.detailPhs.penawaran',
             'docTracking.po.detailPhs.penawaran.customer',
+            'docTracking.portOfLoading',
+            'docTracking.portOfDestination',
+            'docTracking.detailTrackingMultiple',
+            'docTracking.detailTrackingMultiple.kapal',
+            'docTracking.detailTrackingMultiple.kapal.cPort',
+            'detailInvoiceDp'
         ])
         ->where('id_invoice_dp', $id_invoice_dp)
         ->first();
@@ -221,27 +227,86 @@ class InvoiceDPController extends Controller
             $data = [
                 'nama_customer' => $invoiceDp->docTracking->po->detailPhs->penawaran->customer->nama_customer ?? null,
                 'kota_customer' => $invoiceDp->docTracking->po->detailPhs->penawaran->customer->kota ?? null,
+                'invoice_date' => $invoiceDp->invoice_date ?? null,
+                'invoice_no' => $invoiceDp->invoice_no ?? null,
+                'terms' => $invoiceDp->terms ?? null,
+                'no_po' => $invoiceDp->docTracking->no_po ?? null,
+                'tujuan1' => $invoiceDp->docTracking->portOfLoading->nama_pol ?? null,
+                'tujuan2' => $invoiceDp->docTracking->portOfDestination->nama_pod ?? null,
+                'tipe_job' => $invoiceDp->tipe_job ?? null,
             ];
+            
+            if (isset($invoiceDp->docTracking->detailTrackingMultiple) && $invoiceDp->docTracking->detailTrackingMultiple->count() > 0) {
+                for ($i=0; $i < $invoiceDp->docTracking->detailTrackingMultiple->count(); $i++) { 
+                    $data['kapal'][$i] = ['name' => $invoiceDp->docTracking->detailTrackingMultiple[$i]->kapal->kode_kapal . ' ' . $invoiceDp->docTracking->detailTrackingMultiple[$i]->kapal->nama_kapal . ' ' . $invoiceDp->docTracking->detailTrackingMultiple[$i]->voyage];
+                    $data['pelayaran'] = $invoiceDp->docTracking->detailTrackingMultiple[$i]->kapal->cPort->nama;
+                }
+            }
+
+            $data['total-cont'] = $invoiceDp->detailInvoiceDp->sum('total_tonase');
+
+            $pushData = collect([]);
+
+            foreach ($invoiceDp->detailInvoiceDp as $key => $detailInvoiceDp) {
+                if($pushData->count() == 0){
+                    $pushData->push([
+                        'no_po' => $invoiceDp->docTracking->no_po,
+                        'date' => $detailInvoiceDp->po_muat_date,
+                        'total_tonase' => $detailInvoiceDp->total_tonase,
+                        'harga_brg' => $detailInvoiceDp->harga_brg,
+                        'prosentase_ppn' => $detailInvoiceDp->prosentase_ppn,
+                    ]);
+                } else{
+                    $exist = $pushData->where('date', $detailInvoiceDp->po_muat_date)->first();
+                    if(empty($exist)){
+                        $pushData->push([
+                            'no_po' => $invoiceDp->docTracking->no_po,
+                            'date' => $detailInvoiceDp->po_muat_date,
+                            'total_tonase' => $detailInvoiceDp->total_tonase,
+                            'harga_brg' => $detailInvoiceDp->harga_brg,
+                            'prosentase_ppn' => $detailInvoiceDp->prosentase_ppn,
+                        ]); 
+                    } else{
+                        $sum = $detailInvoiceDp->total_tonase + $exist['total_tonase'];
+                        $key = $pushData->search(function($item) use($detailInvoiceDp){
+                            return $item['date'] == $detailInvoiceDp->po_muat_date;
+                        });
+                        $pushData->pull($key);
+
+                        $pushData->push([
+                            'no_po' => $invoiceDp->docTracking->no_po,
+                            'date' => $detailInvoiceDp->po_muat_date,
+                            'total_tonase' => $sum,
+                            'harga_brg' => $detailInvoiceDp->harga_brg,
+                            'prosentase_ppn' => $detailInvoiceDp->prosentase_ppn,
+                        ]);
+                        
+                    }
+                }
+            }
+
+            $data['description'] = [];
+            foreach ($pushData as $key => $value) {
+                $value['name'] = 'FREIGHT PO '.$value['no_po'].' ('.$value['total_tonase'].' X '.$value['harga_brg'].')';
+                array_push($data['description'], $value);
+            }
+
+            $data['bank'] = Bank::where('status', 1)->first();
         }
 
         $title = 'Print Invoice DP';
         $breadcrumb = 'This breadcrumb';
         
-        // $pdf = PDF::loadview('pages.abp-page.print.invoice_dp', compact(
-        //     'title', 'breadcrumb',
-        //     'data'
-        // ));
+        $pdf = PDF::loadview('pages.abp-page.print.invoice_dp', compact(
+            'title', 'breadcrumb',
+            'data'
+        ))->setOptions(['defaultFont' => 'sans-serif']);
     	// return $pdf->download('invoice-dp-pdf');
 
         return view('pages.abp-page.print.invoice_dp', compact(
             'title', 'breadcrumb',
             'data'
         ));
-
-        // return response()->json([
-        //     'data' => $data,
-        //     'invoiceDp' => $invoiceDp
-        // ]);
     }
 
 }
