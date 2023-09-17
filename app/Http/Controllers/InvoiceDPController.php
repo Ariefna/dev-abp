@@ -222,6 +222,7 @@ class InvoiceDPController extends Controller
                 'tipe'=>'Curah',
                 'status'=>1
             ]);
+            return redirect()->back();
         }
 
         public function printInvoiceDp($id_invoice_dp) {
