@@ -203,7 +203,7 @@
                             <h5 class="modal-title" id="modalIDPcur">Tambah Detail Invoice DP Kapal Curah</h5>
                         </div>
                         <div class="modal-body">
-                            <form name="modal-tracking-ada" class="row g-3 needs-validation" action=""  method="POST" enctype="multipart/form-data" novalidate>
+                            <form name="modal-detail" class="row g-3 needs-validation" action=""  method="POST" enctype="multipart/form-data" novalidate>
                                 @csrf
                                 <input type="hidden" name="id_track_i" id="id_track_i" value="{{ $tdp->id_track }}">
                                 <div class="col-md-3">
@@ -221,7 +221,7 @@
                                 <div class="col-md-3">
                                     <label for="notAllowCont" class="form-label">Total Tonase by Date</label>
                                     <div class="input-group">
-                                        <input name="ttdb" step="any" min="0" id="ttdb" type="number" class="form-control qty_cont" required>
+                                        <input name="ttdb" step="any" min="0" id="ttdb" type="number" class="form-control ttdb" readonly required>
                                         <span class="input-group-text" id="inputGroupPrepend">KG</span>
                                     </div>     
                                 </div>
@@ -229,21 +229,21 @@
                                     <label for="notAllowCont" class="form-label">Harga Freight</label>
                                     <div class="input-group">
                                         <span class="input-group-text" id="inputGroupPrepend">Rp</span>
-                                        <input name="hrg_freight" step="any" min="0" id="hrg_freight" type="number" class="form-control qty_cont" required>
+                                        <input name="hrg_freight" step="any" min="0" id="hrg_freight" type="number" class="form-control hrg_freight" readonly required>
                                     </div>     
                                 </div>                                
                                 <div class="col-md-3">
                                     <label for="notAllowCont" class="form-label">Total Harga</label>
                                     <div class="input-group">
                                         <span class="input-group-text" id="inputGroupPrepend">Rp</span>
-                                        <input name="total_harga" min="0" id="total_harga" type="text" class="form-control" required>
+                                        <input name="total_harga" min="0" id="total_harga" type="text" class="form-control total_harga" readonly required>
                                     </div>     
                                 </div>                                
                                 <div class="col-md-2">
                                     <label for="validationCustom01" class="form-label">Prosentase DP</label>
                                     <div class="input-group">
                                         <span class="input-group-text" id="inputGroupPrepend">%</span>
-                                        <input name="prodp" step="any" min="0" max="100" id="prodp" type="number" class="form-control qty_cont" required>
+                                        <input name="prodp" step="any" min="0" max="100" type="number" class="form-control prodp" required>
                                     </div>     
                                     <div class="invalid-feedback">
                                         Masukkan prosentase dengan benar
@@ -253,30 +253,30 @@
                                     <label for="notAllowCont" class="form-label">Total DP</label>
                                     <div class="input-group">
                                         <span class="input-group-text" id="inputGroupPrepend">Rp</span>
-                                        <input name="todp" min="0" id="todp" type="text" class="form-control qty_cont" required>
+                                        <input name="todp" min="0" type="text" class="form-control todp" required>
                                     </div>     
                                 </div>
                                 <div class="col-md-2">
                                     <label for="notAllowCont" class="form-label">Prosentase PPn</label>
                                     <div class="input-group">
                                         <span class="input-group-text" id="inputGroupPrepend">%</span>
-                                        <input name="proppn" step="any" min="0" max="100" id="proppn" type="number" class="form-control qty_cont" required>
+                                        <input name="proppn" step="any" min="0" max="100" type="number" class="form-control proppn" required>
                                     </div>     
                                 </div>
                                 <div class="col-md-4">
                                     <label for="notAllowCont" class="form-label">Total PPn</label>
                                     <div class="input-group">
                                         <span class="input-group-text" id="inputGroupPrepend">Rp</span>
-                                        <input name="toppn" min="0" id="toppn" type="text" class="form-control qty_cont" required>
+                                        <input name="toppn" min="0" type="text" class="form-control toppn" required>
                                     </div>     
                                 </div>
                                 <div class="modal-footer justify-content-center">
                                     <button id ="btn-modal-curah" type="submit" class="btn btn-primary">Tambah</button>
-                                    <button type="button" class="btn btn btn-light-dark" data-bs-dismiss="modal"><i class="flaticon-cancel-12"></i>Batal</button>
+                                    <button id="btn-batal-{{ $tdp->id_invoice_dp }}" type="button" class="btn btn btn-light-dark btn-batal">Batal</button>
                                 </div>
                             </form>
                         </div>
-                        <div id="basic" class="col-lg-12 col-sm-12 col-12 layout-spacing mx-auto">
+                        {{-- <div id="basic" class="col-lg-12 col-sm-12 col-12 layout-spacing mx-auto">
                             <div class="statbox widget box box-shadow">
                                 <div class="widget-header">                                
                                     <div class="row">
@@ -316,7 +316,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
                 </div>
             </div>
         </div>
@@ -442,91 +442,6 @@
             </div>
         </div> --}}
         @endforeach     
-        {{-- <div id="basic" class="col-lg-12 col-sm-12 col-12 layout-spacing">
-            <div class="statbox widget box box-shadow">
-                <div class="widget-header">                                
-                    <div class="row">
-                        <div class="col-xl-12 col-md-12 col-sm-12 col-12">
-                            <h4>Tabel Detail Dooring</h4>
-                        </div>
-                    </div>
-                </div>
-                <div class="widget-content widget-content-area">
-                    <div class="col-lg-12">
-                        <div class="statbox widget box box-shadow">
-                            <div class="widget-content widget-content-area">
-                                <table id="style-4" class="table style-4 dt-table-hover" style="width:100%;">
-                                    <thead style="border-bottom: none;">
-                                        <tr>
-                                            <th>Tgl Muat</th>
-                                            <th>Gudang Muat</th>
-                                            <th>Nopol</th>
-                                            <th>No Container</th>
-                                            <th>No Segel</th>
-                                            <th>Tonase</th>
-                                            <th>SAK</th>
-                                            <th>Timbangan</th>
-                                            <th>No Surat Jalan</th>
-                                            <th class="text-center">Status</th>
-                                            <th class="text-center">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>                 --}}
-        {{-- <div id="basic" class="col-lg-12 col-sm-12 col-12 layout-spacing">
-            <div class="statbox widget box box-shadow">
-                <div class="widget-header">                                
-                    <div class="row">
-                        <div class="col-xl-12 col-md-12 col-sm-12 col-12">
-                            <h4>Tabel Dooring</h4>
-                        </div>
-                    </div>
-                </div>
-                <div class="widget-content widget-content-area">
-                    <div class="col-lg-12">
-                        <div class="statbox widget box box-shadow">
-                            <div class="widget-content widget-content-area">
-                                <table id="show-hide-col" class="table show-hide-col dt-table-hover" style="width:100%;">
-                                    <thead style="border-bottom: none;">
-                                        <tr>
-                                            <th>Customer</th>
-                                            <th>SPK</th>
-                                            <th>Rute</th>
-                                            <th>PO Kebun</th>
-                                            <th>PT Kebun</th>
-                                            <th>Estate</th>
-                                            <th>Description Barang</th>
-                                            <th>Qty Dooring</th>
-                                            <th>KG</th>
-                                            <th>SAK</th>
-                                            <th>Date Berangkat</th>
-                                            <th>Date Tiba</th>
-                                            <th>No Tiket Timbang</th>
-                                            <th>No CONT</th>
-                                            <th>Nopol</th>
-                                            <th>Qty Timbang Kebun</th>
-                                            <th>Nama Kapal</th>
-                                            <th>TD</th>
-                                            <th class="text-center">Status</th>
-                                            <th class="text-center">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>     --}}
     </div>            
 
     <!--  BEGIN CUSTOM SCRIPTS FILE  -->
@@ -563,11 +478,42 @@
                         currency: 'IDR',
                         minimumFractionDigits: 0
                     });
-                    $(".modal").click(function(event) {
-                        if (event.target === this) {
-                            $(this).hide();
+                    @foreach ($invdp as $tdp)
+                    // $("#btn-batal-{{ $tdp->id_invoice_dp }}").click(function(event) {
+                    //     if (event.target === this) {
+                    //         window.location.reload();
+                    //     }
+                    // });                    
+                    $(".modal").on("show.bs.modal", function () {
+                        $('.cb_bypo').val('');
+                        $('.cb_bypo option[value=""]').prop('selected', true);
+                        $('.ttdb').val('0');         
+                        $('.hrg_freight').val('0');  
+                        $('.total_harga').val('0');  
+                        $('.prodp').val('0');  
+                        $('.todp').val('0');  
+                        $('.proppn').val('0');  
+                        $('.toppn').val('0');  
+                    });
+                    $('input[name="prodp"]').on('click', function() {
+                        if($(this).val() === '0'){
+                            $(this).val('');
                         }
                     });
+                    $('input[name="proppn"]').on('click', function() {
+                        if($(this).val() === '0'){
+                            $(this).val('');
+                        }
+                    });
+                    $(".btn-batal").click(function(event) {
+                        if (event.target === this) {
+                            var modalId = $(this).closest('.modal').attr('id');
+                            $('#' + modalId).modal('hide');
+                            $('#' + modalId).on('hidden.bs.modal', function () {
+                            });
+                        }
+                    });
+                    @endforeach
                     $('.cb_bypo').change(function() {
                         var selectedId = $(this).val();
                         var url = "{{ route('getDetailPO', [':id_track']) }}"
@@ -609,26 +555,34 @@
                             $('#hrg_freight').val('');
                         }
                     });
-                    function updateValues() {
-                        var prodp = parseFloat($('#prodp').val()) || 0;
-                        var proppn = parseFloat($('#proppn').val()) || 0;
-                        var total_harga = parseFloat($('#total_harga').val().replace(/\D/g, '')) || 0;
+                    $('.prodp, .proppn').on('input', function () {
+                        var modal = $(this).closest('.modal');
+                        var prodp = parseFloat(modal.find('.prodp').val()) || 0;
+                        var proppn = parseFloat(modal.find('.proppn').val()) || 0;
+                        var total_harga = parseFloat(modal.find('.total_harga').val().replace(/\D/g, '')) || 0;
                         var total_dp = (total_harga * prodp) / 100;
                         var total_ppn = (total_harga * proppn) / 100;
 
-                        $('#todp').val(formatter.format(total_dp).replace('Rp', ''));
-                        $('#toppn').val(formatter.format(total_ppn).replace('Rp', ''));
-                    }
-                    function openModal() {
-                        $('.modal').modal('show');
-                    }
-
-                    $('#prodp, #proppn').on('input', function () {
-                        updateValues();
-                        openModal(); // Open the modal when input changes
+                        modal.find('.todp').val(formatter.format(total_dp).replace('Rp', ''));
+                        modal.find('.toppn').val(formatter.format(total_ppn).replace('Rp', ''));
                     });
 
-                    updateValues();
+                    // function updateValues() {
+                    //     var prodp = parseFloat($('#prodp').val()) || 0;
+                    //     var proppn = parseFloat($('#proppn').val()) || 0;
+                    //     var total_harga = parseFloat($('#total_harga').val().replace(/\D/g, '')) || 0;
+                    //     var total_dp = (total_harga * prodp) / 100;
+                    //     var total_ppn = (total_harga * proppn) / 100;
+
+                    //     $('#todp').val(formatter.format(total_dp).replace('Rp', ''));
+                    //     $('#toppn').val(formatter.format(total_ppn).replace('Rp', ''));
+                    // }
+
+                    // $('#prodp, #proppn').on('input', function () {
+                    //     updateValues();
+                    // });
+
+                    // updateValues();
 
             });
         </script>

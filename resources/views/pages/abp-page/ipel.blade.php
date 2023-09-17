@@ -69,15 +69,7 @@
                             <input name="tgl_inv_dp" id="basicFlatpickr" value="2022-09-04" class="form-control flatpickr flatpickr-input active" type="text" placeholder="Select Date..">
                         </div>
                         <div class="col-md-4">
-                            <label for="validationCustom01" class="form-label">Invoice No</label>
-                            <input name="invoice_no" type="text" class="form-control" id="invoice_no" placeholder="Masukkan invoice no" required>
-                            <div class="invalid-feedback">
-                                Invoice No tidak boleh kosong
-                            </div>
-                        </div>
-                        <div class="col-md-4">
                             <label for="validationCustom01" class="form-label">No PO Muat</label>
-                            {{-- <input name="no_job" type="text" class="form-control" id="no_job" placeholder="No Job" required> --}}
                             <select class="form-select" name="cb_po" id="cb_po" required>
                                 <option selected disabled value="">Pilih...</option>
                                 @foreach ($pomuat as $getpo)
@@ -87,7 +79,15 @@
                             <div class="invalid-feedback">
                                 No PO Muat tidak boleh kosong
                             </div>
-                        </div>                
+                        </div>                                        
+                        <div class="col-md-4">
+                            <label for="validationCustom01" class="form-label">Invoice No</label>
+                            <input name="invoice_no" type="text" class="form-control" id="invoice_no" placeholder="Autofill no invoice dp terakhir dari po + 1" required>
+                            <div class="invalid-feedback">
+                                Invoice No tidak boleh kosong
+                            </div>
+                        </div>
+
                         <div class="col-md-3">
                             <label for="validationCustom04" class="form-label">Tipe Job</label>
                             <select class="form-select" name="cb_tipe" id="cb_tipe" required>
@@ -170,7 +170,7 @@
                                             <td>{{ $tdp->rinci_tipe }}</td>
                                             <td class="text-center"><span class="shadow-none badge badge-danger">Pending</span></td>
                                             <td class="text-center">
-                                                <a href="#modalInvDP-{{ $tdp->id_track }}" class="bs-tooltip"  data-bs-toggle="modal" data-bs-placement="top" title="Tambah Detail" data-original-title="Tambah Detail"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus-circle"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg></a>
+                                                <a href="#modalInvPel-{{ $tdp->id_track }}" class="bs-tooltip"  data-bs-toggle="modal" data-bs-placement="top" title="Tambah Detail" data-original-title="Tambah Detail"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus-circle"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg></a>
                                                 <a href="javascript:void(0);" class="bs-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Print" data-original-title="Print"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-printer"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg></a>
                                             </td>
                                         </tr>
@@ -183,7 +183,8 @@
                 </div>
             </div>
         </div>
-        <div class="modal fade bd-example-modal-xl" id="modalInvDP-{{ $tdp->id_track }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        @foreach ($invdp as $tdp)
+        <div class="modal fade bd-example-modal-xl" id="modalInvPel-{{ $tdp->id_track }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-xl" role="document">
                 <div class="modal-content">
                     {{-- <div class="modal-body"> --}}
@@ -303,6 +304,7 @@
                 </div>
             </div>
         </div>        
+        @endforeach
         {{-- <div id="basic" class="col-lg-12 col-sm-12 col-12 layout-spacing">
             <div class="statbox widget box box-shadow">
                 <div class="widget-header">                                

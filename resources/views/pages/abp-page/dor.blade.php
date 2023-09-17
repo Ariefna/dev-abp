@@ -317,6 +317,12 @@
                                         @endphp
 
                                         @foreach ($monitoringDooring[0]->detailDooring as $md)
+                                            @php
+                                                $totalTimbang += $md->qty_timbang;
+                                            @endphp
+                                        @endforeach                                        
+
+                                        @foreach ($monitoringDooring[0]->detailDooring as $md)
                                             @if (!isset($totalQty))
                                                 @php
                                                     $totalQty = $md->docDooring->docTracking->po->total_qty;
@@ -324,7 +330,7 @@
                                             @endif
                                             
                                             @php
-                                                $susut = $md->qty_timbang - $totalQty;
+                                                $susut = $totalTimbang - $totalQty;
                                             @endphp
                                         <tr>
                                             <td>{{ $md->docDooring->docTracking->po->detailPhs->penawaran->customer->nama_customer ?? '' }}</td>

@@ -58,7 +58,7 @@ class InvoiceDPController extends Controller
                 ->join('invoice_dp','invoice_dp.id_track','=','doc_tracking.id_track')
                 ->whereNull('detail_tracking.no_container')
                 ->whereIn('doc_tracking.status', [2, 3])
-                ->groupBy('detail_tracking.tgl_muat')
+                ->groupBy('doc_tracking.no_po')
                 ->get();
         // dd ($getval);
         $title = 'Adhipramana Bahari Perkasa';
@@ -196,6 +196,10 @@ class InvoiceDPController extends Controller
                 ]);
                 return redirect()->back();
         }
+    }
+
+    public function savecurahidp() {
+        
     }
 
 }
