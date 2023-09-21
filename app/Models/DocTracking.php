@@ -17,16 +17,21 @@ class DocTracking extends Model
         return $this->hasOne(DetailTracking::class,'id_track','id_track');
     }
 
+    public function detailTrackingMultiple()
+    {
+        return $this->hasMany(DetailTracking::class,'id_track','id_track');
+    }
+
     public function po()
     {
         return $this->hasOne(PurchaseOrder::class,'po_muat','no_po');
     }
-    
+
     public function portOfLoading()
     {
         return $this->hasOne(portOfLoading::class,'id','id_pol');
     }
-    
+
     public function portOfDestination()
     {
         return $this->hasOne(portOfDestination::class,'id','id_pod');

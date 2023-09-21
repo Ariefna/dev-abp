@@ -16,6 +16,7 @@ use App\Models\DocTracking;
 use App\Models\DetailTracking;
 use App\Models\DetailTrackingSisa;
 use App\Models\InvoiceDP;
+use App\Models\DetailInvoiceDP;
 use App\Models\Bank;
 use App\Http\Controllers\DB;
 use Illuminate\Http\Request;
@@ -41,6 +42,11 @@ class InvoiceDPController extends Controller
         $invdp = InvoiceDP::select('*','invoice_dp.status')
                 ->join('doc_tracking','doc_tracking.id_track','=','invoice_dp.id_track')
                 ->get();
+        $subtotal = DetailInvoiceDP::select('id_track')
+                ->selectRaw('SUM(total_harga) as sub')
+                ->where('tipe', 'Curah')
+                ->groupBy('id_track')
+                ->get();                
         // dd ($invdp);                
         // $totalmuat = DocTracking::select('*','doc_tracking.id_track', 'doc_tracking.no_po')
         //         ->selectRaw('SUM(detail_tracking.qty_tonase) as total_muat')
@@ -60,12 +66,24 @@ class InvoiceDPController extends Controller
                 ->join('invoice_dp','invoice_dp.id_track','=','doc_tracking.id_track')
                 ->whereNull('detail_tracking.no_container')
                 ->whereIn('doc_tracking.status', [2, 3])
-                ->groupBy('doc_tracking.no_po')
+                ->groupBy('doc_tracking.no_po','detail_tracking.tgl_muat')
                 ->get();
         // dd ($getval);
+        $getvalcont = DocTracking::select('detail_tracking.tgl_muat','invoice_dp.id_track', 'doc_tracking.no_po')
+                ->selectRaw('SUM(detail_tracking.qty_tonase) as total_muat')
+                ->selectRaw("DATE_FORMAT(detail_tracking.tgl_muat, '%e-%M-%Y') as formatted_tgl_muat")
+                ->join('detail_tracking', 'doc_tracking.id_track', '=', 'detail_tracking.id_track')
+                ->join('purchase_orders','purchase_orders.po_muat','=','doc_tracking.no_po')
+                ->join('detail_p_h_s', 'purchase_orders.id_detail_ph', '=', 'detail_p_h_s.id_detail_ph')
+                ->join('invoice_dp','invoice_dp.id_track','=','doc_tracking.id_track')
+                ->whereNotNull('detail_tracking.no_container')
+                ->whereIn('doc_tracking.status', [2, 3])
+                ->groupBy('doc_tracking.no_po','detail_tracking.tgl_muat')
+                ->get();
         $title = 'Adhipramana Bahari Perkasa';
         $breadcrumb = 'This Breadcrumb';
-        return view('pages.abp-page.idp', compact('title', 'breadcrumb','pomuat','bank','invdp','getval'));
+        return view('pages.abp-page.idp', compact('title', 'breadcrumb','pomuat','bank',
+        'invdp','getval','subtotal','getvalcont'));
     }
 
     public function getOptionsPO($id_track) {
@@ -96,10 +114,22 @@ class InvoiceDPController extends Controller
                 ->whereIn('doc_tracking.status', [2, 3])
                 ->whereRaw('CONCAT(doc_tracking.no_po, "(", DATE_FORMAT(detail_tracking.tgl_muat, "%e-%M-%Y"), ")") = ?', [$id_track])
                 ->groupBy('doc_tracking.id_track', 'doc_tracking.no_po', 'formatted_tgl_muat');
-                // ->havingRaw("formatted_tgl_muat = ?", [$tgl]);
-        // dd ([
-        //         '$countersisa' => $query ,
-        //     ]);
+        $getdata = $query->get();
+        return response()->json($getdata);
+    }
+
+    public function getDetailPOCont($id_track) {
+        $query = DocTracking::select('*','invoice_dp.id_track', 'doc_tracking.no_po')
+                ->selectRaw('SUM(detail_tracking.qty_tonase) as total_muat')
+                ->selectRaw("DATE_FORMAT(detail_tracking.tgl_muat, '%e-%M-%Y') as formatted_tgl_muat")
+                ->join('detail_tracking', 'doc_tracking.id_track', '=', 'detail_tracking.id_track')
+                ->join('purchase_orders','purchase_orders.po_muat','=','doc_tracking.no_po')
+                ->join('detail_p_h_s', 'purchase_orders.id_detail_ph', '=', 'detail_p_h_s.id_detail_ph')
+                ->join('invoice_dp','invoice_dp.id_track','=','doc_tracking.id_track')
+                ->whereNotNull('detail_tracking.no_container')
+                ->whereIn('doc_tracking.status', [2, 3])
+                ->whereRaw('CONCAT(doc_tracking.no_po, "(", DATE_FORMAT(detail_tracking.tgl_muat, "%e-%M-%Y"), ")") = ?', [$id_track])
+                ->groupBy('doc_tracking.id_track', 'doc_tracking.no_po', 'formatted_tgl_muat');
         $getdata = $query->get();
         return response()->json($getdata);
     }
@@ -200,8 +230,68 @@ class InvoiceDPController extends Controller
         }
     }
 
-    public function savecurahidp() {
+    public function savecurahidp(Request $request) {
+        $hrg_fr = (int)str_replace(".", "", $request->input('hrg_freight'));
+        $total_hrg = (int)str_replace(".", "", $request->input('total_harga'));
+        $total_dp = (int)str_replace(".", "", $request->input('todp'));
+        $total_ppn = (int)str_replace(".", "", $request->input('toppn'));
 
+        $ceksub = $request->sub_total;
+
+        // DetailInvoiceDP::select
+        // DetailInvoiceDP::where('id_dooring', $request->id_door)
+        // ->where('tipe','Curah')->update([
+        //     'qty_tonase_sisa' => $request->qty,
+        // ]);
+
+        DetailInvoiceDP::create([
+            'id_invoice_dp'=>$request->id_invdp, 
+            'id_track'=>$request->id_track_i,
+            'po_muat_date'=>$request->tgl_muat,
+            'total_tonase'=>$request->ttdb,
+            'harga_brg'=>$hrg_fr,
+            'total_harga'=>$total_hrg,
+            'sub_total'=>$request->total_harga,
+            'prosentase_dp'=>$request->prodp,
+            'total_dp'=>$total_dp,
+            'prosentase_ppn'=>$request->proppn,
+            'total_ppn'=>$total_ppn,
+            'tipe'=>'Curah',
+            'status'=>1
+        ]);
+        return redirect()->back();
+    }
+
+    public function savecontaineridp(Request $request) {
+        $hrg_fr = (int)str_replace(".", "", $request->input('hrg_freightcont'));
+        $total_hrg = (int)str_replace(".", "", $request->input('total_hargacont'));
+        $total_dp = (int)str_replace(".", "", $request->input('todpcont'));
+        $total_ppn = (int)str_replace(".", "", $request->input('toppncont'));
+
+        // $ceksub = $request->sub_total;
+
+        // DetailInvoiceDP::select
+        // DetailInvoiceDP::where('id_dooring', $request->id_door)
+        // ->where('tipe','Curah')->update([
+        //     'qty_tonase_sisa' => $request->qty,
+        // ]);
+
+        DetailInvoiceDP::create([
+            'id_invoice_dp'=>$request->id_invdp, 
+            'id_track'=>$request->id_track_i,
+            'po_muat_date'=>$request->tgl_muatcont,
+            'total_tonase'=>$request->ttdbcont,
+            'harga_brg'=>$hrg_fr,
+            'total_harga'=>$total_hrg,
+            'sub_total'=>$request->total_hargacont,
+            'prosentase_dp'=>$request->prodpcont,
+            'total_dp'=>$total_dp,
+            'prosentase_ppn'=>$request->proppncont,
+            'total_ppn'=>$total_ppn,
+            'tipe'=>'Container',
+            'status'=>1
+        ]);
+        return redirect()->back();        
     }
         
     public function printInvoiceDp($id_invoice_dp) {
@@ -227,7 +317,7 @@ class InvoiceDPController extends Controller
             $data = [
                 'nama_customer' => $invoiceDp->docTracking->po->detailPhs->penawaran->customer->nama_customer ?? null,
                 'kota_customer' => $invoiceDp->docTracking->po->detailPhs->penawaran->customer->kota ?? null,
-                'invoice_date' => $invoiceDp->invoice_date ?? null,
+                'invoice_date' => $invoiceDp->invoice_date ? date('d F Y', strtotime($invoiceDp->invoice_date)) : null,
                 'invoice_no' => $invoiceDp->invoice_no ?? null,
                 'terms' => $invoiceDp->terms ?? null,
                 'no_po' => $invoiceDp->docTracking->no_po ?? null,
@@ -236,11 +326,52 @@ class InvoiceDPController extends Controller
                 'tipe_job' => $invoiceDp->tipe_job ?? null,
             ];
             
+            // if (isset($invoiceDp->docTracking->detailTrackingMultiple) && $invoiceDp->docTracking->detailTrackingMultiple->count() > 0) {
+            //     for ($i=0; $i < $invoiceDp->docTracking->detailTrackingMultiple->count(); $i++) { 
+            //         $data['kapal'][$i] = ['name' => $invoiceDp->docTracking->detailTrackingMultiple[$i]->kapal->kode_kapal . ' ' . $invoiceDp->docTracking->detailTrackingMultiple[$i]->kapal->nama_kapal . ' ' . $invoiceDp->docTracking->detailTrackingMultiple[$i]->voyage];
+            //         $data['pelayaran'] = $invoiceDp->docTracking->detailTrackingMultiple[$i]->kapal->cPort->nama;
+            //     }
+            // }
+
             if (isset($invoiceDp->docTracking->detailTrackingMultiple) && $invoiceDp->docTracking->detailTrackingMultiple->count() > 0) {
-                for ($i=0; $i < $invoiceDp->docTracking->detailTrackingMultiple->count(); $i++) { 
-                    $data['kapal'][$i] = ['name' => $invoiceDp->docTracking->detailTrackingMultiple[$i]->kapal->kode_kapal . ' ' . $invoiceDp->docTracking->detailTrackingMultiple[$i]->kapal->nama_kapal . ' ' . $invoiceDp->docTracking->detailTrackingMultiple[$i]->voyage];
-                    $data['pelayaran'] = $invoiceDp->docTracking->detailTrackingMultiple[$i]->kapal->cPort->nama;
+                $groupedData = []; // Initialize an empty array to hold the grouped data
+                
+                for ($i = 0; $i < $invoiceDp->docTracking->detailTrackingMultiple->count(); $i++) { 
+                    $name = $invoiceDp->docTracking->detailTrackingMultiple[$i]->kapal->kode_kapal . ' ' . $invoiceDp->docTracking->detailTrackingMultiple[$i]->kapal->nama_kapal . ' ' . $invoiceDp->docTracking->detailTrackingMultiple[$i]->voyage;
+                    $pelayaran = $invoiceDp->docTracking->detailTrackingMultiple[$i]->kapal->cPort->nama;
+            
+                    // Create a key based on $name and $pelayaran
+                    $key = $name . ' ' . $pelayaran;
+            
+                    // Add the data to the grouped array using the key
+                    if (!isset($groupedData[$key])) {
+                        $groupedData[$key] = [
+                            'name' => $name,
+                            'pelayaran' => $pelayaran,
+                            // Add other data fields as needed
+                        ];
+                    }
                 }
+                
+                // Convert the grouped data into a simple array
+                $data['kapal'] = array_values($groupedData);
+            }
+            
+
+            $groupedData = [];
+
+            // Iterate through the original array
+            foreach ($data['kapal'] as $item) {
+                // Extract the 'name' field value
+                $name = $item['name'];
+
+                // Check if a group with this 'name' exists, if not, create it
+                if (!isset($groupedData[$name])) {
+                    $groupedData[$name] = [];
+                }
+
+                // Add the item to the corresponding group
+                $groupedData[$name][] = $item;
             }
 
             $data['total-cont'] = $invoiceDp->detailInvoiceDp->sum('total_tonase');
@@ -253,21 +384,33 @@ class InvoiceDPController extends Controller
                         'no_po' => $invoiceDp->docTracking->no_po,
                         'date' => $detailInvoiceDp->po_muat_date,
                         'total_tonase' => $detailInvoiceDp->total_tonase,
+                        'tipe' => $detailInvoiceDp->tipe,
                         'harga_brg' => $detailInvoiceDp->harga_brg,
                         'prosentase_ppn' => $detailInvoiceDp->prosentase_ppn,
+                        'total_dp' => $detailInvoiceDp->total_dp,
+                        'total_ppn' => $detailInvoiceDp->total_ppn
                     ]);
                 } else{
-                    $exist = $pushData->where('date', $detailInvoiceDp->po_muat_date)->first();
+                    $exist = $pushData->where(
+                        'date', $detailInvoiceDp->po_muat_date
+                    )
+                    ->where('tipe', $detailInvoiceDp->tipe,)
+                    ->first();
                     if(empty($exist)){
                         $pushData->push([
                             'no_po' => $invoiceDp->docTracking->no_po,
                             'date' => $detailInvoiceDp->po_muat_date,
                             'total_tonase' => $detailInvoiceDp->total_tonase,
+                            'tipe' => $detailInvoiceDp->tipe,
                             'harga_brg' => $detailInvoiceDp->harga_brg,
                             'prosentase_ppn' => $detailInvoiceDp->prosentase_ppn,
+                            'total_dp' => $detailInvoiceDp->total_dp,
+                            'total_ppn' => $detailInvoiceDp->total_ppn
                         ]); 
                     } else{
                         $sum = $detailInvoiceDp->total_tonase + $exist['total_tonase'];
+                        $sumDp = $detailInvoiceDp->total_dp + $exist['total_dp'];
+                        $sumppn = $detailInvoiceDp->total_ppn + $exist['total_ppn'];
                         $key = $pushData->search(function($item) use($detailInvoiceDp){
                             return $item['date'] == $detailInvoiceDp->po_muat_date;
                         });
@@ -277,8 +420,11 @@ class InvoiceDPController extends Controller
                             'no_po' => $invoiceDp->docTracking->no_po,
                             'date' => $detailInvoiceDp->po_muat_date,
                             'total_tonase' => $sum,
+                            'tipe' => $detailInvoiceDp->tipe,
                             'harga_brg' => $detailInvoiceDp->harga_brg,
                             'prosentase_ppn' => $detailInvoiceDp->prosentase_ppn,
+                            'total_dp' => $sumDp,
+                            'total_ppn'=> $sumppn
                         ]);
                         
                     }
@@ -287,7 +433,7 @@ class InvoiceDPController extends Controller
 
             $data['description'] = [];
             foreach ($pushData as $key => $value) {
-                $value['name'] = 'FREIGHT PO '.$value['no_po'].' ('.$value['total_tonase'].' X '.$value['harga_brg'].')';
+                $value['name'] = 'FREIGHT PO '.$value['no_po'].' ('.$value['total_tonase'].' KG'.' X '.'Rp. '.number_format($value['harga_brg'], 0, ',', '.').')';
                 array_push($data['description'], $value);
             }
 
@@ -299,14 +445,23 @@ class InvoiceDPController extends Controller
         
         $pdf = PDF::loadview('pages.abp-page.print.invoice_dp', compact(
             'title', 'breadcrumb',
-            'data'
-        ))->setOptions(['defaultFont' => 'sans-serif']);
-    	// return $pdf->download('invoice-dp-pdf');
+            'data','groupedData'
+        ))->setOptions(['dpi' => 100, 'defaultFont' => 'sans-serif']);
+        // Set custom page size (A4, portrait)
+        $pdf->setPaper('A4');
+        // $pdf->setOption('dpi','600');
 
-        return view('pages.abp-page.print.invoice_dp', compact(
-            'title', 'breadcrumb',
-            'data'
-        ));
+        // $pdf->setOption('margin-top', '20mm');
+        // $pdf->setOption('margin-right', '0mm');
+        // $pdf->setOption('margin-bottom', '0mm');
+        // $pdf->setOption('margin-left', '0mm');
+    	return $pdf->stream('invoice-dp.pdf');
+        // return $pdf->download('invoice-dp.pdf');
+
+        // return view('pages.abp-page.print.invoice_dp', compact(
+        //     'title', 'breadcrumb',
+        //     'data'
+        // ));
     }
 
 }

@@ -15,6 +15,7 @@
         @vite(['resources/scss/dark/plugins/table/datatable/dt-global_style.scss'])
         @vite(['resources/scss/dark/plugins/table/datatable/custom_dt_miscellaneous.scss'])
         @vite(['resources/scss/light/assets/components/timeline.scss'])
+        @vite(['resources/scss/dark/assets/components/modal.scss'])
         
         <!--  END CUSTOM STYLE FILE  -->
         
@@ -55,6 +56,57 @@
                 <div class="widget-header">                                
                     <div class="row">
                         <div class="col-xl-12 col-md-12 col-sm-12 col-12">
+                            <h4>Update Tabel Monitoring</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="widget-content widget-content-area" style="padding: 1.5%;">
+                    @foreach ($tbl_po->unique('no_po') as $getpo)
+                    <form class="row g-3 needs-validation" action="{{ route('mon-tracking.update') }}" method="POST" enctype="multipart/form-data" novalidate>
+                        @csrf
+                        @method('PUT')
+                        <div class="col-md-3">
+                            <label for="validationCustom01" class="form-label">No PO </label>
+                            <select class="form-select" name="cb_po" id="cb_po" required>
+                                <option selected disabled value="">Pilih...</option>
+                                @foreach ($tbl_po->unique('no_po') as $getpo)
+                                    <option value="{{ $getpo->id_track }}">{{ $getpo->no_po }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="validationCustom01" class="form-label">TD</label>
+                            <div class="input-group has-validation">
+                                <input name="td" id="td" value="0" class="form-control flatpickr flatpickr-input active" type="date" placeholder="Select Date..">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="validationCustom01" class="form-label">TD JKT</label>
+                            <div class="input-group has-validation">
+                                <input name="td_jkt" id="td_jkt" value="0" class="form-control flatpickr flatpickr-input active" type="date" placeholder="Select Date..">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="validationCustom01" class="form-label">TA</label>
+                            <div class="input-group has-validation">
+                                <input name="ta" id="ta" value="0" class="form-control flatpickr flatpickr-input active" type="date" placeholder="Select Date..">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Simpan</button>
+                            {{-- <button type="button" class="btn btn btn-light-dark" data-bs-dismiss="modal"><i class="flaticon-cancel-12"></i>Batal</button> --}}
+                        </div>
+                    </form>        
+                    @endforeach            
+                </div>
+            </div>
+        </div>
+
+        <div id="basic" class="col-lg-12 col-sm-12 col-12 layout-spacing">
+            <div class="statbox widget box box-shadow">
+                <div class="widget-header">                                
+                    <div class="row">
+                        <div class="col-xl-12 col-md-12 col-sm-12 col-12">
                             <h4>Monitoring Tracking</h4>
                         </div>
                     </div>
@@ -86,7 +138,7 @@
                                             <th>TD JKT</th>
                                             <th>TA</th>
                                             <th class="text-center">Status</th>
-                                            <th class="text-center">Action</th>
+                                            {{-- <th class="text-center">Action</th> --}}
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -128,7 +180,7 @@
                                                     <span class="shadow-none badge badge-danger">Kapal TD Jakarta</span>
                                                 @endif
                                             </td>
-                                            <td><button class="btn btn-outline-primary mb-2 me-4">Update</button></td>
+                                            {{-- <td><a href="#update-{{ $tra->id_track }}" data-bs-toggle="modal" class="btn btn-outline-primary mb-2 me-4">Update</a></td> --}}
                                         </tr>
                                         @endforeach                                                                    
                                     </tbody>
@@ -138,7 +190,45 @@
                     </div>
                 </div>
             </div>
-        </div>        
+        </div>
+        @foreach ($tbl_po as $tra)
+            <div class="modal fade bd-example-modal-xl" id="update-{{ $tra->id_track }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-xl" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Update data</h5>
+                            {{-- <input type="text" name="id_gd" id="id_gd" value="{{ $gd->id_gudang }}"> --}}
+                        </div>
+                        <div class="modal-body">
+                            <form class="row g-3 needs-validation" action=""  method="POST" enctype="multipart/form-data" novalidate>
+                                @csrf
+                                @method('PUT')
+                                <div class="col-md-4">
+                                    <label for="validationCustom01" class="form-label">TD</label>
+                                    <div class="input-group has-validation">
+                                        <input name="td" id="td" value="2022-09-04" class="form-control flatpickr flatpickr-input active" type="date" placeholder="Select Date..">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="input-group has-validation">
+                                        <input name="td" id="td_jkt" value="2022-09-04" class="form-control flatpickr flatpickr-input active" type="text" placeholder="Select Date..">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="input-group has-validation">
+                                        <input name="td" id="ta" value="2022-09-04" class="form-control flatpickr flatpickr-input active" type="text" placeholder="Select Date..">
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn btn-light-dark" data-bs-dismiss="modal"><i class="flaticon-cancel-12"></i>Batal</button>
+                                    <button type="submit" class="btn btn-primary">Simpan</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endforeach         
     </div>            
 
     <!--  BEGIN CUSTOM SCRIPTS FILE  -->
@@ -160,7 +250,18 @@
         <script src="{{asset('plugins/table/datatable/button-ext/jszip.min.js')}}"></script>
         <script src="{{asset('plugins/table/datatable/button-ext/buttons.print.min.js')}}"></script>
         {{-- <script src="{{asset('plugins/table/datatable/custom_miscellaneous.js')}}"></script> --}}
-
+        <script>
+            var f2 = flatpickr(document.getElementById('td'), {
+                defaultDate: 'dd/mm/yyyy',
+                // dateFormat: 'd/m/Y',
+            });
+            var f3 = flatpickr(document.getElementById('td_jkt'), {
+                defaultDate: 'dd/mm/yyyy',
+            });
+            var f4 = flatpickr(document.getElementById('ta'), {
+                defaultDate: 'dd/mm/yyyy',
+            });
+        </script>
         <script type='text/javascript'>
             $(document).ready(function() {
                 $('#cb_po').change(function() {

@@ -62,7 +62,7 @@
                     </div>
                 </div>
                 <div class="widget-content widget-content-area" style="padding: 1.5%;">
-                    <form class="row g-3 needs-validation" action="{{ route('invoice-dp.store') }}"  method="POST" enctype="multipart/form-data" novalidate>
+                    <form class="row g-3 needs-validation" action="{{ route('invoice-pelunasan.store') }}"  method="POST" enctype="multipart/form-data" novalidate>
                         @csrf
                         <div class="col-md-4">
                             <label for="validationCustom01" class="form-label">Invoice Date</label>
@@ -82,7 +82,7 @@
                         </div>                                        
                         <div class="col-md-4">
                             <label for="validationCustom01" class="form-label">Invoice No</label>
-                            <input name="invoice_no" type="text" class="form-control" id="invoice_no" placeholder="Autofill no invoice dp terakhir dari po + 1" required>
+                            <input name="invoice_no" type="text" class="form-control" id="invoice_no" placeholder="Autofill no invoice dp terakhir dari po + 1" readonly>
                             <div class="invalid-feedback">
                                 Invoice No tidak boleh kosong
                             </div>

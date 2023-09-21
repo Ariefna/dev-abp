@@ -53,7 +53,7 @@
     <!-- /BREADCRUMB -->        
     <div class="row layout-top-spacing">
 
-        @if (count($track->where('status', 1)) >= 1 && count($dtrack->where('status', 1 )) >= 1)
+        @if (count($track->where('status', 1)) >= 1)
         <div id="alertIcon" class="col-lg-12 mb-2">
             <div class="widget-content widget-content-area">
                 <div class="alert alert-warning alert-dismissible fade show" role="alert">
@@ -159,6 +159,8 @@
                     <div class="row">
                         <div class="col-xl-12 col-md-12 col-sm-12 col-12">
                             <h4>Tabel Tracking</h4>
+                            <p>detail{{ $details }}</p>
+                            <p>trackzero{{ $trackzero->count() }}</p>
                         </div>
                     </div>
                 </div>
@@ -180,27 +182,15 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @if($details==0)
-                                            @foreach ($trackzero as $tra)
+                                        @if($trackzero->count()==0)
+                                            @foreach ($tracknull as $tra)
                                             <tr>
                                                 <td>{{ $tra->no_po }}</td>
                                                 <td>{{ $tra->nama_pol }} - {{ $tra->nama_pod }}</td>
-                                                @if ($tra->qty_curah_track==null)
-                                                    <td>{{ $tra->qty }}</td>
-                                                @else
-                                                    <td>{{ $tra->qty_curah_track }}</td>
-                                                @endif
-                                                @if ($tra->qty_curah_cont==null)
-                                                    <td>{{ $tra->qty2 }}</td>
-                                                @else
-                                                    <td>{{ $tra->qty_curah_cont }}</td>
-                                                @endif
-                                                <td>{{ $tra->qty_curah_track + $tra->qty_curah_cont }}</td>
-                                                @if($tra->qty_curah_cont==null && $tra->qty_curah_track==null)
-                                                    <td>{{ $tra->total_qty }}</td>
-                                                @else
-                                                    <td>{{ $tra->qty_curah_track + $tra->qty_curah_cont }}</td>
-                                                @endif
+                                                <td>0</td>
+                                                <td>0</td>
+                                                <td>0</td>
+                                                <td>{{ $tra->total_qty }}</td>
                                                 <td class="text-center"><span class="shadow-none badge badge-danger">{{ $tra->status == 1 ? 'Pending' : '' }}</span></td>
                                                 {{-- <td class="text-center">{!! $tra->status == 1 ? '<span class="shadow-none badge badge-success">Proses Muat</span>' : ($tra->status == 2 ? '<span class="shadow-none badge badge-warning">Selesai Muat</span>' : '') !!}</td> --}}
                                                 <td class="text-center">
@@ -214,25 +204,80 @@
                                             </tr>
                                             @endforeach
                                         @else
-                                            @foreach ($track as $trac)
-                                            <tr>
-                                                <td>{{ $trac->no_po }}</td>
-                                                <td>{{ $trac->nama_pol }} - {{ $trac->nama_pod }}</td>
-                                                <td>{{ $trac->muat_curah ?? '0' }}</td>
-                                                <td>{{ $trac->muat_container ?? '0' }}</td>
-                                                <td>{{ $trac->muat_container + $trac->muat_curah }}</td>
-                                                <td>{{ ($trac->total_qty) - ($trac->muat_curah + $trac->muat_container)}}</td>
-                                                <td class="text-center"><span class="shadow-none badge badge-danger">{{ $trac->status == 1 ? 'Pending' : '' }}</span></td>
-                                                <td class="text-center">
-                                                    @if($trac->qty != 0)
-                                                        <a href="#detailcur" class="btn btn-outline-primary bs-tooltip me-2" data-bs-toggle="modal" data-placement="top" title="Add Curah">Curah</a>
-                                                    @endif                                            
-                                                    @if($trac->qty2 != 0)
-                                                        <a href="#detailcont" class="btn btn-outline-primary bs-tooltip me-2" data-bs-toggle="modal" data-placement="top" title="Add Container">Container</a>
+                                            @if($details==0 && $trackzero->count()==0)
+                                                @foreach ($trackzero as $tra)
+                                                <tr>
+                                                    <td>{{ $tra->no_po }}</td>
+                                                    <td>{{ $tra->nama_pol }} - {{ $tra->nama_pod }}</td>
+                                                    @if ($tra->qty_curah_track==null)
+                                                        <td>0</td>
+                                                    @else
+                                                        <td>{{ $tra->qty_curah_track }}</td>
                                                     @endif
-                                                </td>
-                                            </tr>
-                                            @endforeach
+                                                    @if ($tra->qty_curah_cont==null)
+                                                        <td>0</td>
+                                                    @else
+                                                        <td>{{ $tra->qty_curah_cont }}</td>
+                                                    @endif
+                                                    <td>{{ $tra->qty_curah_track + $tra->qty_curah_cont }}</td>
+                                                    @if($tra->qty_curah_cont==null && $tra->qty_curah_track==null)
+                                                        <td>{{ $tra->total_qty }}</td>
+                                                    @else
+                                                        <td>{{ $tra->qty_tonase_sisa }}</td>
+                                                    @endif
+                                                    <td class="text-center"><span class="shadow-none badge badge-danger">{{ $tra->status == 1 ? 'Pending' : '' }}</span></td>
+                                                    <td class="text-center">
+                                                        @if($tra->qty != 0)
+                                                            <a href="#detailcur" class="btn btn-outline-primary bs-tooltip me-2" data-bs-toggle="modal" data-placement="top" title="Add Curah">Curah</a>
+                                                        @endif                                            
+                                                        @if($tra->qty2 != 0)
+                                                            <a href="#detailcont" class="btn btn-outline-primary bs-tooltip me-2" data-bs-toggle="modal" data-placement="top" title="Add Container">Container</a>
+                                                        @endif
+                                                    </td>
+                                                </tr>
+                                                @endforeach
+                                            @elseif($details && $trackzero->count())
+                                                @foreach ($track as $trac)
+                                                <tr>
+                                                    <td>{{ $trac->no_po }}</td>
+                                                    <td>{{ $trac->nama_pol }} - {{ $trac->nama_pod }}</td>
+                                                    <td>{{ $trac->muat_curah ?? '0' }}</td>
+                                                    <td>{{ $trac->muat_container ?? '0' }}</td>
+                                                    <td>{{ $trac->muat_container + $trac->muat_curah }}</td>
+                                                    <td>{{ $trac->total_all_sisa }}</td>
+                                                    <td class="text-center"><span class="shadow-none badge badge-danger">{{ $trac->status == 1 ? 'Pending' : '' }}</span></td>
+                                                    <td class="text-center">
+                                                        @if($trac->qty != 0)
+                                                            <a href="#detailcur" class="btn btn-outline-primary bs-tooltip me-2" data-bs-toggle="modal" data-placement="top" title="Add Curah">Curah</a>
+                                                        @endif                                            
+                                                        @if($trac->qty2 != 0)
+                                                            <a href="#detailcont" class="btn btn-outline-primary bs-tooltip me-2" data-bs-toggle="modal" data-placement="top" title="Add Container">Container</a>
+                                                        @endif
+                                                    </td>
+                                                </tr>
+                                                @endforeach
+                                            @elseif($details==0 && $trackzero->count() > 0)
+                                                @foreach ($track as $trac)
+                                                <tr>
+                                                    <td>{{ $trac->no_po }}</td>
+                                                    <td>{{ $trac->nama_pol }} - {{ $trac->nama_pod }}</td>
+                                                    <td>{{ $trac->muat_curah ?? '0' }}</td>
+                                                    <td>{{ $trac->muat_container ?? '0' }}</td>
+                                                    <td>{{ $trac->muat_container + $trac->muat_curah }}</td>
+                                                    {{-- <td>{{ ($trac->qty_total_tonase)}}</td> --}}
+                                                    <td>{{ $trac->total_all_sisa }}</td>
+                                                    <td class="text-center"><span class="shadow-none badge badge-danger">{{ $trac->status == 1 ? 'Pending' : '' }}</span></td>
+                                                    <td class="text-center">
+                                                        @if($trac->qty != 0)
+                                                            <a href="#detailcur" class="btn btn-outline-primary bs-tooltip me-2" data-bs-toggle="modal" data-placement="top" title="Add Curah">Curah</a>
+                                                        @endif                                            
+                                                        @if($trac->qty2 != 0)
+                                                            <a href="#detailcont" class="btn btn-outline-primary bs-tooltip me-2" data-bs-toggle="modal" data-placement="top" title="Add Container">Container</a>
+                                                        @endif
+                                                    </td>
+                                                </tr>
+                                                @endforeach                                                
+                                            @endif
                                         @endif
                                     </tbody>
                                 </table>
@@ -305,9 +350,15 @@
                         {{-- @if ($lastcont) --}}
                         <form class="row g-3 needs-validation" action="{{ route('tracking.savecontainer') }}"  method="POST" enctype="multipart/form-data" novalidate>
                             @csrf
-                            @foreach ($trackzero as $tra)
-                                <input name="id_track" value="{{ $tra->id_track }}" type="hidden" class="form-control" id="validationCustom01" required>
-                            @endforeach
+                            @if($trackzero->count()==0)
+                                @foreach ($tracknull as $tra)
+                                    <input name="id_track" value="{{ $tra->id_track }}" type="hidden" class="form-control" id="validationCustom01" required>
+                                @endforeach
+                            @else
+                                @foreach ($trackzero as $tra)
+                                    <input name="id_track" value="{{ $tra->id_track }}" type="hidden" class="form-control" id="validationCustom01" required>
+                                @endforeach
+                            @endif
                             <div class="col-md-3">
                                 <label for="validationCustom04" class="form-label">Tanggal Muat</label>
                                 <div class="input-group has-validation">
@@ -459,13 +510,19 @@
                         <h5>Tambah Detail Tracking Kapal Curah</h5>
                         <form name="modal-tracking-ada" class="row g-3 needs-validation" action="{{ route('tracking.savecurah') }}"  method="POST" enctype="multipart/form-data" novalidate>
                             @csrf
-                            @foreach ($trackzero as $tra)
-                                <input name="id_track" value="{{ $tra->id_track }}" type="hidden" class="form-control" id="validationCustom01" required>
-                            @endforeach
+                            @if($trackzero->count()==0)
+                                @foreach ($tracknull as $tra)
+                                    <input name="id_track" value="{{ $tra->id_track }}" type="hidden" class="form-control" id="validationCustom01" required>
+                                @endforeach
+                            @else
+                                @foreach ($trackzero as $tra)
+                                    <input name="id_track" value="{{ $tra->id_track }}" type="hidden" class="form-control" id="validationCustom01" required>
+                                @endforeach
+                            @endif
                             <div class="col-lg-3 col-md-6 col-sm-12">
                                 <label for="validationCustom04" class="form-label">Tanggal Muat</label>
                                 <div class="input-group has-validation">
-                                    <input name="tgl_muat" id="basicFlatpickr" value="2022-09-04" class="form-control flatpickr flatpickr-input active" type="text" placeholder="Select Date..">
+                                    <input name="tgl_muat" id="td" value="2022-09-04" class="form-control flatpickr flatpickr-input active" type="date" placeholder="Select Date..">
                                 </div>
                             </div>
                             @if ($lastcurah)     
@@ -512,19 +569,32 @@
                                 <input name="nopol" type="text" class="form-control" id="validationCustom01" placeholder="Masukkan Nopol" required>
                             </div>                            
                             <div class="col-lg-3 col-md-6 col-sm-12">
-                                @if ($lastcurah)
-                                    @foreach ($getcurahqty as $tra)
-                                        <label for="validationMessage" class="form-label">Quantity Tonase </label>
-                                        <div class="input-group">
-                                            <input name="qty_tonase" id="qty_curah" type="number" step="any" min="0" class="form-control qty_curah" placeholder="QTY Tonase" required>
-                                            <span class="input-group-text" id="inputGroupPrepend">KG</span>
-                                        </div>
-                                        <span class="shadow-none badge badge-danger mt-2">Sisa: {{ $tra->qty_tonase_sisa }}</span><div class="validationMessage"></div>
-                                        <input name="qty_curah_total" id="qty_curah_total" value="{{ $tra->qty_tonase_sisa }}" type="text" step="any" min="0">
-                                        <input type="text" name="qty" id="qty_sisa_curah" step="any" min="0">
-                                        
-                                    @endforeach
-                                @elseif($lastcurah==0)
+                                @if ($details && $trackzero->count())
+                                    @if ($lastcurah)
+                                        @foreach ($getcurahqty as $tra)
+                                            <label for="validationMessage" class="form-label">Quantity Tonase </label>
+                                            <div class="input-group">
+                                                <input name="qty_tonase" id="qty_curah" type="number" step="any" min="0" class="form-control qty_curah" placeholder="QTY Tonase" required>
+                                                <span class="input-group-text" id="inputGroupPrepend">KG</span>
+                                            </div>
+                                            <span class="shadow-none badge badge-danger mt-2">Sisa: {{ $tra->qty_tonase_sisa }}</span><div class="validationMessage"></div>
+                                            <input name="qty_curah_total" id="qty_curah_total" value="{{ $tra->qty_tonase_sisa }}" type="hidden" step="any" min="0">
+                                            <input type="hidden" name="qty" id="qty_sisa_curah" step="any" min="0">
+                                        @endforeach
+                                    @else
+                                        @foreach ($zerocurah as $tra)
+                                            <label for="validationMessage" class="form-label">Quantity Tonase</label>
+                                            <div class="input-group">
+                                                <input name="qty_tonase" id="qty_curah" type="number" value="0" step="any" min="0" class="form-control qty_curah" placeholder="QTY Tonase" required>
+                                                <span class="input-group-text" id="inputGroupPrepend">KG</span>
+                                            </div>
+                                            <span class="shadow-none badge badge-danger mt-2">Sisa: {{ $tra->qty }}</span>
+                                            <input name="qty_curah_total" id="qty_curah_total" value="{{ $tra->qty }}" type="hidden" step="any" min="0">
+                                            <input name="qty_sisa_curah" id="qty_sisa_curah" value="0" type="hidden" step="any" min="0">
+                                            <div class="validationMessage"></div>
+                                        @endforeach
+                                    @endif                     
+                                @elseif($details==0 && $trackzero->count() == 0)
                                     @foreach ($zerocurah as $tra)
                                         <label for="validationMessage" class="form-label">Quantity Tonase</label>
                                         <div class="input-group">
@@ -532,10 +602,28 @@
                                             <span class="input-group-text" id="inputGroupPrepend">KG</span>
                                         </div>
                                         <span class="shadow-none badge badge-danger mt-2">Sisa: {{ $tra->qty }}</span>
-                                        <input name="qty_curah_total" id="qty_curah_total" value="{{ $tra->qty }}" type="text" step="any" min="0">
-                                        <input name="qty_sisa_curah" id="qty_sisa_curah" value="0" type="text" step="any" min="0">
+                                        <input name="qty_curah_total" id="qty_curah_total" value="{{ $tra->qty }}" type="hidden" step="any" min="0">
+                                        <input name="qty_sisa_curah" id="qty_sisa_curah" value="0" type="hidden" step="any" min="0">
                                         <div class="validationMessage"></div>
                                     @endforeach
+                                @elseif($details==0 && $trackzero->count() > 0)
+                                @foreach ($getcurahqty as $tra)
+                                    <label for="validationMessage" class="form-label">Quantity Tonase </label>
+                                    <div class="input-group">
+                                        <input name="qty_tonase" id="qty_curah" type="number" step="any" min="0" class="form-control qty_curah" placeholder="QTY Tonase" required>
+                                        <span class="input-group-text" id="inputGroupPrepend">KG</span>
+                                    </div>
+                                    <span class="shadow-none badge badge-danger mt-2">Sisa: {{ $tra->qty_tonase_sisa }}</span><div class="validationMessage"></div>
+                                    <input name="qty_curah_total" id="qty_curah_total" value="{{ $tra->qty_tonase_sisa }}" type="hidden" step="any" min="0">
+                                    <input type="hidden" name="qty" id="qty_sisa_curah" step="any" min="0">
+                                @endforeach                                
+                                {{-- @elseif($sisacurah>0)
+                                    @foreach($getcurahqty as $sc)
+                                        @if($sisacurah->where('id_track',$sc->id_track))    
+                                        <input type="text" name="" id="" value="{{ $sc->id_track }}">
+                                        <input type="text" name="" id="" value="{{ $sc->qty_tonase_sisa }}">
+                                        @endif
+                                    @endforeach --}}
                                 @endif
                             </div>
                             <div class="col-lg-3 col-md-6 col-sm-12">
@@ -693,6 +781,9 @@
                 defaultDate: new Date()
             });
             var f4 = flatpickr(document.getElementById('eta'), {
+                defaultDate: new Date()
+            });
+            var f5 = flatpickr(document.getElementById('tgl_curah'), {
                 defaultDate: new Date()
             });
         </script>

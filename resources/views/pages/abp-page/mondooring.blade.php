@@ -111,7 +111,7 @@
                                             <td>{{ $md->docDooring->docTracking->detailTracking->td }}</td>
                                             <td class="text-center">{!! $md->status == 1 ? '<span class="shadow-none badge badge-success">Proses Muat</span>' : ($md->status == 2 ? '<span class="shadow-none badge badge-warning">Selesai Muat</span>' : '') !!}</td>
                                         </tr>
-                                        @endforeach                                                                    --}}
+                                        @endforeach
                                     </tbody>
                                 </table>
                             </div>

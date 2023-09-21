@@ -52,10 +52,18 @@ class DooringController extends Controller
                 ->join('pt_penerima', 'pt_penerima.id_pt_penerima', '=', 'penerimas.id_pt_penerima')
                 ->join('barangs', 'purchase_orders.id', '=', 'barangs.id')
                 ->whereIn('doc_tracking.status', [2, 3])
+                ->whereNotNull('detail_tracking.ta')
                 ->groupBy('doc_tracking.no_po')
                 ->get();
         $track = DocDooring::select('*', 'doc_dooring.status', 'doc_dooring.id_dooring','detail_dooring.qty_tonase'
                 ,'detail_dooring_sisa.tipe','detail_dooring_sisa.qty_tonase_sisa')
+                ->selectSub(function ($query) {
+                    $query->selectRaw('SUM(qty_tonase_sisa)')
+                        ->from('detail_dooring_sisa')
+                        ->whereColumn('detail_dooring_sisa.id_dooring', 'doc_dooring.id_dooring')
+                        // ->where('detail_tracking_sisa.status',1)
+                        ->groupBy('detail_dooring_sisa.id_dooring');
+                }, 'total_all_sisa')                
                 ->selectSub(function ($query) {
                     $query->selectRaw('SUM(qty_tonase)')
                         ->from('detail_dooring')
@@ -67,14 +75,14 @@ class DooringController extends Controller
                     $query->selectRaw('SUM(qty_tonase)')
                         ->from('detail_tracking')
                         ->whereColumn('detail_tracking.id_track', 'doc_tracking.id_track')
-                        ->where('status',[2,3])
+                        ->whereIn('status',[1,2,3])
                         ->groupBy('detail_tracking.id_track');
                 }, 'total_tonase_track')                
                 ->selectSub(function ($query) {
                     $query->selectRaw('SUM(qty_tonase)')
                         ->from('detail_tracking')
                         ->whereColumn('detail_tracking.id_track', 'doc_tracking.id_track')
-                        ->where('detail_tracking.status', [2,3])
+                        ->whereIn('detail_tracking.status', [1,2,3])
                         ->whereNull('no_container')
                         ->groupBy('detail_tracking.id_track');
                 }, 'muat_curah_track')
@@ -82,7 +90,7 @@ class DooringController extends Controller
                     $query->selectRaw('SUM(qty_tonase)')
                         ->from('detail_tracking')
                         ->whereColumn('detail_tracking.id_track', 'doc_tracking.id_track')
-                        ->where('detail_tracking.status', [2,3])
+                        ->whereIn('detail_tracking.status', [1,2,3])
                         ->whereNotNull('no_container')
                         ->groupBy('detail_tracking.id_track');
                 }, 'muat_container_track')
@@ -97,6 +105,40 @@ class DooringController extends Controller
                 ->groupBy('doc_dooring.id_dooring')
                 ->orderBy('doc_dooring.id_dooring', 'desc')
                 ->get();
+        $doornull = DocDooring::select('*', 'doc_dooring.status', 'doc_dooring.id_dooring')
+                    ->selectSub(function ($query) {
+                        $query->selectRaw('SUM(qty_tonase)')
+                            ->from('detail_tracking')
+                            ->whereColumn('detail_tracking.id_track', 'doc_tracking.id_track')
+                            ->where('status',[2,3])
+                            ->groupBy('detail_tracking.id_track');
+                    }, 'total_tonase_track')
+                    ->selectSub(function ($query) {
+                        $query->selectRaw('SUM(qty_tonase)')
+                            ->from('detail_tracking')
+                            ->whereColumn('detail_tracking.id_track', 'doc_tracking.id_track')
+                            ->where('status',[2,3])
+                            ->whereNull('no_container')
+                            ->groupBy('detail_tracking.id_track');
+                    }, 'qty_curah_track')
+                    ->selectSub(function ($query) {
+                        $query->selectRaw('SUM(qty_tonase)')
+                            ->from('detail_tracking')
+                            ->whereColumn('detail_tracking.id_track', 'doc_tracking.id_track')
+                            ->where('status',[2,3])
+                            ->whereNotNull('no_container')
+                            ->groupBy('detail_tracking.id_track');
+                    }, 'qty_curah_cont')
+                    ->join('doc_tracking','doc_tracking.id_track','=','doc_dooring.id_track')
+                    ->join('detail_tracking', 'detail_tracking.id_track', '=', 'doc_dooring.id_track')
+                    ->join('port_of_loading', 'port_of_loading.id', '=', 'doc_tracking.id_pol')
+                    ->join('port_of_destination', 'port_of_destination.id', '=', 'doc_tracking.id_pod')
+                    ->join('purchase_orders', 'purchase_orders.po_muat', '=', 'doc_tracking.no_po')
+                    ->where('doc_dooring.status', 1)
+                    // ->where('detail_tracking.status', [2,3])
+                    ->groupBy('doc_dooring.id_dooring')
+                    ->orderBy('doc_dooring.id_dooring', 'desc')
+                    ->get();
         $doorzero = DocDooring::select('*', 'doc_dooring.status', 'doc_dooring.id_dooring')
                     ->selectSub(function ($query) {
                         $query->selectRaw('SUM(qty_tonase)')
@@ -259,11 +301,12 @@ class DooringController extends Controller
             'detailDooring.docDooring.docTracking.portOfDestination',
         ])
         ->get();
+        // dd ($monitoringDooring);
         // return response()->json($monitoringDooring);
         return view('pages.abp-page.dor', 
             compact('title', 'breadcrumb','po','details','getcurahqty','getcontqty','track','doorzero','dtrack',
                 'lastcont','lastcurah', 'lastcontainer','zerocurah', 'zeroContainer','gudang','pol','pod','kapal','estate'
-                ,'docDooring', 'monitoringDooring'
+                ,'docDooring', 'monitoringDooring','doornull'
             )
         );
     }
@@ -275,8 +318,8 @@ class DooringController extends Controller
                 ->where('kapals.status', 1)
                 ->whereIn('detail_tracking.status',[2,3])
                 ->where('detail_tracking.id_track',$id)
-                ->whereNotNull('detail_tracking.no_container');
-                // ->groupBy('detail_tracking.id_kapal');
+                ->whereNotNull('detail_tracking.no_container')
+                ->groupBy('detail_tracking.no_container');
         $getdata = $kapal->get();
         return response()->json($getdata);
     }
@@ -338,15 +381,11 @@ class DooringController extends Controller
     }    
 
     public function savecurah(Request $request){
-        // dd([
-        //     'request' => $request->all(),
-        // ]);
-        
         $request->validate([
             'file_notiket' => 'required|mimes:jpeg,png,pdf|max:2048',
         ]);
         
-        $file1 = $request->file('file_notiket'); // Change variable name to $file1
+        $file1 = $request->file('file_notiket'); 
         $fileName1 = time() . '_' . $file1->getClientOriginalName();
         
         Storage::disk('public')->putFileAs('uploads/dooring', $file1, $fileName1);
@@ -366,6 +405,7 @@ class DooringController extends Controller
             'tgl_muat'=>$request->tgl_brkt,
             'tgl_tiba'=>$request->tgl_tiba,
             'nopol'     => $request->nopol,
+            'estate'=> $request->estate,
             'qty_tonase'     => $request->qty_tonase,
             'qty_timbang'     => $request->qty_timbang,
             'jml_sak'     => $request->sak,
@@ -379,7 +419,7 @@ class DooringController extends Controller
             'status'=> 1
         ]);
 
-        $c = $request->qty_sisa_curah;
+        $c = $request->qty_sisa_curah2;
         $b = $request->qty;            
         if ($c !== $b) {
             DetailDooringSisa::where('id_dooring', $request->id_door)
@@ -399,8 +439,7 @@ class DooringController extends Controller
         return redirect()->back();
     }
 
-    public function savecontainer(Request $request)
-    {
+    public function savecontainer(Request $request){
         $request->validate([
             'file_notiket' => 'required|mimes:jpeg,png,pdf|max:2048',
             'file_surat_jalan' => 'required|mimes:jpeg,png,pdf|max:2048',
@@ -417,9 +456,11 @@ class DooringController extends Controller
 
         DetailDooring::create([
             'id_dooring'    => $request->id_door, 
+            'id_kapal'=>$request->id_kpl, 
             'tgl_muat'      => $request->tgl_brkt,
             'tgl_tiba'      => $request->tgl_tiba,
             'nopol'         => $request->nopol,
+            'estate'=> $request->estate,            
             'qty_tonase'    => $request->qty_tonase,
             'qty_timbang'   => $request->qty_timbang,
             'jml_sak'       => $request->simb,
@@ -433,10 +474,15 @@ class DooringController extends Controller
             'status'        => 1
         ]);
 
-        $c = $request->qty_sisa_container;
+        $c = $request->qty_sisa_container2;
         $b = $request->qty;
 
         if ($c !== $b) {
+            DetailDooringSisa::where('id_dooring', $request->id_door)
+            ->where('tipe','Container')->update([
+                'qty_tonase_sisa' => $request->qty,
+            ]);
+        } else if($c === $b){
             DetailDooringSisa::create([
                 'id_dooring'        => $request->id_door,
                 'qty_tonase_sisa'   => $request->qty_sisa_container,
@@ -444,13 +490,29 @@ class DooringController extends Controller
                 'status'            => 1,
                 'tipe'              => 'Container'
             ]);
-        } else if($c === $b){
-            DetailDooringSisa::where('id_dooring', $request->id_door)
-            ->where('tipe','Container')->update([
-                'qty_tonase_sisa' => $request->qty,
-            ]);
         }
 
         return redirect()->back();
     }
+
+    public function destroy(Request $request, $id) {
+        // $idtracking = DetailTrackingSisa::select('qty_tonase_sisa')->where('id_track',$id)->get();
+        $qty_sisa = $request->qty_sisa_simpan;
+        if ($qty_sisa > 0) {
+            DocDooring::where('id_dooring', $id)->update([
+                'status' => '2'
+            ]);
+            DetailDooring::where('id_dooring', $id)->update([
+                'status' => '2'
+            ]);
+        }else if($qty_sisa == 0){
+            DocDooring::where('id_dooring', $id)->update([
+                'status' => '3'
+            ]);
+            DetailDooring::where('id_dooring', $id)->update([
+                'status' => '3'
+            ]);
+        }
+        return redirect()->back();
+    }   
 }

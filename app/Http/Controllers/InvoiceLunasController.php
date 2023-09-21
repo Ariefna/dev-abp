@@ -13,9 +13,11 @@ use App\Models\Barang;
 use App\Models\PurchaseOrder;
 use App\Models\PtPenerima;
 use App\Models\DocTracking;
+use App\Models\DocDooring;
 use App\Models\DetailTracking;
 use App\Models\DetailTrackingSisa;
 use App\Models\InvoiceDP;
+use App\Models\InvoicePelunasan;
 use App\Models\Bank;
 use App\Http\Controllers\DB;
 use Illuminate\Http\Request;
@@ -36,9 +38,10 @@ class InvoiceLunasController extends Controller
                 ->get();
         $bank = Bank::where('status','=','1')
                 ->get();
-        $invdp = InvoiceDP::select('*')
-                ->join('doc_tracking','doc_tracking.id_track','=','invoice_dp.id_track')
-                ->where('invoice_dp.status','=','1')
+        $invdp = InvoicePelunasan::select('*','doc_tracking.no_po')
+                ->join('doc_dooring','doc_dooring.id_dooring','=','invoice_pelunasan.id_dooring')
+                ->join('doc_tracking','doc_tracking.id_track','=','doc_dooring.id_track')
+                ->where('invoice_pelunasan.status','=','1')
                 ->get();
         // $totalmuat = DocTracking::select('*','doc_tracking.id_track', 'doc_tracking.no_po')
         //         ->selectRaw('SUM(detail_tracking.qty_tonase) as total_muat')
@@ -89,17 +92,36 @@ class InvoiceLunasController extends Controller
     }
 
     public function store(Request $request) {
-        InvoiceDP::create([
-            'id_bank'     => $request->cb_bank,
-            'id_track'     => $request->cb_po,
-            'invoice_date'     => $request->tgl_inv_dp,
-            'invoice_no' => $request->invoice_no,
-            'tipe_job' => $request->cb_tipe,
-            'rinci_tipe'=>$request->cb_rinci,
-            'terms' => $request->terms,
-            'total_invoice' => 0,
-            'status' => '1'
-        ]);
+        $id_doc_tracking = $request->get('cb_po');
+        $DocDooring = DocDooring::with(
+            'invoiceDp',
+            'invoiceDp.detailInvoiceDp',
+        )
+        ->where('id_track', $id_doc_tracking)
+        ->firstOrFail();
+
+        $lastInvoiceDp = $DocDooring->invoiceDp->SortByDesc('id_invoice_dp')->first()->invoice_no;
+        $getCount = (int)explode('-', $lastInvoiceDp)[1];
+        $nextInvoiceNo = explode('-', $lastInvoiceDp)[0].'-'.$getCount + 1;
+
+        foreach ($DocDooring->invoiceDp as $key => $invoiceDp) {
+            $data = [
+                'id_invoice_dp' => $DocDooring->invoiceDp[$key]->id_invoice_dp,
+                'id_bank' => $DocDooring->invoiceDp[$key]->id_bank,
+                'id_dooring' => $DocDooring->id_dooring,
+                'invoice_date' => $DocDooring->invoiceDp[$key]->invoice_date,
+                'invoice_no' => $nextInvoiceNo,
+                'tipe_job' => $DocDooring->invoiceDp[$key]->tipe_job,
+                'rinci_tipe' => $DocDooring->invoiceDp[$key]->rinci_tipe,
+                'terms' => $DocDooring->invoiceDp[$key]->terms,
+                'total_invoice' => $DocDooring->invoiceDp[$key]->total_invoice,
+                'status' => 1,
+                // 'status' => $DocDooring->invoiceDp[$key]->status,
+            ];
+
+            InvoicePelunasan::create($data);
+        }
+
         return redirect()->back();
     }
 }

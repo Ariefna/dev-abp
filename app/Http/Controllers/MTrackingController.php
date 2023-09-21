@@ -50,7 +50,7 @@ class MTrackingController extends Controller
                 'gudang_muats.nama_gudang', 'barangs.nama_barang','purchase_orders.no_pl', 'detail_tracking.tgl_muat',
                 'purchase_orders.po_kebun','detail_tracking.qty_tonase', 'detail_tracking.qty_timbang','detail_tracking.jml_sak',
                 'detail_tracking.nopol','detail_tracking.no_container','detail_tracking.voyage','detail_tracking.td','detail_tracking.td_jkt',
-                'detail_tracking.ta','customers.nama_customer','doc_tracking.status_kapal')
+                'detail_tracking.ta','customers.nama_customer','doc_tracking.status_kapal','doc_tracking.id_track')
                 ->join('detail_tracking','detail_tracking.id_track','=','doc_tracking.id_track')
                 ->join('gudang_muats', 'gudang_muats.id_gudang', '=', 'detail_tracking.id_gudang')
                 ->join('purchase_orders', 'purchase_orders.po_muat', '=', 'doc_tracking.no_po')
@@ -69,4 +69,15 @@ class MTrackingController extends Controller
         $breadcrumb = 'This Breadcrumb';
         return view('pages.abp-page.montracking', compact('title', 'breadcrumb','tbl_po',));
     }
+
+    public function update(Request $request) {
+        DetailTracking::where('id_track',$request->cb_po)
+        ->update([
+            'td' => $request->td,
+            'td_jkt' => $request->td_jkt,
+            'ta' => $request->ta
+        ]);
+        return redirect()->back();
+    }
+    
 }

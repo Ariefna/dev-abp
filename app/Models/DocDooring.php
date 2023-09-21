@@ -21,4 +21,8 @@ class DocDooring extends Model
     {
         return $this->hasOne(DocTracking::class,'id_track','id_track');
     }
+    public function invoiceDp()
+    {
+        return $this->hasMany(InvoiceDp::class,'id_track','id_track');
+    }
 }

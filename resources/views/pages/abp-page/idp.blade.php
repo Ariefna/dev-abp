@@ -180,7 +180,7 @@
                                                 <a href="#modalIDPcur-{{ $tdp->id_track }}" class="btn btn-outline-primary bs-tooltip me-2" data-bs-toggle="modal" data-placement="top" title="Invoice Curah">Curah</a>
                                                 <a href="#modalIDPcont-{{ $tdp->id_track }}" class="btn btn-outline-primary bs-tooltip me-2" data-bs-toggle="modal" data-placement="top" title="Invoice Container">Container</a>
                                                 {!! $tdp->status == 1 ? '<a href="'. route('invoice-dp.approve', ['id_invoice_dp' => $tdp->id_invoice_dp]) .'" class="btn btn-outline-primary bs-tooltip me-2" id="approve-link" data-bs-toggle="tooltip" data-bs-placement="top" title="Approve" data-original-title="Approve">Approve</a>' : ($tdp->status == 2 ? '':'') !!}
-                                                {!! $tdp->status == 2 ? '<a href="javascript:void(0);" class="btn btn-outline-primary bs-tooltip me-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Print" data-original-title="Print">Print</a>' : ($tdp->status == 1 ? '':'') !!}
+                                                {!! $tdp->status == 2 ? '<a href="'. route('invoice-dp.print',['id_invoice_dp'=>$tdp->id_invoice_dp]).'" class="btn btn-outline-primary bs-tooltip me-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Print" data-original-title="Print">Print</a>' : ($tdp->status == 1 ? '':'') !!}
                                                 {{-- <a href="#modalInvDP-{{ $tdp->id_track }}" class="bs-tooltip"  data-bs-toggle="modal" data-bs-placement="top" title="Tambah Detail" data-original-title="Tambah Detail"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus-circle"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg></a>
                                                 {!! $tdp->status == 1 ? '<a href="'. route('invoice-dp.approve', ['id_invoice_dp' => $tdp->id_invoice_dp]) .'" id="approve-link" class="bs-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Approve" data-original-title="Approve"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check"><polyline points="20 6 9 17 4 12"></polyline></svg></a>' : ($tdp->status == 2 ? '':'') !!}
                                                 <a href="javascript:void(0);" class="bs-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Print" data-original-title="Print"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-printer"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg></a> --}}
@@ -205,8 +205,8 @@
                         <div class="modal-body">
                             <form name="modal-detail" class="row g-3 needs-validation" action="{{ route('invoice-dp.savecurahidp') }}"  method="POST" enctype="multipart/form-data" novalidate>
                                 @csrf
-                                <input type="text" name="id_track_i" id="id_track_i" value="{{ $tdp->id_track }}">
-                                <input type="text" name="id_invdp" id="id_invdp" value="{{ $tdp->id_invoice_dp }}">
+                                <input type="hidden" name="id_track_i" id="id_track_i" value="{{ $tdp->id_track }}">
+                                <input type="hidden" name="id_invdp" id="id_invdp" value="{{ $tdp->id_invoice_dp }}">
                                 <div class="col-md-3">
                                     <label for="validationCustom04" class="form-label">PO Muat</label>
                                     <select class="form-select cb_bypo" name="cb_bypo" required>
@@ -215,6 +215,7 @@
                                             <option value="{{ $gv->no_po }}({{ $gv->formatted_tgl_muat }})">{{ $gv->no_po }}({{ $gv->formatted_tgl_muat }})</option>
                                         @endforeach
                                     </select>
+                                    <input type="hidden" name="tgl_muat" id="tgl_muat">
                                     <div class="invalid-feedback">
                                         Pilih PO Muat
                                     </div>
@@ -237,8 +238,9 @@
                                     <label for="notAllowCont" class="form-label">Total Harga</label>
                                     <div class="input-group">
                                         <span class="input-group-text" id="inputGroupPrepend">Rp</span>
-                                        <input name="total_harga" min="0" id="total_harga" type="text" class="form-control total_harga" readonly required>
+                                        <input name="total_harga" min="0" id="total_harga" type="text" class="form-control total_harga" required>
                                     </div>     
+                                    <input type="hidden" name="sub_total" class="sub_total" value="{{ $subtotal->where('id_track', $tdp->id_track)->first()?->sub ?? 0 }}">
                                 </div>                                
                                 <div class="col-md-2">
                                     <label for="validationCustom01" class="form-label">Prosentase DP</label>
@@ -321,21 +323,26 @@
                 </div>
             </div>
         </div>
-        {{-- <div class="modal fade bd-example-modal-xl" id="modalIDPcont-{{ $tdp->id_track }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal fade bd-example-modal-xl" id="modalIDPcont-{{ $tdp->id_track }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-xl" role="document">
                 <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="modalIDPcont">Tambah Detail Invoice DP Kapal Container</h5>
                         </div>
                         <div class="modal-body">
-                            <form name="modal-tracking-ada" class="row g-3 needs-validation" action=""  method="POST" enctype="multipart/form-data" novalidate>
+                            <form name="modal-tracking-ada" class="row g-3 needs-validation" action="{{ route('invoice-dp.savecontaineridp') }}"  method="POST" enctype="multipart/form-data" novalidate>
                                 @csrf
                                 <input type="hidden" name="id_track_i" id="id_track_i" value="{{ $tdp->id_track }}">
+                                <input type="hidden" name="id_invdp" id="id_invdp" value="{{ $tdp->id_invoice_dp }}">
                                 <div class="col-md-3">
                                     <label for="validationCustom04" class="form-label">PO Muat</label>
-                                    <select class="form-select" name="cb_bypocont" id="cb_bypocont" required>
+                                    <select class="form-select cb_bypocont" name="cb_bypocont" id="cb_bypocont" required>
                                         <option selected disabled value="">Pilih...</option>
+                                        @foreach($getvalcont->where('no_po',$tdp->no_po) as $gvc)
+                                            <option value="{{ $gvc->no_po }}({{ $gvc->formatted_tgl_muat }})">{{ $gvc->no_po }}({{ $gvc->formatted_tgl_muat }})</option>
+                                        @endforeach
                                     </select>
+                                    <input type="hidden" name="tgl_muatcont" id="tgl_muatcont">
                                     <div class="invalid-feedback">
                                         Pilih PO Muat
                                     </div>
@@ -343,7 +350,7 @@
                                 <div class="col-md-3">
                                     <label for="notAllowCont" class="form-label">Total Tonase by Date</label>
                                     <div class="input-group">
-                                        <input name="ttdbcont" step="any" min="0" id="ttdbcont" type="number" class="form-control qty_cont" required>
+                                        <input readonly name="ttdbcont" step="any" min="0" id="ttdbcont" type="number" class="form-control ttdbcont" required>
                                         <span class="input-group-text" id="inputGroupPrepend">KG</span>
                                     </div>     
                                 </div>
@@ -351,21 +358,21 @@
                                     <label for="notAllowCont" class="form-label">Harga Freight</label>
                                     <div class="input-group">
                                         <span class="input-group-text" id="inputGroupPrepend">Rp</span>
-                                        <input name="hrg_freightcont" step="any" min="0" id="hrg_freightcont" type="number" class="form-control qty_cont" required>
+                                        <input readonly name="hrg_freightcont" step="any" min="0" id="hrg_freightcont" type="text" class="form-control hrg_freightcont" required>
                                     </div>     
                                 </div>                                
                                 <div class="col-md-3">
                                     <label for="notAllowCont" class="form-label">Total Harga</label>
                                     <div class="input-group">
                                         <span class="input-group-text" id="inputGroupPrepend">Rp</span>
-                                        <input name="total_hargacont" min="0" id="total_hargacont" type="text" class="form-control" required>
+                                        <input readonly name="total_hargacont" min="0" id="total_hargacont" type="text" class="form-control total_hargacont" required>
                                     </div>     
                                 </div>                                
                                 <div class="col-md-2">
                                     <label for="validationCustom01" class="form-label">Prosentase DP</label>
                                     <div class="input-group">
                                         <span class="input-group-text" id="inputGroupPrepend">%</span>
-                                        <input name="prodp" step="any" min="0" max="100" id="prodp" type="number" class="form-control qty_cont" required>
+                                        <input name="prodpcont" step="any" min="0" max="100" id="prodpcont" type="number" class="form-control prodpcont" required>
                                     </div>     
                                     <div class="invalid-feedback">
                                         Masukkan prosentase dengan benar
@@ -375,30 +382,30 @@
                                     <label for="notAllowCont" class="form-label">Total DP</label>
                                     <div class="input-group">
                                         <span class="input-group-text" id="inputGroupPrepend">Rp</span>
-                                        <input name="todp" min="0" id="todp" type="text" class="form-control qty_cont" required>
+                                        <input name="todpcont" min="0" id="todpcont" type="text" class="form-control todpcont" required>
                                     </div>     
                                 </div>
                                 <div class="col-md-2">
                                     <label for="notAllowCont" class="form-label">Prosentase PPn</label>
                                     <div class="input-group">
                                         <span class="input-group-text" id="inputGroupPrepend">%</span>
-                                        <input name="proppn" step="any" min="0" max="100" id="proppn" type="number" class="form-control qty_cont" required>
+                                        <input name="proppncont" step="any" min="0" max="100" id="proppncont" type="number" class="form-control proppncont" required>
                                     </div>     
                                 </div>
                                 <div class="col-md-4">
                                     <label for="notAllowCont" class="form-label">Total PPn</label>
                                     <div class="input-group">
                                         <span class="input-group-text" id="inputGroupPrepend">Rp</span>
-                                        <input name="toppn" min="0" id="toppn" type="text" class="form-control qty_cont" required>
+                                        <input name="toppncont" min="0" id="toppncont" type="text" class="form-control toppncont" required>
                                     </div>     
                                 </div>
                                 <div class="modal-footer justify-content-center">
                                     <button id ="btn-modal-curah" type="submit" class="btn btn-primary">Tambah</button>
-                                    <button type="button" class="btn btn btn-light-dark" data-bs-dismiss="modal"><i class="flaticon-cancel-12"></i>Batal</button>
+                                    <button type="button" id="btn-batal" class="btn btn btn-light-dark btn-batal" data-bs-dismiss="modal"><i class="flaticon-cancel-12"></i>Batal</button>
                                 </div>
                             </form>
                         </div>
-                        <div id="basic" class="col-lg-12 col-sm-12 col-12 layout-spacing mx-auto">
+                        {{-- <div id="basic" class="col-lg-12 col-sm-12 col-12 layout-spacing mx-auto">
                             <div class="statbox widget box box-shadow">
                                 <div class="widget-header">                                
                                     <div class="row">
@@ -438,10 +445,10 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
                 </div>
             </div>
-        </div> --}}
+        </div>
         @endforeach     
     </div>            
 
@@ -494,14 +501,25 @@
                         $('.prodp').val('0');  
                         $('.todp').val('0');  
                         $('.proppn').val('0');  
-                        $('.toppn').val('0');  
+                        $('.toppn').val('0');
+                        $('.cb_bypo').val('');
+
+                        $('.cb_bypocont option[value=""]').prop('selected', true);
+                        $('.ttdbcont').val('0');         
+                        $('.hrg_freightcont').val('0');  
+                        $('.total_hargacont').val('0');  
+                        $('.prodpcont').val('0');  
+                        $('.todpcont').val('0');  
+                        $('.proppncont').val('0');  
+                        $('.toppncont').val('0');
+                        $('.cb_bypocont').val('');
                     });
-                    $('input[name="prodp"]').on('click', function() {
+                    $('input[name="prodp"], input[name="prodpcont"]').on('click', function() {
                         if($(this).val() === '0'){
                             $(this).val('');
                         }
                     });
-                    $('input[name="proppn"]').on('click', function() {
+                    $('input[name="proppn"], input[name="proppncont"]').on('click', function() {
                         if($(this).val() === '0'){
                             $(this).val('');
                         }
@@ -529,10 +547,12 @@
                                     console.log(response);
                                     $("#ttdb").empty();
                                     $("#hrg_freight").empty();
+                                    $('#tgl_muat').empty();
                                     if (response.length > 0) {
                                         for (var i=0; i<response.length; i++) {
                                             $('input[name=ttdb]').val(response[i].total_muat);
                                             $('input[name=hrg_freight]').val(formatter.format(response[i].oa_kpl_kayu).replace('Rp', ''));
+                                            $('input[name=tgl_muat]').val(response[i].tgl_muat)
                                             var hrg_freight = response[i].oa_kpl_kayu;
                                             var total_tonase = response[i].total_muat;
                                             var total = hrg_freight * total_tonase;
@@ -555,16 +575,72 @@
                             $('#hrg_freight').val('');
                         }
                     });
+                    $('.cb_bypocont').change(function() {
+                        var selectedId = $(this).val();
+                        var url = "{{ route('getDetailPOCont', [':id_track']) }}"
+                                .replace(':id_track', selectedId);
+                        if (selectedId !== '') {
+                            $.ajax({
+                                url: url,
+                                type: 'GET',
+                                dataType: 'json',
+                                success: function(response) {
+                                    var data = response[0];
+                                    console.log(response);
+                                    $("#ttdbcont").empty();
+                                    $("#hrg_freightcont").empty();
+                                    $('#tgl_muatcont').empty();
+                                    if (response.length > 0) {
+                                        for (var i=0; i<response.length; i++) {
+                                            $('input[name=ttdbcont]').val(response[i].total_muat);
+                                            $('input[name=hrg_freightcont]').val(formatter.format(response[i].oa_container).replace('Rp', ''));
+                                            $('input[name=tgl_muatcont]').val(response[i].tgl_muat)
+                                            var hrg_freight = response[i].oa_container;
+                                            var total_tonase = response[i].total_muat;
+                                            var total = hrg_freight * total_tonase;
+                                            $('input[name=total_hargacont]').val(formatter.format(total).replace('Rp', ''));
+                                            console.log(total_tonase);
+                                            console.log(hrg_freight);
+                                            console.log(total);
+                                            console.log(response);
+                                        }
+                                    }else{
+                                        console.log("no data");
+                                    }
+                                },
+                                error: function(xhr, status, error) {
+                                    console.log("AJAX Error: " + error);
+                                }
+                            });
+                        } else {
+                            $('#ttdbcont').val('');
+                            $('#hrg_freightcont').val('');
+                            $('#tgl_muatcont').val('');
+                        }
+                    });
                     $('.prodp, .proppn').on('input', function () {
                         var modal = $(this).closest('.modal');
                         var prodp = parseFloat(modal.find('.prodp').val()) || 0;
                         var proppn = parseFloat(modal.find('.proppn').val()) || 0;
                         var total_harga = parseFloat(modal.find('.total_harga').val().replace(/\D/g, '')) || 0;
+                        var subtotal = $('.sub_total').val();
                         var total_dp = (total_harga * prodp) / 100;
                         var total_ppn = (total_harga * proppn) / 100;
 
                         modal.find('.todp').val(formatter.format(total_dp).replace('Rp', ''));
                         modal.find('.toppn').val(formatter.format(total_ppn).replace('Rp', ''));
+                    });
+                    $('.prodpcont, .proppncont').on('input', function () {
+                        var modal = $(this).closest('.modal');
+                        var prodp = parseFloat(modal.find('.prodpcont').val()) || 0;
+                        var proppn = parseFloat(modal.find('.proppncont').val()) || 0;
+                        var total_harga = parseFloat(modal.find('.total_hargacont').val().replace(/\D/g, '')) || 0;
+                        var subtotal = $('.sub_totalcont').val();
+                        var total_dp = (total_harga * prodp) / 100;
+                        var total_ppn = (total_harga * proppn) / 100;
+
+                        modal.find('.todpcont').val(formatter.format(total_dp).replace('Rp', ''));
+                        modal.find('.toppncont').val(formatter.format(total_ppn).replace('Rp', ''));
                     });
 
                     // function updateValues() {

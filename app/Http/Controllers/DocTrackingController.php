@@ -49,13 +49,14 @@ class DocTrackingController extends Controller
                     $query->selectRaw('SUM(qty_tonase_sisa)')
                         ->from('detail_tracking_sisa')
                         ->whereColumn('detail_tracking_sisa.id_track', 'doc_tracking.id_track')
+                        // ->where('detail_tracking_sisa.status',1)
                         ->groupBy('detail_tracking.id_track');
                 }, 'total_all_sisa')
                 ->selectSub(function ($query) {
                     $query->selectRaw('SUM(qty_tonase)')
                         ->from('detail_tracking')
                         ->whereColumn('detail_tracking.id_track', 'doc_tracking.id_track')
-                        ->where('detail_tracking.status', 1)
+                        ->whereIn('detail_tracking.status', [1, 2, 3])
                         ->whereNull('no_container')
                         ->groupBy('detail_tracking.id_track');
                 }, 'muat_curah')
@@ -63,7 +64,7 @@ class DocTrackingController extends Controller
                     $query->selectRaw('SUM(qty_tonase)')
                         ->from('detail_tracking')
                         ->whereColumn('detail_tracking.id_track', 'doc_tracking.id_track')
-                        ->where('detail_tracking.status', 1)
+                        ->whereIn('detail_tracking.status', [1,2,3])
                         ->whereNotNull('no_container')
                         ->groupBy('detail_tracking.id_track');
                 }, 'muat_container')
@@ -102,6 +103,14 @@ class DocTrackingController extends Controller
                     ->groupBy('doc_tracking.id_track')
                     ->orderBy('doc_tracking.id_track', 'desc')
                     ->get();
+        $tracknull = DocTracking::select('*', 'doc_tracking.status', 'doc_tracking.id_track')
+                    ->join('port_of_loading', 'port_of_loading.id', '=', 'doc_tracking.id_pol')
+                    ->join('port_of_destination', 'port_of_destination.id', '=', 'doc_tracking.id_pod')
+                    ->join('purchase_orders', 'purchase_orders.po_muat', '=', 'doc_tracking.no_po')
+                    ->where('doc_tracking.status', 1)
+                    ->groupBy('doc_tracking.id_track')
+                    ->orderBy('doc_tracking.id_track', 'desc')
+                    ->get();
         $getcurahqty = DocTracking::select('*', 'doc_tracking.status', 'doc_tracking.id_track')
                     ->join('port_of_loading', 'port_of_loading.id', '=', 'doc_tracking.id_pol')
                     ->join('port_of_destination', 'port_of_destination.id', '=', 'doc_tracking.id_pod')
@@ -125,12 +134,12 @@ class DocTrackingController extends Controller
                     ->orderBy('doc_tracking.id_track', 'desc')
                     ->get();                    
         $details = DocTracking::select('*', 'doc_tracking.status', 'doc_tracking.id_track')
-                ->selectSub(function ($query) {
-                    $query->selectRaw('SUM(qty_tonase)')
-                        ->from('detail_tracking')
-                        ->whereColumn('detail_tracking.id_track', 'doc_tracking.id_track')
-                        ->groupBy('detail_tracking.id_track');
-                }, 'total_qty_tonase')
+                // ->selectSub(function ($query) {
+                //     $query->selectRaw('SUM(qty_tonase)')
+                //         ->from('detail_tracking')
+                //         ->whereColumn('detail_tracking.id_track', 'doc_tracking.id_track')
+                //         ->groupBy('detail_tracking.id_track');
+                // }, 'total_qty_tonase')
                 ->join('port_of_loading', 'port_of_loading.id', '=', 'doc_tracking.id_pol')
                 ->join('port_of_destination', 'port_of_destination.id', '=', 'doc_tracking.id_pod')
                 ->join('purchase_orders', 'purchase_orders.po_muat', '=', 'doc_tracking.no_po')
@@ -146,8 +155,31 @@ class DocTrackingController extends Controller
                 ->where('detail_tracking.status', 1)
                 ->orderBy('detail_tracking.id_detail_track', 'desc')
                 ->get();    
-        $lastcont = DetailTracking::where('status', 1)->whereNotNull('no_container')->latest()->first();
-        $lastcurah = DetailTracking::where('status', 1)->whereNull('no_container')->latest()->first();
+        $lastcont = DetailTracking::join('detail_tracking_sisa','detail_tracking_sisa.id_track','=','detail_tracking.id_track')
+                    ->where(function ($query) {
+                        $query->where('detail_tracking.status', 1)
+                            ->whereNotNull('detail_tracking.no_container');
+                    })
+                    ->orWhere(function ($query) {
+                        $query->where('detail_tracking_sisa.status', 1)
+                            ->where('detail_tracking_sisa.tipe', 'Container');
+                    })
+                    ->first();
+        $lastcurah = DetailTracking::join('detail_tracking_sisa', 'detail_tracking_sisa.id_track', '=', 'detail_tracking.id_track')
+                    ->where(function ($query) {
+                        $query->where('detail_tracking.status', 1)
+                            ->whereNull('detail_tracking.no_container');
+                    })
+                    ->orWhere(function ($query) {
+                        $query->where('detail_tracking_sisa.status', 1)
+                            ->where('detail_tracking_sisa.tipe', 'Curah');
+                    })
+                    ->first();
+        $sisacurah = DetailTrackingSisa::where('tipe','Curah')
+                    // ->select('qty_tonase_sisa','id_track')
+                    ->latest()->first();
+                    // ->get();
+                    // dd($sisacurah);
         $zerocurah = DocTracking::select('*')
                     ->join('purchase_orders', 'purchase_orders.po_muat', '=', 'doc_tracking.no_po')
                     ->where('doc_tracking.status',1)
@@ -178,7 +210,9 @@ class DocTrackingController extends Controller
         //         ->get();
         $title = 'Adhipramana Bahari Perkasa';
         $breadcrumb = 'This Breadcrumb';
-        return view('pages.abp-page.tra', compact('title', 'breadcrumb','po','details','getcurahqty','getcontqty','track','trackzero','dtrack','lastcont','lastcurah','zerocurah','zerocont','gudang','pol','pod','kapal'));
+        return view('pages.abp-page.tra', compact('title', 'breadcrumb','po','details','getcurahqty','getcontqty',
+        'track','trackzero','dtrack','lastcont','lastcurah','zerocurah',
+        'zerocont','gudang','pol','pod','kapal','tracknull','sisacurah'));
     }
     
 

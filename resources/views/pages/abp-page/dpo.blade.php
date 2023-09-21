@@ -171,7 +171,7 @@
 
                         <div class="col-md-6">
                             <label for="validationCustom03" class="form-label">Total Amount (IDR)</label>
-                            <input name="total_all" type="text" value="0" class="form-control" id="total_all" placeholder="Masukkan Total Amount" required>
+                            <input readonly name="total_all" type="text" value="0" class="form-control" id="total_all" placeholder="Masukkan Total Amount" required>
                         </div>
 
                         <div class="col-12">
@@ -343,14 +343,17 @@
                                         var price_curah = response[i].oa_kpl_kayu;
                                         var price_container = response[i].oa_container;
 
-                                        if (price_curah == 0) {
+                                        if (price_curah == 0 && price_container != 0) {
                                             $('input[name=qty]').attr("readonly","readonly");
+                                            $('input[name="qty2"]').removeAttr("readonly");
                                             console.log('price_curah : '+ price_curah);
-                                        }
-                                        
-                                        if (price_container == 0) {
+                                        }else if (price_container == 0 && price_curah != 0) {
                                             $('input[name=qty2]').attr("readonly","readonly");
+                                            $('input[name="qty"]').removeAttr("readonly");
                                             console.log('price_container : '+ price_container);
+                                        }else if(price_curah != 0 && price_container != 0){
+                                            $('input[name="qty"]').removeAttr("readonly");
+                                            $('input[name="qty2"]').removeAttr("readonly");                                            
                                         }
                                         // $("#cb_estate").append(option);
                                     }

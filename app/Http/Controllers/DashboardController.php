@@ -36,7 +36,7 @@ class DashboardController extends Controller
                 ->join('penerimas', 'detail_p_h_s.id_penerima', '=', 'penerimas.id_penerima')
                 ->join('pt_penerima', 'pt_penerima.id_pt_penerima', '=', 'penerimas.id_pt_penerima')
                 ->join('barangs', 'purchase_orders.id', '=', 'barangs.id')
-                ->where('doc_tracking.status', [2])
+                ->whereIn('doc_tracking.status', [1,2,3])
                 ->orderBy('doc_tracking.no_po')
                 ->groupBy('detail_tracking_sisa.id_track')
                 ->get();

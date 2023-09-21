@@ -13,6 +13,7 @@ class DetailDooring extends Model
         'tgl_muat',
         'tgl_tiba',
         'nopol',
+        'estate',
         'qty_tonase',
         'qty_timbang',
         'jml_sak',
