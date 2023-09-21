@@ -25,7 +25,7 @@ class InvoiceDP extends Model
     {
         return $this->hasOne(DocTracking::class,'id_track','id_track');
     }
-
+    
     public function detailInvoiceDp()
     {
         return $this->hasMany(DetailInvoiceDP::class,'id_invoice_dp','id_invoice_dp');
