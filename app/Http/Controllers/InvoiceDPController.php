@@ -22,6 +22,8 @@ use App\Http\Controllers\DB;
 use Illuminate\Http\Request;
 
 use PDF;
+use Excel;
+use App\Exports\InvoiceDpExport;
 
 class InvoiceDPController extends Controller
 {
@@ -313,7 +315,7 @@ class InvoiceDPController extends Controller
         ->where('id_invoice_dp', $id_invoice_dp)
         ->groupBy('id_invoice_dp')
         ->first();
-        return response()->json($invoiceDp);
+        // dd($invoiceDp);
         $data = [];
         
         if (!is_null($invoiceDp)) {
@@ -336,7 +338,13 @@ class InvoiceDPController extends Controller
             //     }
             // }
 
+            
             if (isset($invoiceDp->docTracking->detailTrackingMultiple) && $invoiceDp->docTracking->detailTrackingMultiple->count() > 0) {
+                // return response()->json([
+                //     'multiple' => $invoiceDp->docTracking->detailTrackingMultiple,
+                //     'count' => $invoiceDp->docTracking->detailTrackingMultiple->count(),
+                // ]);
+
                 $groupedData = []; // Initialize an empty array to hold the grouped data
                 
                 for ($i = 0; $i < $invoiceDp->docTracking->detailTrackingMultiple->count(); $i++) { 
@@ -365,13 +373,13 @@ class InvoiceDPController extends Controller
                 $data['kapal'] = array_values($groupedData);
             }
             $finalGroupedData = [];
-            foreach ($groupedData as $key => $data) {
-                $invoiceNo = $data['invoice_no'];
-                if (!isset($finalGroupedData[$invoiceNo])) {
-                    $finalGroupedData[$invoiceNo] = [];
-                }
-                $finalGroupedData[$invoiceNo][] = $data;
-            }
+            // foreach ($groupedData as $key => $data) {
+            //     $invoiceNo = $data['invoice_no'];
+            //     if (!isset($finalGroupedData[$invoiceNo])) {
+            //         $finalGroupedData[$invoiceNo] = [];
+            //     }
+            //     $finalGroupedData[$invoiceNo][] = $data;
+            // }
 
             // return response()->json($finalGroupedData);
             
@@ -395,6 +403,8 @@ class InvoiceDPController extends Controller
             $data['total-cont'] = $invoiceDp->detailInvoiceDp->sum('total_tonase');
 
             $pushData = collect([]);
+
+            // dd($invoiceDp->detailInvoiceDp);
 
             foreach ($invoiceDp->detailInvoiceDp as $key => $detailInvoiceDp) {
                 if($pushData->count() == 0){
@@ -461,7 +471,9 @@ class InvoiceDPController extends Controller
         $title = 'Print Invoice DP';
         $breadcrumb = 'This breadcrumb';
 
-        // return response()->json($data);
+        $filename = 'invoice-dp-report-' . date('YmdHis') . '-' . rand(0, 1000) . ".xlsx";
+        // dd($data);
+        return Excel::download(new InvoiceDpExport($data), $filename);
         
         $pdf = PDF::loadview('pages.abp-page.print.invoice_dp', compact(
             'title', 'breadcrumb',
