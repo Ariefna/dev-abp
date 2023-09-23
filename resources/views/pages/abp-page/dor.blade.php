@@ -339,7 +339,29 @@
                                             
                                             @php
                                                 $susut = $totalTimbang - $totalQty;
+
+                                                $noContainer = '';
+                                                $idKapal = $md->id_kapal;
+                                                $countDetailTrackingMultiple = count($md->docDooring->docTracking->detailTrackingMultiple);
+
+                                                $namaKapal = '';
                                             @endphp
+
+                                            @if ($countDetailTrackingMultiple > 0)
+                                                @for ($i=0; $i<$countDetailTrackingMultiple; $i++)
+                                                    @if ($md->docDooring->docTracking->detailTrackingMultiple[$i]->id_kapal == $idKapal)
+                                                        @php
+                                                            $namaKapal = $md->docDooring->docTracking->detailTrackingMultiple[$i]->kapal->nama_kapal;
+                                                        @endphp
+
+                                                        @if ($md->tipe == 'Container')
+                                                            @php
+                                                            $noContainer = $md->docDooring->docTracking->detailTrackingMultiple[$i]->no_container;
+                                                            @endphp
+                                                        @endif
+                                                    @endif
+                                                @endfor
+                                            @endif
                                         <tr>
                                             <td>{{ $md->docDooring->docTracking->po->detailPhs->penawaran->customer->nama_customer ?? '' }}</td>
                                             <td>{{ $md->docDooring->docTracking->no_po ?? '' }}</td>
@@ -354,11 +376,11 @@
                                             <td>{{ $md->tgl_muat }}</td>
                                             <td>{{ $md->tgl_tiba }}</td>
                                             <td>{{ $md->no_tiket }}</td>
-                                            <td>{{ $md->no_container }}</td>
+                                            <td>{{ $noContainer }}</td>
                                             <td>{{ $md->nopol }}</td>
                                             <td>{{ $md->qty_timbang }}</td>                                            
                                             <td>{{ $susut }}</td>
-                                            <td>{{ $md->docDooring->docTracking->detailTracking->kapal->nama_kapal }}</td>
+                                            <td>{{ $namaKapal }}</td>
                                             <td>{{ $md->docDooring->docTracking->detailTracking->td }}</td>
                                             <td class="text-center">{!! $md->status == 1 ? '<span class="shadow-none badge badge-success">Proses Muat</span>' : ($md->status == 2 ? '<span class="shadow-none badge badge-warning">Selesai Muat</span>' : '') !!}</td>
                                         </tr>

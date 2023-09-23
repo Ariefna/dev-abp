@@ -212,6 +212,7 @@ class InvoiceDPController extends Controller
                     $a = 2;
                 }
             }
+            // dd ($a);
             $newInvoiceNumber = "ABP/{$currentYear}/{$currentMonth}/" .
                 str_pad($newCounter, 4, '0', STR_PAD_LEFT) . '-' . $newStatus;            
             
@@ -228,6 +229,7 @@ class InvoiceDPController extends Controller
                 ]);
                 return redirect()->back();
         }
+
     }
 
     public function savecurahidp(Request $request) {
@@ -309,8 +311,9 @@ class InvoiceDPController extends Controller
             'detailInvoiceDp'
         ])
         ->where('id_invoice_dp', $id_invoice_dp)
+        ->groupBy('id_invoice_dp')
         ->first();
-
+        return response()->json($invoiceDp);
         $data = [];
         
         if (!is_null($invoiceDp)) {
@@ -339,23 +342,38 @@ class InvoiceDPController extends Controller
                 for ($i = 0; $i < $invoiceDp->docTracking->detailTrackingMultiple->count(); $i++) { 
                     $name = $invoiceDp->docTracking->detailTrackingMultiple[$i]->kapal->kode_kapal . ' ' . $invoiceDp->docTracking->detailTrackingMultiple[$i]->kapal->nama_kapal . ' ' . $invoiceDp->docTracking->detailTrackingMultiple[$i]->voyage;
                     $pelayaran = $invoiceDp->docTracking->detailTrackingMultiple[$i]->kapal->cPort->nama;
+                    $tgl = $invoiceDp->docTracking->detailTrackingMultiple[$i]->tgl_muat;
+                    $invoice_no = $invoiceDp->invoice_no;
             
                     // Create a key based on $name and $pelayaran
-                    $key = $name . ' ' . $pelayaran;
+                    $key = $name . ' ' . $pelayaran. '' .$tgl;
             
                     // Add the data to the grouped array using the key
                     if (!isset($groupedData[$key])) {
                         $groupedData[$key] = [
                             'name' => $name,
                             'pelayaran' => $pelayaran,
+                            'muat_date' => $tgl,
+                            'invoice_no' => $invoice_no
                             // Add other data fields as needed
                         ];
                     }
                 }
+                // return response()->json($groupedData);
                 
                 // Convert the grouped data into a simple array
                 $data['kapal'] = array_values($groupedData);
             }
+            $finalGroupedData = [];
+            foreach ($groupedData as $key => $data) {
+                $invoiceNo = $data['invoice_no'];
+                if (!isset($finalGroupedData[$invoiceNo])) {
+                    $finalGroupedData[$invoiceNo] = [];
+                }
+                $finalGroupedData[$invoiceNo][] = $data;
+            }
+
+            // return response()->json($finalGroupedData);
             
 
             $groupedData = [];
@@ -442,6 +460,8 @@ class InvoiceDPController extends Controller
 
         $title = 'Print Invoice DP';
         $breadcrumb = 'This breadcrumb';
+
+        // return response()->json($data);
         
         $pdf = PDF::loadview('pages.abp-page.print.invoice_dp', compact(
             'title', 'breadcrumb',

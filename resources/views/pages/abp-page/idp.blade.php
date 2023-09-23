@@ -205,8 +205,8 @@
                         <div class="modal-body">
                             <form name="modal-detail" class="row g-3 needs-validation" action="{{ route('invoice-dp.savecurahidp') }}"  method="POST" enctype="multipart/form-data" novalidate>
                                 @csrf
-                                <input type="hidden" name="id_track_i" id="id_track_i" value="{{ $tdp->id_track }}">
-                                <input type="hidden" name="id_invdp" id="id_invdp" value="{{ $tdp->id_invoice_dp }}">
+                                <input type="text" name="id_track_i" id="id_track_i" value="{{ $tdp->id_track }}">
+                                <input type="text" name="id_invdp" id="id_invdp" value="{{ $tdp->id_invoice_dp }}">
                                 <div class="col-md-3">
                                     <label for="validationCustom04" class="form-label">PO Muat</label>
                                     <select class="form-select cb_bypo" name="cb_bypo" required>
