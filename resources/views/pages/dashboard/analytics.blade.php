@@ -36,13 +36,13 @@
             
                             <div class="balance-info">
                                 <h6 style="color: blue;">Total DP</h6>
-                                <p>Rp. 0</p>
+                                <p>Rp. {{ number_format($totaldp, 0, ',', '.') }}</p>
                             </div>
                         </div>
             
                         <div class="card-bottom-section">
                             <div></div>
-                            <a href="#">View Report</a>
+                            {{-- <a href="#">View Report</a> --}}
                         </div>
                     </div>
                 </div>
@@ -63,13 +63,13 @@
             
                             <div class="balance-info">
                                 <h6 style="color: blue;">Total Pelunasan</h6>
-                                <p>Rp. 0</p>
+                                <p>Rp. {{ number_format($totalpel, 0, ',', '.') }}</p>
                             </div>
                         </div>
             
                         <div class="card-bottom-section">
                             <div></div>
-                            <a href="#">View Report</a>
+                            {{-- <a href="#">View Report</a> --}}
                         </div>
                     </div>
                 </div>
@@ -134,7 +134,7 @@
                     </div>
                 </div>
                 <div class="d-grid gap-4 col-12 mx-auto">
-                    <a href="" class="btn btn-outline-secondary mb-4">View All</a>
+                    {{-- <a href="" class="btn btn-outline-secondary mb-4">View All</a> --}}
                 </div>
             </div>
         </div>
@@ -156,16 +156,16 @@
                             <thead>
                                 <tr>
                                     <th><div class="th-content">No PO</div></th>
-                                    <th><div class="th-content">Total Belum Muat</div></th>
+                                    <th><div class="th-content">Total Belum Dooring</div></th>
                                     <th><div class="th-content">Status</div></th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($tbl_po as $trab)
+                                @foreach($tbl_dor as $trab)
                                 <tr>
-                                    <td><a href="{{ route('analytics.addsisatrack', ['no_po' => $trab->no_po]) }}"><div class="td-content"><span class="">{{ $trab->no_po }}</span></div></a></td>
-                                    <td><a href="{{ route('analytics.addsisatrack', ['no_po' => $trab->no_po]) }}"><div class="td-content"><span class="">{{ $trab->qty_sisa }}</span></div></a></td>
-                                    <td><div class="td-content"><span class="badge badge-danger">Sisa Muat</span></div></td>
+                                    <td><a href="{{ route('analytics.addsisadoor', ['id_dooring' => $trab->id_dooring]) }}"><div class="td-content"><span class="">{{ $trab->no_po }}</span></div></a></td>
+                                    <td><a href="{{ route('analytics.addsisadoor', ['id_dooring' => $trab->id_dooring]) }}"><div class="td-content"><span class="">{{ $trab->qty_sisa }}</span></div></a></td>
+                                    <td><div class="td-content"><span class="badge badge-danger">Sisa Dooring</span></div></td>
                                 </tr>
                                 @endforeach
                             </tbody>
@@ -173,7 +173,7 @@
                     </div>
                 </div>
                 <div class="d-grid gap-4 col-12 mx-auto">
-                    <a href="" class="btn btn-outline-secondary mb-4">View All</a>
+                    {{-- <a href="" class="btn btn-outline-secondary mb-4">View All</a> --}}
                 </div>
             </div>
         </div>

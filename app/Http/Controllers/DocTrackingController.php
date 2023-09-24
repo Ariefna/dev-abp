@@ -35,7 +35,8 @@ class DocTrackingController extends Controller
                 ->join('c_ports', 'c_ports.id_company_port', '=', 'kapals.id_company_port')
                 ->where('kapals.status', 1)
                 ->get();                                        
-        $po = PurchaseOrder::select('purchase_orders.po_muat', 'purchase_orders.po_kebun', 'customers.nama_customer', 'purchase_orders.status')
+        $po = PurchaseOrder::select('purchase_orders.po_muat', 'purchase_orders.po_kebun',
+                'customers.nama_customer', 'purchase_orders.status')
                 ->join('detail_p_h_s', 'purchase_orders.id_detail_ph', '=', 'detail_p_h_s.id_detail_ph')
                 ->join('penawaran_hargas', 'penawaran_hargas.id_penawaran', '=', 'detail_p_h_s.id_penawaran')
                 ->join('customers', 'customers.id', '=', 'penawaran_hargas.id_customer')
@@ -43,6 +44,10 @@ class DocTrackingController extends Controller
                 ->join('pt_penerima', 'pt_penerima.id_pt_penerima', '=', 'penerimas.id_pt_penerima')
                 ->join('barangs', 'purchase_orders.id', '=', 'barangs.id')
                 ->where('purchase_orders.status', '=', 2)
+                ->whereNotIn('purchase_orders.po_muat', function ($query) {
+                    $query->select('no_po')
+                        ->from('doc_tracking');
+                })
                 ->get();
         $track = DocTracking::select('*', 'doc_tracking.status', 'doc_tracking.id_track')
                 ->selectSub(function ($query) {
@@ -161,9 +166,9 @@ class DocTrackingController extends Controller
                             ->whereNotNull('detail_tracking.no_container');
                     })
                     ->orWhere(function ($query) {
-                        $query->where('detail_tracking_sisa.status', 1)
-                            ->where('detail_tracking_sisa.tipe', 'Container');
+                        $query->where('detail_tracking_sisa.tipe', 'Container');
                     })
+                    ->latest('detail_tracking.created_at')
                     ->first();
         $lastcurah = DetailTracking::join('detail_tracking_sisa', 'detail_tracking_sisa.id_track', '=', 'detail_tracking.id_track')
                     ->where(function ($query) {
@@ -171,9 +176,9 @@ class DocTrackingController extends Controller
                             ->whereNull('detail_tracking.no_container');
                     })
                     ->orWhere(function ($query) {
-                        $query->where('detail_tracking_sisa.status', 1)
-                            ->where('detail_tracking_sisa.tipe', 'Curah');
+                        $query->where('detail_tracking_sisa.tipe', 'Curah');
                     })
+                    ->latest('detail_tracking.created_at')
                     ->first();
         $sisacurah = DetailTrackingSisa::where('tipe','Curah')
                     // ->select('qty_tonase_sisa','id_track')

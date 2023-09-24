@@ -53,7 +53,8 @@
     <!-- /BREADCRUMB -->        
     <div class="row layout-top-spacing">
 
-        @if (count($track->where('status', 1)) >= 1)
+        {{-- @if ($details == 0 && $trackzero->count() == 0 || $trackzero->count() > 0)  --}}
+        @if ($track->where('status',1)->count()>0) 
         <div id="alertIcon" class="col-lg-12 mb-2">
             <div class="widget-content widget-content-area">
                 <div class="alert alert-warning alert-dismissible fade show" role="alert">
@@ -62,7 +63,7 @@
                 </div>
             </div>
         </div>        
-        @else
+        @elseif($track->where('status',1)->count()==0)
         <div id="basic" class="col-lg-12 col-sm-12 col-12 layout-spacing">
             <div class="statbox widget box box-shadow">
                 <div class="widget-header">                                
@@ -525,7 +526,8 @@
                                     <input name="tgl_muat" id="td" value="2022-09-04" class="form-control flatpickr flatpickr-input active" type="date" placeholder="Select Date..">
                                 </div>
                             </div>
-                            @if ($lastcurah)     
+                            {{-- @if ($details && $trackzero->count()) --}}
+                            @if ($details || $trackzero->count() && $lastcurah)     
                             <div class="col-lg-3 col-md-6 col-sm-12">                       
                                 <label for="validationCustom03" class="form-label">Gudang Muat</label>
                                 <select class="form-select" name="id_gudang" id="validationDefault01" required>
@@ -540,11 +542,11 @@
                                 <select class="form-select" name="id_kapal" id="validationDefault01" required>
                                     <option selected disabled value="">Pilih...</option>
                                     @foreach ($kapal as $kpl)
-                                        <option {{ $lastcurah->id_kapal == $kpl->id ? 'selected' : '' }} value="{{ $kpl->id }}">{{ $kpl->kode_kapal }} {{ $kpl->nama_kapal }}</option>
+                                        <option {{ $lastcurah->id_kapal == $kpl->id ? 'selected' : '' }} value="{{ $kpl->id }}">{{ $kpl->kode_kapal }} {{ $kpl->nama_kapal }} {{ $lastcurah->id_kapal }}</option>
                                     @endforeach
                                 </select>
                             </div>
-                            @elseif($lastcurah==0)
+                            @elseif($details==0 && $trackzero->count()==0)
                             <div class="col-lg-3 col-md-6 col-sm-12">                       
                                 <label for="validationCustom03" class="form-label">Gudang Muat</label>
                                 <select class="form-select" name="id_gudang" id="validationDefault01" required>
