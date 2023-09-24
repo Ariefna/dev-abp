@@ -138,7 +138,7 @@
                                             <th>TD JKT</th>
                                             <th>TA</th>
                                             <th class="text-center">Status</th>
-                                            {{-- <th class="text-center">Action</th> --}}
+                                            <th class="text-center">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -180,7 +180,7 @@
                                                     <span class="shadow-none badge badge-danger">Kapal TD Jakarta</span>
                                                 @endif
                                             </td>
-                                            {{-- <td><a href="#update-{{ $tra->id_track }}" data-bs-toggle="modal" class="btn btn-outline-primary mb-2 me-4">Update</a></td> --}}
+                                            <td><a href="{{route('monitoring.tracking.print', $tra->id_detail_track)}}" class="btn btn-outline-primary mb-2 me-4">Print</a></td>
                                         </tr>
                                         @endforeach                                                                    
                                     </tbody>
