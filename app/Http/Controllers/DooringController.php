@@ -52,7 +52,7 @@ class DooringController extends Controller
                 ->join('pt_penerima', 'pt_penerima.id_pt_penerima', '=', 'penerimas.id_pt_penerima')
                 ->join('barangs', 'purchase_orders.id', '=', 'barangs.id')
                 ->whereIn('doc_tracking.status', [2, 3])
-                ->whereNotNull('detail_tracking.ta')
+                ->where('detail_tracking.ta','!=','')
                 ->groupBy('doc_tracking.no_po')
                 ->get();
         $track = DocDooring::select('*', 'doc_dooring.status', 'doc_dooring.id_dooring','detail_dooring.qty_tonase'

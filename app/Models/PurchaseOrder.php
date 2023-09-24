@@ -19,4 +19,10 @@ class PurchaseOrder extends Model
     {
         return $this->hasOne(Barang::class,'id','id');
     }
+
+    public function docTracking()
+    {
+        return $this->hasMany(DocTracking::class, 'no_po', 'po_muat');
+    }
+
 }

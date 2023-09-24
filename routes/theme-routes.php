@@ -37,6 +37,7 @@ foreach ($prefixRouters as $prefixRouter) {
             })->name('analytics');
             Route::resource('/analytics', \App\Http\Controllers\DashboardController::class);
             Route::match(['get', 'post'], '/analytics/addsisatrack/{no_po}', [\App\Http\Controllers\DashboardController::class, 'addsisatrack'])->name('analytics.addsisatrack');
+            Route::match(['get', 'post'], '/analytics/addsisadoor/{id_dooring}', [\App\Http\Controllers\DashboardController::class, 'addsisadoor'])->name('analytics.addsisadoor');
             Route::get('/sales', function () {
                 return view('pages.dashboard.sales', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
             })->name('sales');
