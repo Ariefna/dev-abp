@@ -70,28 +70,6 @@ foreach ($prefixRouters as $prefixRouter) {
                 Route::resource('/customer', \App\Http\Controllers\CustomerController::class);
                 // Route::put('/customer/{customer}', [CustomerController::class, 'update'])->name('customer.update');
 
-<<<<<<< Updated upstream
-        /**
-         * ==============================
-         *       @Router -  Monitoring
-         * ==============================
-         */
-        
-        Route::prefix('monitoring')->group(function () {
-            Route::get('/mon-tracking', function () {
-                return view('pages.abp-page.montracking', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
-            })->name('mon-tracking.index');
-            Route::get('/mon-tracking/print/{id_detail_track}', [\App\Http\Controllers\MTrackingController::class, 'print'])->name('monitoring.tracking.print');
-            Route::resource('/mon-tracking', \App\Http\Controllers\MTrackingController::class);
-            Route::put('/mon-tracking', [\App\Http\Controllers\MTrackingController::class, 'update'])->name('mon-tracking.update');
-            // Route::put('edit/{id}','ProductController@update')->name('product.update');
-            // Route::match(['post'], '/mon-tracking/mt/tambahdt', [\App\Http\Controllers\MTrackingController::class, 'tambahdt'])->name('mon-tracking.tambahdt');
-            Route::get('/mon-dooring', function () {
-                return view('pages.abp-page.mondooring', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
-            })->name('mon-dooring.index');
-            Route::resource('/mon-dooring', \App\Http\Controllers\MDooringController::class);
-        });
-=======
                 // Route::post('/data-insert', [CustomerController::class, 'store'])->name('data.insert');
                 // Route::resource('customer', ); 
                 Route::get('/barang', function () {
@@ -166,7 +144,6 @@ foreach ($prefixRouters as $prefixRouter) {
                 Route::get('/purchase-order/po/getDetailOA/{id}', [\App\Http\Controllers\POController::class, 'getDetailOA'])->name('getDetailOA');
                 Route::match(['get', 'post'], '/purchase-order/approve/{po_muat}', [\App\Http\Controllers\POController::class, 'approve'])->name('purchase-order.approve');
                 Route::match(['get', 'post'], '/purchase-order/removed/{po_muat}', [\App\Http\Controllers\POController::class, 'removed'])->name('purchase-order.removed');
->>>>>>> Stashed changes
 
                 Route::get('/surat-perintah-kerja', function () {
                     return view('pages.abp-page.dspk', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
