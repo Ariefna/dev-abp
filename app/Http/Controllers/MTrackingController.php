@@ -89,7 +89,8 @@ class MTrackingController extends Controller
                 'docTracking.po.barang',
                 'docTracking.po.detailPhs.penerima.ptPenerima',
                 'kapal',
-        ])->where('id_detail_track', $id_detail_track)->first();
+        ])->where('id_detail_track', $id_detail_track)
+        ->first();
 
         $tbl_po = DocTracking::select('doc_tracking.no_po', 'purchase_orders.po_kebun', 
                 'purchase_orders.total_qty', 'port_of_loading.nama_pol', 'port_of_destination.nama_pod',
@@ -113,7 +114,8 @@ class MTrackingController extends Controller
                 ->join('barangs', 'purchase_orders.id', '=', 'barangs.id')
                 ->where('doc_tracking.status', [2,3,4])
                 ->where('doc_tracking.id_track', $DetailTracking->id_track)
-                // ->groupBy('kapals.nama_kapal, doc_tracking.no_po')
+                ->where('detail_tracking.id_kapal', $DetailTracking->id_kapal)
+                // ->groupBy('kapals.nama_kapal')
                 ->get();
 
         $pdf = \App::make('dompdf.wrapper');
