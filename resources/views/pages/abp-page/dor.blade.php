@@ -78,7 +78,7 @@
                             <label for="validationCustom01" class="form-label">No PO</label>
                             <select class="form-select" name="no_po" id="cb_po" required>
                                 <option selected disabled value="">Pilih...</option>                                
-                                @foreach ($po->whereNotNull('detail_tracking.ta') as $po)
+                                @foreach ($po as $po)
                                     <option value="{{ $po->id_track }}">{{ $po->no_po }}</option>
                                 @endforeach
                             </select>

@@ -134,7 +134,7 @@ class PHController extends Controller
     public function updatephd(Request $request, $id_detail_ph) {
         DetailPH::where('id_detail_ph', $id_detail_ph)->update([
             'id_penawaran'     => $request->id_ph,
-            'id_penerima'     => $request->id_pen,
+            // 'id_penerima'     => $request->id_pen,
             'oa_kpl_kayu'     => $request->oa_kk,
             'oa_container'   => $request->oa_cont,
             'status' => '1'

@@ -24,4 +24,11 @@ class POLController extends Controller
         ]);
         return redirect()->back();
     }
+    public function destroy($id) {
+        $pol = PortOfLoading::find($id);
+        $pol->update([
+            'status' => '0'
+        ]);
+        return redirect()->back();
+    } 
 }

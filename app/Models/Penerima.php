@@ -9,6 +9,7 @@ class Penerima extends Model
 {
     use HasFactory;
     protected $fillable = ['id_pt_penerima', 'id_grup', 'alamat', 'estate','status'];
+    protected  $primaryKey = 'id_penerima';
 
     public function ptPenerima()
     {

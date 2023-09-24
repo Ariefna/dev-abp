@@ -19,8 +19,9 @@ class PenerimaController extends Controller
                     ->get();                    
         $penerima = Penerima::join('pt_penerima', 'penerimas.id_pt_penerima', '=', 'pt_penerima.id_pt_penerima')
                     ->join('grups', 'penerimas.id_grup', '=', 'grups.id_grup')
-                    ->select('pt_penerima.nama_penerima', 'grups.nama_grup', 'penerimas.estate')
+                    ->select('pt_penerima.nama_penerima', 'grups.nama_grup', 'penerimas.estate','penerimas.id_penerima')
                     ->where('penerimas.status', 1)
+                    ->orderBy('penerimas.id_penerima','asc')
                     ->get();                
         $title = 'Adhipramana Bahari Perkasa';
         $breadcrumb = 'This Breadcrumb';
@@ -34,6 +35,14 @@ class PenerimaController extends Controller
             'estate'     => $request->estate_pen,
             'alamat'     => $request->alamat_pen,
             'status' => '1'
+        ]);
+        return redirect()->back();
+    }
+
+    public function destroy($id) {
+        $penerima = Penerima::find($id);
+        $penerima->update([
+            'status' => '0'
         ]);
         return redirect()->back();
     }

@@ -215,9 +215,9 @@
                                             <td class="text-center">
                                                 <ul class="table-controls">
                                                     {{-- <li><a href="javascript:void(0);" class="action-btn btn-view bs-tooltip me-2" data-toggle="tooltip" data-placement="top" title="View"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-eye p-1 br-8 mb-1"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></a></li> --}}
-                                                    <li><a href="javascript:void(0);" class="bs-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit" data-original-title="Edit"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2 p-1 br-8 mb-1"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></a></li>
+                                                    <li><a href="#edit-{{ $p->id_po }}" class="bs-tooltip" data-bs-toggle="modal" data-bs-placement="top" title="Edit" data-original-title="Edit"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2 p-1 br-8 mb-1"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></a></li>
                                                     {!! $p->status == 1 ? '<a href="'. route('purchase-order.approve', ['po_muat' => $p->po_muat]) .'" id="approve-link" class="bs-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Approve" data-original-title="Approve"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check"><polyline points="20 6 9 17 4 12"></polyline></svg></a>' : ($p->status == 2 ? '':'') !!}
-                                                    <li><a href="javascript:void(0);" class="bs-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete" data-original-title="Delete"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash p-1 br-8 mb-1"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></a></li>
+                                                    <li><a href="#exampleModalHps-{{ $p->id_po }}" class="bs-tooltip" data-bs-toggle="modal" data-bs-placement="top" title="Delete" data-original-title="Delete"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash p-1 br-8 mb-1"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></a></li>
                                                 </ul>
                                             </td>
                                         </tr>
@@ -230,7 +230,68 @@
                     </div>
                 </div>
             </div>
+        </div>
+        @foreach ($po as $p)
+        <div class="modal fade bd-example-modal-xl" id="edit-{{ $p->id_po }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Edit Purchase Order</h5>
+                        {{-- <input type="text" name="id_gd" id="id_gd" value="{{ $gd->id_gudang }}"> --}}
+                    </div>
+                    <div class="modal-body">
+                        <form class="row g-3 needs-validation" action="{{ route('purchase-order.update', ['purchase_order' => $p->id_po]) }}"  method="POST" enctype="multipart/form-data" novalidate>
+                            @csrf
+                            @method('PUT')
+                            <div class="col-md-12">
+                                <label for="validationCustom01" class="form-label">No PO</label>
+                                <input readonly name="no_po" type="text" value="{{ $p->po_muat }}" class="form-control" id="validationCustom01" placeholder="Masukkan nama gudang" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="validationCustom04" class="form-label">Quantity Curah</label>
+                                <div class="input-group has-validation">
+                                    <input name="qty_curah" type="number" id="qty_curah" value="{{ $p->qty }}" class="form-control" id="validationCustom04" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="validationCustom03" class="form-label">Quantity Container</label>
+                                <input name="qty_cont" type="number" id="qty_cont" value="{{ $p->qty2 }}" class="form-control" id="validationCustom03" required>
+                            </div>
+                            <div class="col-md-12">
+                                <label for="validationCustom03" class="form-label">Total saat ini</label>
+                                <input readonly name="qty_total" type="number" value="{{ $p->total_qty }}" class="form-control" id="validationCustom03" required>
+                            </div>
+                            <div class="col-md-12">
+                                <label for="validationCustom03" class="form-label">Total terbaru</label>
+                                <input name="qty_new" type="number" id="qty_new" value="0" class="form-control" id="validationCustom03" required>
+                            </div>                            
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn btn-light-dark" data-bs-dismiss="modal"><i class="flaticon-cancel-12"></i>Batal</button>
+                                <button type="submit" class="btn btn-primary">Simpan</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>        
+        <div class="modal fade bd-example-modal-l" id="exampleModalHps-{{ $p->id_po }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-l modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-body text-center">
+                        <h5>Apakah anda yakin ingin hapus data ini?</h5>
+                        <form class="row g-3 needs-validation" action="{{ route('purchase-order.destroy', ['purchase_order' => $p->id_po]) }}"  method="POST">
+                            @method('DELETE')
+                            @csrf
+                            <div class="modal-footer justify-content-center">
+                                <button type="submit" class="btn btn-primary">Iya hapus data ini!</button>
+                                <button type="button" class="btn btn btn-light-dark" data-bs-dismiss="modal"><i class="flaticon-cancel-12"></i>Batal</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endforeach    
     </div>            
 
     <!--  BEGIN CUSTOM SCRIPTS FILE  -->
@@ -376,20 +437,24 @@
                 function updateValues() {
                     var qty = parseFloat($('#t_qty').val()) || 0;
                     var qty2 = parseFloat($('#t_qty2').val()) || 0;
+                    var eqty = parseFloat($('#qty_curah').val()) || 0;
+                    var eqty2 = parseFloat($('#qty_cont').val()) || 0;
                     var oa_kpl_kayu = parseFloat($('#oa_kpl_kayu').val().replace(/\D/g, '')) || 0;
                     var oa_container = parseFloat($('#oa_container').val().replace(/\D/g, '')) || 0;
                     var am_container = qty2 * oa_container;
                     var am_kayu = qty * oa_kpl_kayu;
                     var total_qty = qty + qty2;
+                    var etotal_qty = eqty + eqty2;
                     var total_all = am_container + am_kayu;
 
                     $('#total_qty').val(total_qty);
                     $('#am_kayu').val(formatter.format(am_kayu));
                     $('#am_container').val(formatter.format(am_container));
                     $('#total_all').val(formatter.format(total_all));
+                    $('#qty_new').val(etotal_qty);
                 }
 
-                $('#t_qty, #t_qty2, #oa_kpl_kayu, #oa_container').on('input', updateValues);
+                $('#t_qty, #t_qty2, #oa_kpl_kayu, #oa_container, #qty_curah,#qty_cont').on('input', updateValues);
 
                 updateValues();                
                 $('#approve-link').click(function() {

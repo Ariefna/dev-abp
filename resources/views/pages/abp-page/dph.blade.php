@@ -246,7 +246,7 @@
                         @endforeach
                         <div class="col-md-6">
                             <label for="validationCustom03" class="form-label">Estate</label>
-                            <select name="id_pen" class="form-select" id="sel_emp" required>
+                            <select name="id_pen-est" class="form-select" id="sel_emp" required>
                                 <option disabled selected value="">Pilih...</option>
                             </select>
                             <div class="invalid-feedback">

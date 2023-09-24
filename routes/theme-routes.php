@@ -200,6 +200,15 @@ foreach ($prefixRouters as $prefixRouter) {
             // Route::match(['get', 'post'], '/invoice-pelunasan/store', [\App\Http\Controllers\InvoiceLunasController::class, 'store'])->name('invoice-pelunasan.store');
             // Route::post('/invoice-pelunasan/store', [\App\Http\Controllers\InvoiceLunasController::class, 'store'])->name('store');
         });
+
+        // Route::prefix('user-role')->group(function () {
+        //     Route::get('/menu-user', function () {
+        //         return view('pages.abp-page.menu', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
+        //     })->name('menu.index');
+        //     Route::get('/create-user', function () {
+        //         return view('pages.abp-page.create', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
+        //     })->name('create.index');
+        // });
         
         /**
          * ==============================
