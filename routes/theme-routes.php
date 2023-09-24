@@ -24,141 +24,53 @@ foreach ($prefixRouters as $prefixRouter) {
         // Route::get('/sss', function () {
         //     return view('welcome', ['title' => 'this is ome ', 'breadcrumb' => 'This Breadcrumb']);
         // });
-
-        /**
-         * ==============================
-         *       @Router -  Dashboard
-         * ==============================
-         */
-        
-        Route::prefix('dashboard')->group(function () {
-            Route::get('/analytics', function () {
-                return view('pages.dashboard.analytics', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
-            })->name('analytics');
-            Route::resource('/analytics', \App\Http\Controllers\DashboardController::class);
-            Route::match(['get', 'post'], '/analytics/addsisatrack/{no_po}', [\App\Http\Controllers\DashboardController::class, 'addsisatrack'])->name('analytics.addsisatrack');
-            Route::match(['get', 'post'], '/analytics/addsisadoor/{id_dooring}', [\App\Http\Controllers\DashboardController::class, 'addsisadoor'])->name('analytics.addsisadoor');
-            Route::get('/sales', function () {
-                return view('pages.dashboard.sales', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
-            })->name('sales');
-        });
-
-        /**
-         * ==============================
-         *       @Router -  Master
-         * ==============================
-         */
-
-        Route::prefix('testing')->group(function () {
-            Route::get('/try', function () {
-                return view('pages.abp-page.try', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
-            })->name('trying');
-        });
-
-        Route::prefix('master')->group(function () {
-            Route::get('/customer', function () {
-                return view('pages.abp-page.mcustomer', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
-            })->name('customer.index');
-            Route::resource('/customer', \App\Http\Controllers\CustomerController::class);
-            // Route::put('/customer/{customer}', [CustomerController::class, 'update'])->name('customer.update');
-
-            // Route::post('/data-insert', [CustomerController::class, 'store'])->name('data.insert');
-            // Route::resource('customer', ); 
-            Route::get('/barang', function () {
-                return view('pages.abp-page.mbarang', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
-            })->name('barang.index');
-            Route::resource('/barang', \App\Http\Controllers\BarangController::class);
-            // Route::delete('/barang/{barang}', [\App\Http\Controllers\BarangController::class, 'softDelete'])->name('barang.softDelete');
-
-            Route::get('/kapal', function () {
-                return view('pages.abp-page.mkapal', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
-            })->name('kapal.index');
-            Route::resource('/kapal', \App\Http\Controllers\KapalController::class);
-            Route::get('/kapal/cport/getDetails/{id}', [\App\Http\Controllers\KapalController::class, 'getDetails'])->name('getKapalDetails');
-            Route::get('/kapal/cport/getEditDetails/{id}', [\App\Http\Controllers\KapalController::class, 'getEditDetails'])->name('getEditDetails');
-            Route::resource('/company_port', \App\Http\Controllers\CompanyPortController::class);
-
-            Route::get('/penerima', function () {
-                return view('pages.abp-page.mpenerima', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
-            })->name('penerima.index');                    
-            Route::resource('/penerima', \App\Http\Controllers\PenerimaController::class);
-            Route::resource('/pt_penerima', \App\Http\Controllers\PTpenerimaController::class);
-            Route::resource('/grup', \App\Http\Controllers\GrupController::class);
-            // Route::get('/penerima/pen/getPenDetails/{id}', [\App\Http\Controllers\PenerimaController::class, 'getPenDetails'])->name('getPenerimaDetails');
-            // Route::get('/penerima/pen/getGroDetails/{id}', [\App\Http\Controllers\PenerimaController::class, 'getGroDetails'])->name('getGroupDetails');
+        Route::get('/login', function () {
+            return view('auth.login', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
+        })->name('login');
+        Route::post('/login', [\App\Http\Controllers\AuthController::class, 'login'])->name('login.post');
+        Route::middleware(['web', 'CheckNamaSession'])->group(function () {
+            // Rute untuk proses logout
+            Route::get('/logout', [\App\Http\Controllers\AuthController::class, 'logout'])->name('logout');
 
 
-            Route::get('/gudang-muat', function () {
-                return view('pages.abp-page.mgudangmuat', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
-            })->name('gudang-muat.index');
-            Route::resource('/gudang-muat', \App\Http\Controllers\GudangMuatController::class);
+            /**
+             * ==============================
+             *       @Router -  Dashboard
+             * ==============================
+             */
 
-            Route::get('/pol', function () {
-                return view('pages.abp-page.mpol', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
-            })->name('pol');
-            Route::resource('/pol', \App\Http\Controllers\POLController::class);
+            Route::prefix('dashboard')->group(function () {
+                Route::get('/analytics', function () {
+                    return view('pages.dashboard.analytics', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
+                })->name('analytics');
+                Route::resource('/analytics', \App\Http\Controllers\DashboardController::class);
+                Route::match(['get', 'post'], '/analytics/addsisatrack/{no_po}', [\App\Http\Controllers\DashboardController::class, 'addsisatrack'])->name('analytics.addsisatrack');
+                Route::match(['get', 'post'], '/analytics/addsisadoor/{id_dooring}', [\App\Http\Controllers\DashboardController::class, 'addsisadoor'])->name('analytics.addsisadoor');
+                Route::get('/sales', function () {
+                    return view('pages.dashboard.sales', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
+                })->name('sales');
+            });
 
-            Route::get('/pod', function () {
-                return view('pages.abp-page.mpod', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
-            })->name('pod');
-            Route::resource('/pod', \App\Http\Controllers\PODController::class);                       
-        });
+            /**
+             * ==============================
+             *       @Router -  Master
+             * ==============================
+             */
 
-        /**
-         * ==============================
-         *       @Router -  Document
-         * ==============================
-         */
+            Route::prefix('testing')->group(function () {
+                Route::get('/try', function () {
+                    return view('pages.abp-page.try', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
+                })->name('trying');
+            });
 
-        Route::prefix('document')->group(function () {
-            Route::get('/penawaran-harga', function () {
-                return view('pages.abp-page.dph', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
-            })->name('penawaran-harga');
-            Route::resource('/penawaran-harga', \App\Http\Controllers\PHController::class);
-            Route::get('/penawaran-harga/ph/getDetails/{id}', [\App\Http\Controllers\PHController::class, 'getDetails'])->name('getDetails');
-            Route::get('/penawaran-harga/ph/getPenDetails/{id}', [\App\Http\Controllers\PHController::class, 'getPenDetails'])->name('getPenDetails');
-            Route::post('/penawaran-harga/save', [\App\Http\Controllers\PHController::class, 'save'])->name('penawaran-harga.save');
-            Route::match(['get', 'post'], '/penawaran-harga/approve/{id_penawaran}', [\App\Http\Controllers\PHController::class, 'approve'])->name('penawaran-harga.approve');
-            Route::match(['get', 'post'], '/penawaran-harga/removed/{id_penawaran}', [\App\Http\Controllers\PHController::class, 'removed'])->name('penawaran-harga.removed');
-            Route::match(['get', 'post'], '/penawaran-harga/edit/{id_penawaran}', [\App\Http\Controllers\PHController::class, 'edit'])->name('penawaran-harga.edit');   
-            Route::match(['get', 'post'], '/penawaran-harga/updateph/{id_penawaran}', [\App\Http\Controllers\PHController::class, 'updateph'])->name('penawaran-harga.updateph');
-            Route::match(['get', 'post','delete'], '/penawaran-harga/removedph/{id_penawaran}', [\App\Http\Controllers\PHController::class, 'removedph'])->name('penawaran-harga.removedph');
-            Route::match(['get', 'post'], '/penawaran-harga/updatephd/{id_detail_ph}', [\App\Http\Controllers\PHController::class, 'updatephd'])->name('penawaran-harga.updatephd');
-            Route::match(['get', 'post','delete'], '/penawaran-harga/removedphd/{id_detail_ph}', [\App\Http\Controllers\PHController::class, 'removedphd'])->name('penawaran-harga.removedphd');            
+            Route::prefix('master')->group(function () {
+                Route::get('/customer', function () {
+                    return view('pages.abp-page.mcustomer', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
+                })->name('customer.index');
+                Route::resource('/customer', \App\Http\Controllers\CustomerController::class);
+                // Route::put('/customer/{customer}', [CustomerController::class, 'update'])->name('customer.update');
 
-            Route::get('/purchase-order', function () {
-                return view('pages.abp-page.dpo', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
-            })->name('purchase-order.index');
-            Route::resource('/purchase-order', \App\Http\Controllers\POController::class);
-            Route::get('/purchase-order/po/getCustomerDetails/{id}', [\App\Http\Controllers\POController::class, 'getCustomerDetails'])->name('getCustomerDetails');
-            Route::get('/purchase-order/po/getEstateDetails/{id}', [\App\Http\Controllers\POController::class, 'getEstateDetails'])->name('getEstateDetails');
-            Route::get('/purchase-order/po/getDetailOA/{id}', [\App\Http\Controllers\POController::class, 'getDetailOA'])->name('getDetailOA');
-            Route::match(['get', 'post'], '/purchase-order/approve/{po_muat}', [\App\Http\Controllers\POController::class, 'approve'])->name('purchase-order.approve');
-            Route::match(['get', 'post'], '/purchase-order/removed/{po_muat}', [\App\Http\Controllers\POController::class, 'removed'])->name('purchase-order.removed');
-
-            Route::get('/surat-perintah-kerja', function () {
-                return view('pages.abp-page.dspk', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
-            })->name('surat-perintah-kerja');
-
-            Route::get('/tracking', function () {
-                return view('pages.abp-page.tra', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
-            })->name('tracking.index');
-            Route::resource('/tracking', \App\Http\Controllers\DocTrackingController::class);
-            Route::get('/tracking/tr/getPo/{id}', [\App\Http\Controllers\DocTrackingController::class, 'getPo'])->name('getPo');
-            Route::match(['get', 'post'], '/tracking/savecontainer', [\App\Http\Controllers\DocTrackingController::class, 'savecontainer'])->name('tracking.savecontainer');
-            Route::match(['get', 'post'], '/tracking/savecurah', [\App\Http\Controllers\DocTrackingController::class, 'savecurah'])->name('tracking.savecurah');
-
-            Route::get('/dooring', function () {
-                return view('pages.abp-page.dor', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
-            })->name('dooring.index');            
-            Route::resource('/dooring', \App\Http\Controllers\DooringController::class);
-            Route::get('/dooring/dr/getKapalDooring/{id}', [\App\Http\Controllers\DooringController::class, 'getKapalDooring'])->name('getKapalDooring');
-            Route::get('/dooring/dr/getContainer/{id}', [\App\Http\Controllers\DooringController::class, 'getContainer'])->name('getContainer');            
-            Route::get('/dooring/dr/getPoDooring/{id}', [\App\Http\Controllers\DooringController::class, 'getPoDooring'])->name('getPoDooring');
-            Route::match(['get', 'post'], '/dooring/savecurah', [\App\Http\Controllers\DooringController::class, 'savecurah'])->name('dooring.savecurah');
-            Route::match(['get', 'post'], '/dooring/savecontainer', [\App\Http\Controllers\DooringController::class, 'savecontainer'])->name('dooring.savecontainer');
-        });
-
+<<<<<<< Updated upstream
         /**
          * ==============================
          *       @Router -  Monitoring
@@ -179,36 +91,173 @@ foreach ($prefixRouters as $prefixRouter) {
             })->name('mon-dooring.index');
             Route::resource('/mon-dooring', \App\Http\Controllers\MDooringController::class);
         });
+=======
+                // Route::post('/data-insert', [CustomerController::class, 'store'])->name('data.insert');
+                // Route::resource('customer', ); 
+                Route::get('/barang', function () {
+                    return view('pages.abp-page.mbarang', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
+                })->name('barang.index');
+                Route::resource('/barang', \App\Http\Controllers\BarangController::class);
+                // Route::delete('/barang/{barang}', [\App\Http\Controllers\BarangController::class, 'softDelete'])->name('barang.softDelete');
 
-        Route::prefix('finance')->group(function () {
-            Route::get('/invoice-dp', function () {
-                return view('pages.abp-page.idp', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
-            })->name('invoice-dp.index');
-            Route::resource('/invoice-dp', \App\Http\Controllers\InvoiceDPController::class);
-            Route::get('/invoice-dp/dp/getOptionsPO/{id_track}', [\App\Http\Controllers\InvoiceDPController::class, 'getOptionsPO'])->name('getOptionsPO');
-            Route::get('/invoice-dp/dp/getDetailPO/{id_track}', [\App\Http\Controllers\InvoiceDPController::class, 'getDetailPO'])->name('getDetailPO');
-            Route::get('/invoice-dp/dp/getDetailPOCont/{id_track}', [\App\Http\Controllers\InvoiceDPController::class, 'getDetailPOCont'])->name('getDetailPOCont');
-            Route::get('/invoice-dp/gen/generate', [\App\Http\Controllers\InvoiceDPController::class, 'generate'])->name('generate');
-            Route::match(['get', 'post'], '/invoice-dp/approve/{id_invoice_dp}', [\App\Http\Controllers\InvoiceDPController::class, 'approve'])->name('invoice-dp.approve');
-            Route::match(['get', 'post'], '/invoice-dp/savecurahidp', [\App\Http\Controllers\InvoiceDPController::class, 'savecurahidp'])->name('invoice-dp.savecurahidp');
-            Route::match(['get', 'post'], '/invoice-dp/savecontaineridp', [\App\Http\Controllers\InvoiceDPController::class, 'savecontaineridp'])->name('invoice-dp.savecontaineridp');
-            Route::match(['get', 'post'], '/invoice-dp/print/{id_invoice_dp}', [\App\Http\Controllers\InvoiceDPController::class, 'printInvoiceDp'])->name('invoice-dp.print');
-            // Route::get('/invoice-dp/print/{id_invoice_dp}', [\App\Http\Controllers\InvoiceDPController::class, 'printInvoiceDp'])->name('invoice-dp.printInvoiceDp');
+                Route::get('/kapal', function () {
+                    return view('pages.abp-page.mkapal', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
+                })->name('kapal.index');
+                Route::resource('/kapal', \App\Http\Controllers\KapalController::class);
+                Route::get('/kapal/cport/getDetails/{id}', [\App\Http\Controllers\KapalController::class, 'getDetails'])->name('getKapalDetails');
+                Route::get('/kapal/cport/getEditDetails/{id}', [\App\Http\Controllers\KapalController::class, 'getEditDetails'])->name('getEditDetails');
+                Route::resource('/company_port', \App\Http\Controllers\CompanyPortController::class);
 
-            Route::get('/invoice-pelunasan', function () {
-                return view('pages.abp-page.ipl', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
-            })->name('invoice-pelunasan.index');            
-            Route::resource('/invoice-pelunasan', \App\Http\Controllers\InvoiceLunasController::class);
-            // Route::match(['get', 'post'], '/invoice-pelunasan/store', [\App\Http\Controllers\InvoiceLunasController::class, 'store'])->name('invoice-pelunasan.store');
-            // Route::post('/invoice-pelunasan/store', [\App\Http\Controllers\InvoiceLunasController::class, 'store'])->name('store');
+                Route::get('/penerima', function () {
+                    return view('pages.abp-page.mpenerima', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
+                })->name('penerima.index');
+                Route::resource('/penerima', \App\Http\Controllers\PenerimaController::class);
+                Route::resource('/pt_penerima', \App\Http\Controllers\PTpenerimaController::class);
+                Route::resource('/grup', \App\Http\Controllers\GrupController::class);
+                // Route::get('/penerima/pen/getPenDetails/{id}', [\App\Http\Controllers\PenerimaController::class, 'getPenDetails'])->name('getPenerimaDetails');
+                // Route::get('/penerima/pen/getGroDetails/{id}', [\App\Http\Controllers\PenerimaController::class, 'getGroDetails'])->name('getGroupDetails');
+
+
+                Route::get('/gudang-muat', function () {
+                    return view('pages.abp-page.mgudangmuat', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
+                })->name('gudang-muat.index');
+                Route::resource('/gudang-muat', \App\Http\Controllers\GudangMuatController::class);
+
+                Route::get('/pol', function () {
+                    return view('pages.abp-page.mpol', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
+                })->name('pol');
+                Route::resource('/pol', \App\Http\Controllers\POLController::class);
+
+                Route::get('/pod', function () {
+                    return view('pages.abp-page.mpod', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
+                })->name('pod');
+                Route::resource('/pod', \App\Http\Controllers\PODController::class);
+            });
+
+            /**
+             * ==============================
+             *       @Router -  Document
+             * ==============================
+             */
+
+            Route::prefix('document')->group(function () {
+                Route::get('/penawaran-harga', function () {
+                    return view('pages.abp-page.dph', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
+                })->name('penawaran-harga');
+                Route::resource('/penawaran-harga', \App\Http\Controllers\PHController::class);
+                Route::get('/penawaran-harga/ph/getDetails/{id}', [\App\Http\Controllers\PHController::class, 'getDetails'])->name('getDetails');
+                Route::get('/penawaran-harga/ph/getPenDetails/{id}', [\App\Http\Controllers\PHController::class, 'getPenDetails'])->name('getPenDetails');
+                Route::post('/penawaran-harga/save', [\App\Http\Controllers\PHController::class, 'save'])->name('penawaran-harga.save');
+                Route::match(['get', 'post'], '/penawaran-harga/approve/{id_penawaran}', [\App\Http\Controllers\PHController::class, 'approve'])->name('penawaran-harga.approve');
+                Route::match(['get', 'post'], '/penawaran-harga/removed/{id_penawaran}', [\App\Http\Controllers\PHController::class, 'removed'])->name('penawaran-harga.removed');
+                Route::match(['get', 'post'], '/penawaran-harga/edit/{id_penawaran}', [\App\Http\Controllers\PHController::class, 'edit'])->name('penawaran-harga.edit');
+                Route::match(['get', 'post'], '/penawaran-harga/updateph/{id_penawaran}', [\App\Http\Controllers\PHController::class, 'updateph'])->name('penawaran-harga.updateph');
+                Route::match(['get', 'post', 'delete'], '/penawaran-harga/removedph/{id_penawaran}', [\App\Http\Controllers\PHController::class, 'removedph'])->name('penawaran-harga.removedph');
+                Route::match(['get', 'post'], '/penawaran-harga/updatephd/{id_detail_ph}', [\App\Http\Controllers\PHController::class, 'updatephd'])->name('penawaran-harga.updatephd');
+                Route::match(['get', 'post', 'delete'], '/penawaran-harga/removedphd/{id_detail_ph}', [\App\Http\Controllers\PHController::class, 'removedphd'])->name('penawaran-harga.removedphd');
+                Route::match(['get', 'post'], '/penawaran-harga/document/{id_penawaran}', [\App\Http\Controllers\PHController::class, 'generatepdf'])->name('penawaran-harga.generatepdf');
+
+                Route::get('/purchase-order', function () {
+                    return view('pages.abp-page.dpo', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
+                })->name('purchase-order.index');
+                Route::resource('/purchase-order', \App\Http\Controllers\POController::class);
+                Route::get('/purchase-order/po/getCustomerDetails/{id}', [\App\Http\Controllers\POController::class, 'getCustomerDetails'])->name('getCustomerDetails');
+                Route::get('/purchase-order/po/getEstateDetails/{id}', [\App\Http\Controllers\POController::class, 'getEstateDetails'])->name('getEstateDetails');
+                Route::get('/purchase-order/po/getDetailOA/{id}', [\App\Http\Controllers\POController::class, 'getDetailOA'])->name('getDetailOA');
+                Route::match(['get', 'post'], '/purchase-order/approve/{po_muat}', [\App\Http\Controllers\POController::class, 'approve'])->name('purchase-order.approve');
+                Route::match(['get', 'post'], '/purchase-order/removed/{po_muat}', [\App\Http\Controllers\POController::class, 'removed'])->name('purchase-order.removed');
+>>>>>>> Stashed changes
+
+                Route::get('/surat-perintah-kerja', function () {
+                    return view('pages.abp-page.dspk', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
+                })->name('surat-perintah-kerja');
+
+                Route::get('/tracking', function () {
+                    return view('pages.abp-page.tra', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
+                })->name('tracking.index');
+                Route::resource('/tracking', \App\Http\Controllers\DocTrackingController::class);
+                Route::get('/tracking/tr/getPo/{id}', [\App\Http\Controllers\DocTrackingController::class, 'getPo'])->name('getPo');
+                Route::match(['get', 'post'], '/tracking/savecontainer', [\App\Http\Controllers\DocTrackingController::class, 'savecontainer'])->name('tracking.savecontainer');
+                Route::match(['get', 'post'], '/tracking/savecurah', [\App\Http\Controllers\DocTrackingController::class, 'savecurah'])->name('tracking.savecurah');
+
+                Route::get('/dooring', function () {
+                    return view('pages.abp-page.dor', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
+                })->name('dooring.index');
+                Route::resource('/dooring', \App\Http\Controllers\DooringController::class);
+                Route::get('/dooring/dr/getKapalDooring/{id}', [\App\Http\Controllers\DooringController::class, 'getKapalDooring'])->name('getKapalDooring');
+                Route::get('/dooring/dr/getContainer/{id}', [\App\Http\Controllers\DooringController::class, 'getContainer'])->name('getContainer');
+                Route::get('/dooring/dr/getPoDooring/{id}', [\App\Http\Controllers\DooringController::class, 'getPoDooring'])->name('getPoDooring');
+                Route::match(['get', 'post'], '/dooring/savecurah', [\App\Http\Controllers\DooringController::class, 'savecurah'])->name('dooring.savecurah');
+                Route::match(['get', 'post'], '/dooring/savecontainer', [\App\Http\Controllers\DooringController::class, 'savecontainer'])->name('dooring.savecontainer');
+            });
+
+            /**
+             * ==============================
+             *       @Router -  Monitoring
+             * ==============================
+             */
+
+            Route::prefix('monitoring')->group(function () {
+                Route::get('/mon-tracking', function () {
+                    return view('pages.abp-page.montracking', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
+                })->name('mon-tracking.index');
+                Route::resource('/mon-tracking', \App\Http\Controllers\MTrackingController::class);
+                Route::put('/mon-tracking', [\App\Http\Controllers\MTrackingController::class, 'update'])->name('mon-tracking.update');
+                // Route::put('edit/{id}','ProductController@update')->name('product.update');
+                // Route::match(['post'], '/mon-tracking/mt/tambahdt', [\App\Http\Controllers\MTrackingController::class, 'tambahdt'])->name('mon-tracking.tambahdt');
+                Route::get('/mon-dooring', function () {
+                    return view('pages.abp-page.mondooring', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
+                })->name('mon-dooring.index');
+                Route::resource('/mon-dooring', \App\Http\Controllers\MDooringController::class);
+            });
+
+            Route::prefix('finance')->group(function () {
+                Route::get('/invoice-dp', function () {
+                    return view('pages.abp-page.idp', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
+                })->name('invoice-dp.index');
+                Route::resource('/invoice-dp', \App\Http\Controllers\InvoiceDPController::class);
+                Route::get('/invoice-dp/dp/getOptionsPO/{id_track}', [\App\Http\Controllers\InvoiceDPController::class, 'getOptionsPO'])->name('getOptionsPO');
+                Route::get('/invoice-dp/dp/getDetailPO/{id_track}', [\App\Http\Controllers\InvoiceDPController::class, 'getDetailPO'])->name('getDetailPO');
+                Route::get('/invoice-dp/dp/getDetailPOCont/{id_track}', [\App\Http\Controllers\InvoiceDPController::class, 'getDetailPOCont'])->name('getDetailPOCont');
+                Route::get('/invoice-dp/gen/generate', [\App\Http\Controllers\InvoiceDPController::class, 'generate'])->name('generate');
+                Route::match(['get', 'post'], '/invoice-dp/approve/{id_invoice_dp}', [\App\Http\Controllers\InvoiceDPController::class, 'approve'])->name('invoice-dp.approve');
+                Route::match(['get', 'post'], '/invoice-dp/savecurahidp', [\App\Http\Controllers\InvoiceDPController::class, 'savecurahidp'])->name('invoice-dp.savecurahidp');
+                Route::match(['get', 'post'], '/invoice-dp/savecontaineridp', [\App\Http\Controllers\InvoiceDPController::class, 'savecontaineridp'])->name('invoice-dp.savecontaineridp');
+                Route::match(['get', 'post'], '/invoice-dp/print/{id_invoice_dp}', [\App\Http\Controllers\InvoiceDPController::class, 'printInvoiceDp'])->name('invoice-dp.print');
+                // Route::get('/invoice-dp/print/{id_invoice_dp}', [\App\Http\Controllers\InvoiceDPController::class, 'printInvoiceDp'])->name('invoice-dp.printInvoiceDp');
+
+                Route::get('/invoice-pelunasan', function () {
+                    return view('pages.abp-page.ipl', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
+                })->name('invoice-pelunasan.index');
+                Route::resource('/invoice-pelunasan', \App\Http\Controllers\InvoiceLunasController::class);
+                // Route::match(['get', 'post'], '/invoice-pelunasan/store', [\App\Http\Controllers\InvoiceLunasController::class, 'store'])->name('invoice-pelunasan.store');
+                // Route::post('/invoice-pelunasan/store', [\App\Http\Controllers\InvoiceLunasController::class, 'store'])->name('store');
+            });
+            /**
+             * ==============================
+             *       @Router -  User Role
+             * ==============================
+             */
+
+            Route::prefix('userrole')->group(function () {
+                Route::post('/menuuser/add', [\App\Http\Controllers\MenuUserController::class, 'add'])->name('menuuser.add');
+                Route::get('/menuuser', function () {
+                    return view('pages.abp-page.menuuser', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
+                })->name('menuuser.index');
+                Route::resource('/menuuser', \App\Http\Controllers\MenuUserController::class);
+                Route::get('/createuser', function () {
+                    return view('pages.abp-page.user', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
+                })->name('createuser.index');
+                Route::resource('/createuser', \App\Http\Controllers\CreateUserController::class);
+            });
         });
-        
+
         /**
          * ==============================
          *        @Router -  Apps
          * ==============================
          */
-        
+
         Route::prefix('app')->group(function () {
             Route::get('/calendar', function () {
                 return view('pages.app.calendar', ['title' => 'Javascript Calendar | CORK - Multipurpose Bootstrap Dashboard Template', 'breadcrumb' => 'This Breadcrumb']);
@@ -231,9 +280,9 @@ foreach ($prefixRouters as $prefixRouter) {
             Route::get('/todo-list', function () {
                 return view('pages.app.todolist', ['title' => 'Todo List | CORK - Multipurpose Bootstrap Dashboard Template', 'breadcrumb' => 'This Breadcrumb']);
             })->name('todolist');
-        
+
             // Blog
-        
+
             Route::prefix('/blog')->group(function () {
                 Route::get('/create', function () {
                     return view('pages.app.blog.create', ['title' => 'Blog Create | CORK - Multipurpose Bootstrap Dashboard Template ', 'breadcrumb' => 'This Breadcrumb']);
@@ -251,7 +300,7 @@ foreach ($prefixRouters as $prefixRouter) {
                     return view('pages.app.blog.post', ['title' => 'Post Content | CORK - Multipurpose Bootstrap Dashboard Template ', 'breadcrumb' => 'This Breadcrumb']);
                 })->name('blog-post');
             });
-        
+
             // Ecommerce
             Route::prefix('/ecommerce')->group(function () {
                 Route::get('/add', function () {
@@ -270,9 +319,9 @@ foreach ($prefixRouters as $prefixRouter) {
                     return view('pages.app.ecommerce.shop', ['title' => 'Ecommerce Shop | CORK - Multipurpose Bootstrap Dashboard Template ', 'breadcrumb' => 'This Breadcrumb']);
                 })->name('ecommerce-shop');
             });
-        
+
             // Invoice
-        
+
             Route::prefix('/invoice')->group(function () {
                 Route::get('/add', function () {
                     return view('pages.app.invoice.add', ['title' => 'Invoice Add | CORK - Multipurpose Bootstrap Dashboard Template ', 'breadcrumb' => 'This Breadcrumb']);
@@ -288,16 +337,16 @@ foreach ($prefixRouters as $prefixRouter) {
                 })->name('invoice-preview');
             });
         });
-        
+
         /**
          * ==============================
          *    @Router -  Authentication
          * ==============================
          */
-        
+
         Route::prefix('authentication')->group(function () {
             // Boxed
-            
+
             Route::prefix('/boxed')->group(function () {
                 Route::get('/2-step-verification', function () {
                     return view('pages.authentication.boxed.2-step-verification', ['title' => '2 Step Verification Cover | CORK - Multipurpose Bootstrap Dashboard Template', 'breadcrumb' => 'This Breadcrumb']);
@@ -315,8 +364,8 @@ foreach ($prefixRouters as $prefixRouter) {
                     return view('pages.authentication.boxed.signup', ['title' => 'SignUp Cover | CORK - Multipurpose Bootstrap Dashboard Template', 'breadcrumb' => 'This Breadcrumb']);
                 })->name('signup');
             });
-            
-            
+
+
             // Cover
 
             Route::prefix('/cover')->group(function () {
@@ -336,15 +385,14 @@ foreach ($prefixRouters as $prefixRouter) {
                     return view('pages.authentication.cover.signup', ['title' => 'SignUp Cover | CORK - Multipurpose Bootstrap Dashboard Template', 'breadcrumb' => 'This Breadcrumb']);
                 })->name('signup');
             });
-            
         });
-        
+
         /**
          * ==============================
          *     @Router -  Components
          * ==============================
          */
-        
+
         Route::prefix('component')->group(function () {
             Route::get('/accordion', function () {
                 return view('pages.component.accordion', ['title' => 'Accordions | CORK - Multipurpose Bootstrap Dashboard Template ', 'breadcrumb' => 'This Breadcrumb']);
@@ -395,7 +443,7 @@ foreach ($prefixRouters as $prefixRouter) {
                 return view('pages.component.timeline', ['title' => 'Timeline | CORK - Multipurpose Bootstrap Dashboard Template ', 'breadcrumb' => 'This Breadcrumb']);
             })->name('timeline');
         });
-        
+
         /**
          * ==============================
          *     @Router -  Elements
@@ -454,13 +502,13 @@ foreach ($prefixRouters as $prefixRouter) {
                 return view('pages.element.typography', ['title' => 'Typography | CORK - Multipurpose Bootstrap Dashboard Template ', 'breadcrumb' => 'This Breadcrumb']);
             })->name('typography');
         });
-        
+
         /**
          * ==============================
          *        @Router -  Forms
          * ==============================
          */
-        
+
         Route::prefix('form')->group(function () {
             Route::get('/autocomplete', function () {
                 return view('pages.form.autocomplete', ['title' => 'AutoComplete | CORK - Multipurpose Bootstrap Dashboard Template ', 'breadcrumb' => 'This Breadcrumb']);
@@ -523,7 +571,7 @@ foreach ($prefixRouters as $prefixRouter) {
                 return view('pages.form.wizard', ['title' => 'Wizards | CORK - Multipurpose Bootstrap Dashboard Template ', 'breadcrumb' => 'This Breadcrumb']);
             })->name('wizard');
         });
-        
+
         /**
          * ==============================
          *       @Router -  Layouts
@@ -543,13 +591,13 @@ foreach ($prefixRouters as $prefixRouter) {
                 return view('pages.layout.empty', ['title' => 'Empty | CORK - Multipurpose Bootstrap Dashboard Template', 'breadcrumb' => 'This Breadcrumb']);
             })->name('empty');
         });
-        
+
         /**
          * ==============================
          *       @Router -  Pages
          * ==============================
          */
-        
+
         Route::prefix('page')->group(function () {
             Route::get('/contact-us', function () {
                 return view('pages.page.contact-us', ['title' => 'Contact Us | CORK - Multipurpose Bootstrap Dashboard Template ', 'breadcrumb' => 'This Breadcrumb']);
@@ -567,7 +615,7 @@ foreach ($prefixRouters as $prefixRouter) {
                 return view('pages.page.maintanence', ['title' => 'Maintenence | CORK - Multipurpose Bootstrap Dashboard Template ', 'breadcrumb' => 'This Breadcrumb']);
             })->name('maintenance');
         });
-        
+
         /**
          * ==============================
          *       @Router -  Table
@@ -576,8 +624,8 @@ foreach ($prefixRouters as $prefixRouter) {
         Route::get('/table', function () {
             return view('pages.table.basic', ['title' => 'Bootstrap Tables | CORK - Multipurpose Bootstrap Dashboard Template ', 'breadcrumb' => 'This Breadcrumb']);
         })->name('table');
-        
-        
+
+
         /**
          * ======================================
          *          @Router -  Datatables
@@ -597,13 +645,13 @@ foreach ($prefixRouters as $prefixRouter) {
                 return view('pages.table.datatable.striped-table', ['title' => 'DataTables Striped | CORK - Multipurpose Bootstrap Dashboard Template ', 'breadcrumb' => 'This Breadcrumb']);
             })->name('striped-table');
         });
-        
+
         /**
          * ==============================
          *          @Router -  Users
          * ==============================
          */
-        
+
         Route::prefix('user')->group(function () {
             Route::get('/settings', function () {
                 return view('pages.user.account-settings', ['title' => 'User Profile | CORK - Multipurpose Bootstrap Dashboard Template ', 'breadcrumb' => 'This Breadcrumb']);
@@ -612,27 +660,27 @@ foreach ($prefixRouters as $prefixRouter) {
                 return view('pages.user.profile', ['title' => 'Account Settings | CORK - Multipurpose Bootstrap Dashboard Template ', 'breadcrumb' => 'This Breadcrumb']);
             })->name('profile');
         });
-        
+
         /**
          * ==============================
          *        @Router -  Widgets
          * ==============================
          */
-        
+
         Route::get('/widgets', function () {
             return view('pages.widget.widgets', ['title' => 'Widgets | CORK - Multipurpose Bootstrap Dashboard Template ', 'breadcrumb' => 'This Breadcrumb']);
         })->name('widgets');
-        
+
         /**
          * ==============================
          *      @Router -  charts
          * ==============================
          */
-        
+
         Route::get('/charts', function () {
             return view('pages.charts', ['title' => 'Apex Chart | CORK - Multipurpose Bootstrap Dashboard Template ', 'breadcrumb' => 'This Breadcrumb']);
         })->name('charts');
-        
+
         /**
          * ==============================
          *       @Router -  Maps
@@ -641,7 +689,6 @@ foreach ($prefixRouters as $prefixRouter) {
         Route::get('/maps', function () {
             return view('pages.map', ['title' => 'jVector Maps | CORK - Multipurpose Bootstrap Dashboard Template ', 'breadcrumb' => 'This Breadcrumb']);
         })->name('maps');
-
     });
 }
 
@@ -656,11 +703,11 @@ Route::prefix('rtl')->group(function () {
     $rtlPrefixRouters = [
         'modern-light-menu', 'modern-dark-menu', 'collapsible-menu', 'horizontal-light-menu', 'horizontal-dark-menu'
     ];
-    
+
     foreach ($rtlPrefixRouters as $rtlPrefixRouter) {
         Route::prefix($rtlPrefixRouter)->group(function () {
 
-        
+
             Route::get('/sss', function () {
                 return view('welcome', ['title' => 'this is ome ', 'breadcrumb' => 'This Breadcrumb']);
             });
@@ -670,7 +717,7 @@ Route::prefix('rtl')->group(function () {
              *       @Router -  Dashboard
              * ==============================
              */
-            
+
             Route::prefix('dashboard')->group(function () {
                 Route::get('/analytics', function () {
                     return view('pages-rtl.dashboard.analytics', ['title' => 'CORK Admin - Multipurpose Bootstrap Dashboard Template', 'breadcrumb' => 'This Breadcrumb']);
@@ -679,13 +726,13 @@ Route::prefix('rtl')->group(function () {
                     return view('pages-rtl.dashboard.sales', ['title' => 'Sales Admin | CORK - Multipurpose Bootstrap Dashboard Template', 'breadcrumb' => 'This Breadcrumb']);
                 })->name('sales');
             });
-            
+
             /**
              * ==============================
              *        @Router -  Apps
              * ==============================
              */
-            
+
             Route::prefix('app')->group(function () {
                 Route::get('/calendar', function () {
                     return view('pages-rtl.app.calendar', ['title' => 'Javascript Calendar | CORK - Multipurpose Bootstrap Dashboard Template', 'breadcrumb' => 'This Breadcrumb']);
@@ -708,9 +755,9 @@ Route::prefix('rtl')->group(function () {
                 Route::get('/todo-list', function () {
                     return view('pages-rtl.app.todolist', ['title' => 'Todo List | CORK - Multipurpose Bootstrap Dashboard Template', 'breadcrumb' => 'This Breadcrumb']);
                 })->name('todolist');
-            
+
                 // Blog
-            
+
                 Route::prefix('/blog')->group(function () {
                     Route::get('/create', function () {
                         return view('pages-rtl.app.blog.create', ['title' => 'Blog Create | CORK - Multipurpose Bootstrap Dashboard Template ', 'breadcrumb' => 'This Breadcrumb']);
@@ -728,7 +775,7 @@ Route::prefix('rtl')->group(function () {
                         return view('pages-rtl.app.blog.post', ['title' => 'Post Content | CORK - Multipurpose Bootstrap Dashboard Template ', 'breadcrumb' => 'This Breadcrumb']);
                     })->name('blog-post');
                 });
-            
+
                 // Ecommerce
                 Route::prefix('/ecommerce')->group(function () {
                     Route::get('/add', function () {
@@ -747,9 +794,9 @@ Route::prefix('rtl')->group(function () {
                         return view('pages-rtl.app.ecommerce.shop', ['title' => 'Ecommerce Shop | CORK - Multipurpose Bootstrap Dashboard Template ', 'breadcrumb' => 'This Breadcrumb']);
                     })->name('ecommerce-shop');
                 });
-            
+
                 // Invoice
-            
+
                 Route::prefix('/invoice')->group(function () {
                     Route::get('/add', function () {
                         return view('pages-rtl.app.invoice.add', ['title' => 'Invoice Add | CORK - Multipurpose Bootstrap Dashboard Template ', 'breadcrumb' => 'This Breadcrumb']);
@@ -765,16 +812,16 @@ Route::prefix('rtl')->group(function () {
                     })->name('invoice-preview');
                 });
             });
-            
+
             /**
              * ==============================
              *    @Router -  Authentication
              * ==============================
              */
-            
+
             Route::prefix('authentication')->group(function () {
                 // Boxed
-                
+
                 Route::prefix('/boxed')->group(function () {
                     Route::get('/2-step-verification', function () {
                         return view('pages-rtl.authentication.boxed.2-step-verification', ['title' => '2 Step Verification Cover | CORK - Multipurpose Bootstrap Dashboard Template', 'breadcrumb' => 'This Breadcrumb']);
@@ -792,8 +839,8 @@ Route::prefix('rtl')->group(function () {
                         return view('pages-rtl.authentication.boxed.signup', ['title' => 'SignUp Cover | CORK - Multipurpose Bootstrap Dashboard Template', 'breadcrumb' => 'This Breadcrumb']);
                     })->name('signup');
                 });
-                
-                
+
+
                 // Cover
 
                 Route::prefix('/cover')->group(function () {
@@ -813,15 +860,14 @@ Route::prefix('rtl')->group(function () {
                         return view('pages-rtl.authentication.cover.signup', ['title' => 'SignUp Cover | CORK - Multipurpose Bootstrap Dashboard Template', 'breadcrumb' => 'This Breadcrumb']);
                     })->name('signup');
                 });
-                
             });
-            
+
             /**
              * ==============================
              *     @Router -  Components
              * ==============================
              */
-            
+
             Route::prefix('component')->group(function () {
                 Route::get('/accordion', function () {
                     return view('pages-rtl.component.accordion', ['title' => 'Accordions | CORK - Multipurpose Bootstrap Dashboard Template ', 'breadcrumb' => 'This Breadcrumb']);
@@ -872,7 +918,7 @@ Route::prefix('rtl')->group(function () {
                     return view('pages-rtl.component.timeline', ['title' => 'Timeline | CORK - Multipurpose Bootstrap Dashboard Template ', 'breadcrumb' => 'This Breadcrumb']);
                 })->name('timeline');
             });
-            
+
             /**
              * ==============================
              *     @Router -  Elements
@@ -931,13 +977,13 @@ Route::prefix('rtl')->group(function () {
                     return view('pages-rtl.element.typography', ['title' => 'Typography | CORK - Multipurpose Bootstrap Dashboard Template ', 'breadcrumb' => 'This Breadcrumb']);
                 })->name('typography');
             });
-            
+
             /**
              * ==============================
              *        @Router -  Forms
              * ==============================
              */
-            
+
             Route::prefix('form')->group(function () {
                 Route::get('/autocomplete', function () {
                     return view('pages-rtl.form.autocomplete', ['title' => 'AutoComplete | CORK - Multipurpose Bootstrap Dashboard Template ', 'breadcrumb' => 'This Breadcrumb']);
@@ -1000,7 +1046,7 @@ Route::prefix('rtl')->group(function () {
                     return view('pages-rtl.form.wizard', ['title' => 'Wizards | CORK - Multipurpose Bootstrap Dashboard Template ', 'breadcrumb' => 'This Breadcrumb']);
                 })->name('wizard');
             });
-            
+
             /**
              * ==============================
              *       @Router -  Layouts
@@ -1020,13 +1066,13 @@ Route::prefix('rtl')->group(function () {
                     return view('pages-rtl.layout.empty', ['title' => 'Empty | CORK - Multipurpose Bootstrap Dashboard Template', 'breadcrumb' => 'This Breadcrumb']);
                 })->name('empty');
             });
-            
+
             /**
              * ==============================
              *       @Router -  Pages
              * ==============================
              */
-            
+
             Route::prefix('page')->group(function () {
                 Route::get('/contact-us', function () {
                     return view('pages-rtl.page.contact-us', ['title' => 'Contact Us | CORK - Multipurpose Bootstrap Dashboard Template ', 'breadcrumb' => 'This Breadcrumb']);
@@ -1044,7 +1090,7 @@ Route::prefix('rtl')->group(function () {
                     return view('pages-rtl.page.maintanence', ['title' => 'Maintenence | CORK - Multipurpose Bootstrap Dashboard Template ', 'breadcrumb' => 'This Breadcrumb']);
                 })->name('maintenance');
             });
-            
+
             /**
              * ==============================
              *       @Router -  Table
@@ -1053,8 +1099,8 @@ Route::prefix('rtl')->group(function () {
             Route::get('/table', function () {
                 return view('pages-rtl.table.basic', ['title' => 'Bootstrap Tables | CORK - Multipurpose Bootstrap Dashboard Template ', 'breadcrumb' => 'This Breadcrumb']);
             })->name('table');
-            
-            
+
+
             /**
              * ======================================
              *          @Router -  Datatables
@@ -1074,13 +1120,13 @@ Route::prefix('rtl')->group(function () {
                     return view('pages-rtl.table.datatable.striped-table', ['title' => 'DataTables Striped | CORK - Multipurpose Bootstrap Dashboard Template ', 'breadcrumb' => 'This Breadcrumb']);
                 })->name('striped-table');
             });
-            
+
             /**
              * ==============================
              *          @Router -  Users
              * ==============================
              */
-            
+
             Route::prefix('user')->group(function () {
                 Route::get('/settings', function () {
                     return view('pages-rtl.user.account-settings', ['title' => 'User Profile | CORK - Multipurpose Bootstrap Dashboard Template ', 'breadcrumb' => 'This Breadcrumb']);
@@ -1089,27 +1135,27 @@ Route::prefix('rtl')->group(function () {
                     return view('pages-rtl.user.profile', ['title' => 'Account Settings | CORK - Multipurpose Bootstrap Dashboard Template ', 'breadcrumb' => 'This Breadcrumb']);
                 })->name('profile');
             });
-            
+
             /**
              * ==============================
              *        @Router -  Widgets
              * ==============================
              */
-            
+
             Route::get('/widgets', function () {
                 return view('pages-rtl.widget.widgets', ['title' => 'Widgets | CORK - Multipurpose Bootstrap Dashboard Template ', 'breadcrumb' => 'This Breadcrumb']);
             })->name('widgets');
-            
+
             /**
              * ==============================
              *      @Router -  charts
              * ==============================
              */
-            
+
             Route::get('/charts', function () {
                 return view('pages-rtl.charts', ['title' => 'Apex Chart | CORK - Multipurpose Bootstrap Dashboard Template ', 'breadcrumb' => 'This Breadcrumb']);
             })->name('charts');
-            
+
             /**
              * ==============================
              *       @Router -  Maps
@@ -1118,9 +1164,6 @@ Route::prefix('rtl')->group(function () {
             Route::get('/maps', function () {
                 return view('pages-rtl.map', ['title' => 'jVector Maps | CORK - Multipurpose Bootstrap Dashboard Template ', 'breadcrumb' => 'This Breadcrumb']);
             })->name('maps');
-
-            
         });
     }
-    
 });
