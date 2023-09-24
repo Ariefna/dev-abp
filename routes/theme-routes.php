@@ -1,4 +1,5 @@
 <?php
+use App\Http\Controllers\RoleController;
 
 
 // Route::get('/', function () {
@@ -168,6 +169,7 @@ foreach ($prefixRouters as $prefixRouter) {
             Route::get('/mon-tracking', function () {
                 return view('pages.abp-page.montracking', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
             })->name('mon-tracking.index');
+            Route::get('/mon-tracking/print/{id_detail_track}', [\App\Http\Controllers\MTrackingController::class, 'print'])->name('monitoring.tracking.print');
             Route::resource('/mon-tracking', \App\Http\Controllers\MTrackingController::class);
             Route::put('/mon-tracking', [\App\Http\Controllers\MTrackingController::class, 'update'])->name('mon-tracking.update');
             // Route::put('edit/{id}','ProductController@update')->name('product.update');
@@ -200,6 +202,15 @@ foreach ($prefixRouters as $prefixRouter) {
             // Route::match(['get', 'post'], '/invoice-pelunasan/store', [\App\Http\Controllers\InvoiceLunasController::class, 'store'])->name('invoice-pelunasan.store');
             // Route::post('/invoice-pelunasan/store', [\App\Http\Controllers\InvoiceLunasController::class, 'store'])->name('store');
         });
+
+        // Route::prefix('user-role')->group(function () {
+        //     Route::get('/menu-user', function () {
+        //         return view('pages.abp-page.role', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
+        //     })->name('menu.index');
+        //     Route::get('/create-user', function () {
+        //         return view('pages.abp-page.create', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
+        //     })->name('create.index');
+        // });
         
         /**
          * ==============================
