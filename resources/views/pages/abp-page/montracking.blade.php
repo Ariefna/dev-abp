@@ -327,7 +327,46 @@
                 "sLengthMenu": "Results :  _MENU_",
                 },
                 buttons: [
-                    { extend: 'excel', className: 'btn btn-success' },
+                    { 
+                        extend: 'excel', 
+                        className: 'btn btn-success', 
+                        exportOptions: {
+                            columns: ':visible'
+                        },
+                        customize: function(xlsx) {
+            var sheet = xlsx.xl.worksheets['sheet1.xml'];
+            var rows = sheet.getElementsByTagName('row');
+
+            // Define a style object for borders
+            var borderStyle = {
+                style: 'thin', // You can change this to 'medium', 'thick', etc.
+                color: '000000' // Border color in hexadecimal format (black in this case)
+            };
+
+            // Loop through rows and cells to apply borders
+            for (var i = 0; i < rows.length; i++) {
+                var cells = rows[i].getElementsByTagName('c');
+                for (var j = 0; j < cells.length; j++) {
+                    var cell = cells[j];
+                    var is = cell.getElementsByTagName('is')[0];
+                    if (is) {
+                        var t = is.getElementsByTagName('t')[0];
+                        if (t && t.textContent === 's') {
+                            if (!cell.getElementsByTagName('border').length) {
+                                var borders = xlsx.createElement('border');
+                                borders.appendChild(xlsx.createElement('left')).appendChild(xlsx.createElement('color')).setAttribute('auto', '1');
+                                borders.appendChild(xlsx.createElement('right')).appendChild(xlsx.createElement('color')).setAttribute('auto', '1');
+                                borders.appendChild(xlsx.createElement('top')).appendChild(xlsx.createElement('color')).setAttribute('auto', '1');
+                                borders.appendChild(xlsx.createElement('bottom')).appendChild(xlsx.createElement('color')).setAttribute('auto', '1');
+                                cell.appendChild(borders);
+                            }
+                        }
+                    }
+                }
+            }
+        }                                       
+                        
+                    },
                     {
                         text: 'Customer',
                         className: 'btn btn-secondary toggle-vis mb-1',
