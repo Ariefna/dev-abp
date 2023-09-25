@@ -185,6 +185,7 @@ foreach ($prefixRouters as $prefixRouter) {
                 Route::get('/mon-dooring', function () {
                     return view('pages.abp-page.mondooring', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
                 })->name('mon-dooring.index');
+                Route::get('/mon-dooring/print/spk/{id_detail_door}', [\App\Http\Controllers\MDooringController::class, 'printSPK'])->name('monitoring.dooring.spk');
                 Route::resource('/mon-dooring', \App\Http\Controllers\MDooringController::class);
             });
 
