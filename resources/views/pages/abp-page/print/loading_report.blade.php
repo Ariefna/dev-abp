@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>LOADING REPORT</title>
 
     <style>
         table#display {
@@ -39,7 +39,7 @@
         </tr>
         <tr>
             <td>DARI PARTY</td>
-            <td>: PO : {{$DetailTracking->docTracking->no_po}}</td>
+            <td>: PO : {{$DetailTracking->docTracking->no_po}} {{$DetailTracking->docTracking->po->total_qty}} KG</td>
         </tr>
 
         {{-- space --}}
@@ -57,7 +57,7 @@
         </tr>
         <tr>
             <td>DIMUAT</td>
-            <td>: PO : {{$DetailTracking->docTracking->no_po}}</td>
+            <td>: PO : {{$DetailTracking->docTracking->no_po}} {{$tbl_po->sum('qty_tonase')}} KG</td>
         </tr>
         <tr>
             <td>PO KEBUN</td>

@@ -170,6 +170,7 @@ foreach ($prefixRouters as $prefixRouter) {
                 return view('pages.abp-page.montracking', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
             })->name('mon-tracking.index');
             Route::get('/mon-tracking/print/{id_detail_track}', [\App\Http\Controllers\MTrackingController::class, 'print'])->name('monitoring.tracking.print');
+            Route::get('/mon-tracking/print/spk/{id_detail_track}', [\App\Http\Controllers\MTrackingController::class, 'printSPK'])->name('monitoring.tracking.spk');
             Route::resource('/mon-tracking', \App\Http\Controllers\MTrackingController::class);
             Route::put('/mon-tracking', [\App\Http\Controllers\MTrackingController::class, 'update'])->name('mon-tracking.update');
             // Route::put('edit/{id}','ProductController@update')->name('product.update');
