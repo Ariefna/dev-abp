@@ -39,7 +39,7 @@
         .tg .tg-wp8o{border-color:#000000;text-align:center;vertical-align:top}
         .tg .tg-r1gl{border-color:inherit;font-family:Arial, Helvetica, sans-serif !important;font-size:15px;text-align:left;
         vertical-align:top}
-        .tg .tg-7btt{border-color:inherit;font-weight:bold;text-align:center;vertical-align:top}
+        .tg .tg-7btt{border-color:inherit;font-weight:bold;}
         .tg .tg-n6ju{border-color:inherit;font-weight:bold;text-align:center;vertical-align:top}
         .tg .tg-0pky{border-color:inherit;text-align:left;vertical-align:top}
         .tg .tg-fymr{border-color:inherit;font-weight:bold;text-align:left;vertical-align:top}
@@ -60,21 +60,21 @@
                 <td class="tg-r1gl" style="border: none; font-family: Calibri, sans-serif; font-size: 11pt !important;" colspan="7">Pergudangan Pakal Indah, Jl Raya Pakal no 16 Blok A7<br>Surabaya, Indonesia<br>Telp +6231 7433099</td>
               </tr>
               <tr>
-                <td class="tg-7btt" style="font-family:'Arial Black'; font-size:11pt !important;" colspan="3">Bill To</td>
+                <td class="tg-7btt" style="font-size: 18pt !important;" colspan="3">Bill To</td>
                 <td class="tg-n6ju" style="font-size: 18px;" colspan="4">Invoice</td>
               </tr>
               <tr>
-                <td class="tg-0pky" style="font-family:'Calibri'; font-size:10pt; font-weight: bold;" colspan="3" rowspan="3">{{ $data['nama_customer'] ?? '-' }}<br>{{ $data['kota_customer'] ?? '-'}}</td>
+                <td class="tg-0pky" style="font-weight: bold;" colspan="3" rowspan="3">{{ $data['nama_customer'] ?? '-' }}<br>{{ $data['kota_customer'] ?? '-'}}</td>
                 <td class="tg-0pky" style="border: none;" colspan="2">INVOICE DATE</td>
-                <td class="tg-fymr" style="border-left: none; border-bottom: none; border-top: none; text-align: right;" colspan="2">{{ $data['invoice_date'] ?? '-'}}</td>
+                <td class="tg-fymr" style="border-left: none; border-bottom: none; border-top: none; text-align: right;font-weight: bold;" colspan="2">{{ $data['invoice_date'] ?? '-'}}</td>
               </tr>
               <tr>
                 <td class="tg-0pky" style="border: none;" colspan="2">INVOICE NO</td>
-                <td class="tg-fymr" style="border-left: none; border-bottom: none; border-top: none; text-align: right;" colspan="2">{{ $data['invoice_no'] ?? '-'}}</td>
+                <td class="tg-fymr" style="border-left: none; border-bottom: none; border-top: none; text-align: right;font-weight: bold;" colspan="2">{{ $data['invoice_no'] ?? '-'}}</td>
               </tr>
               <tr>
                 <td class="tg-0pky" style="border-left: none; border-top: none; border-right: none;" colspan="2">TERMS</td>
-                <td class="tg-fymr" style="border-left: none; border-top: none; text-align: right;" colspan="2">{{ $data['terms'] ?? '-'}}</td>
+                <td class="tg-fymr" style="border-left: none; border-top: none; text-align: right;font-weight: bold;" colspan="2">{{ $data['terms'] ?? '-'}}</td>
               </tr>
               @foreach ($data['kapal'] as $key => $kapal)
               <tr>
@@ -194,6 +194,11 @@
                 <td class="tg-0pky" style="border-bottom: none; border-top: none; border-left:none;" colspan="2">
                     <b>Rp. {{ number_format($desc['prosentase_ppn'] * $subtotal / 100 + $dp_50, 0, ',', '.') }}</b>
                 </td>
+              </tr>
+              <tr>
+                <td colspan="3"></td>
+                <td colspan="2"></td>
+                <td colspan="2"></td>
               </tr>
               <tr>
                 <td class="tg-73oq" style="border-bottom: none; border-right: none; border-left: none;" colspan="3">

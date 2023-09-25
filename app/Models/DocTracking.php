@@ -29,11 +29,11 @@ class DocTracking extends Model
 
     public function portOfLoading()
     {
-        return $this->hasOne(portOfLoading::class,'id','id_pol');
+        return $this->hasOne(PortOfLoading::class,'id','id_pol');
     }
 
     public function portOfDestination()
     {
-        return $this->hasOne(portOfDestination::class,'id','id_pod');
+        return $this->hasOne(PortOfDestination::class,'id','id_pod');
     }
 }
