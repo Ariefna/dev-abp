@@ -293,6 +293,46 @@
                         data-bs-parent="#accordionExample">
                         @if (in_array('monitoring-mon-tracking', Session::get('admin_menus')) || Session::get('role') == 'superadmin')
                             <li class="{{ Request::routeIs('penawaran-harga.index') ? 'active' : '' }}">
+                                <a href="{{ getRouterValue() }}/report/mon-tracking"> Monitoring Tracking </a>
+                            </li>
+                        @endif
+
+                        @if (in_array('monitoring-mon-dooring', Session::get('admin_menus')) || Session::get('role') == 'superadmin')
+                            <li class="{{ Request::routeIs('purchase-order.index') ? 'active' : '' }}">
+                                <a href="{{ getRouterValue() }}/report/mon-dooring"> Monitoring Doring </a>
+                            </li>
+                        @endif
+                    </ul>
+                </li>
+            @endif
+            {{-- @if (in_array('monitoring-mon-tracking', Session::get('admin_menus')) ||
+                in_array('monitoring-mon-dooring', Session::get('admin_menus')) ||
+                Session::get('role') == 'superadmin')
+                <li class="menu {{ Request::is('*/report/*') ? 'active' : '' }}">
+                    <a href="#document" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle">
+                        <div class="">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" class="feather feather-users">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg>
+                            <span>User Role</span>
+                        </div>
+                        <div>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+                                <polyline points="9 18 15 12 9 6"></polyline>
+                            </svg>
+                        </div>
+                    </a>
+                    <ul class="dropdown-menu submenu list-unstyled" id="report"
+                        data-bs-parent="#accordionExample">
+                        @if (in_array('monitoring-mon-tracking', Session::get('admin_menus')) || Session::get('role') == 'superadmin')
+                            <li class="{{ Request::routeIs('penawaran-harga.index') ? 'active' : '' }}">
                                 <a href="{{ getRouterValue() }}/report/a"> Monitoring Tracking </a>
                             </li>
                         @endif
@@ -304,20 +344,19 @@
                         @endif
                     </ul>
                 </li>
-            @endif
-            <li class="menu menu-heading">
+            @endif             --}}
+            {{-- <li class="menu menu-heading">
                 <div class="heading"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                         viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                         stroke-linecap="round" stroke-linejoin="round" class="feather feather-minus">
                         <line x1="5" y1="12" x2="19" y2="12"></line>
                     </svg><span>TABLES AND FORMS</span></div>
-            </li>
+            </li> --}}
             @if (in_array('userrole-menu-user', Session::get('admin_menus')) ||
                     in_array('userrole-create-user', Session::get('admin_menus')) ||
                     Session::get('role') == 'superadmin')
-                <li
-                    class="menu {{ Request::routeIs('table') ? 'active' : '' }} {{ Request::is('*/datatables/*') ? 'active' : '' }}">
-                    <a href="#tables" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle">
+                <li class="menu {{ Request::routeIs('table') ? 'active' : '' }} {{ Request::is('*/userrole/*') ? 'active' : '' }}">
+                    <a href="#userrole" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle">
                         <div>
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -340,12 +379,12 @@
                     <ul class="dropdown-menu submenu list-unstyled" id="tables"
                         data-bs-parent="#accordionExample">
                         @if (in_array('userrole-menu-user', Session::get('admin_menus')) || Session::get('role') == 'superadmin')
-                            <li class="{{ Request::routeIs('table') ? 'active' : '' }}">
+                            <li class="{{ Request::routeIs('menuuser.index') ? 'active' : '' }}">
                                 <a href="{{ getRouterValue() }}/userrole/menuuser"> Menu User </a>
                             </li>
                         @endif
                         @if (in_array('userrole-create-user', Session::get('admin_menus')) || Session::get('role') == 'superadmin')
-                            <li class="{{ Request::routeIs('table') ? 'active' : '' }}">
+                            <li class="{{ Request::routeIs('createuser.index') ? 'active' : '' }}">
                                 <a href="{{ getRouterValue() }}/userrole/createuser"> Create User </a>
                             </li>
                         @endif
