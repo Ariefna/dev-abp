@@ -50,9 +50,9 @@
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="tambahModalLabel">Tambah Data Menu Halaman</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                             </div>
                             <div class="modal-body">
                                 <form action="{{ route('menuuser.add') }}" method="POST">
@@ -66,7 +66,7 @@
                                         </select>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                                    <button type="button" class="btn btn btn-light-dark" data-bs-dismiss="modal"><i class="flaticon-cancel-12"></i>Batal</button>
                                         <button type="submit" class="btn btn-primary">Simpan</button>
                                     </div>
                                 </form>
