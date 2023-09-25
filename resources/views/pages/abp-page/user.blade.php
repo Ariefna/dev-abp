@@ -36,6 +36,9 @@
                 input[type=number] {
                     -moz-appearance: textfield;
                 }
+                #PopupAutoComplete[resultstyles~="insecureWarning"] {
+ display:none !important;
+}
             </style>
             </x-slot>
             <!-- END GLOBAL MANDATORY STYLES -->
