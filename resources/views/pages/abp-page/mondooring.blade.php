@@ -85,7 +85,7 @@
                                             <th>Nama Kapal</th>
                                             <th>TD</th>
                                             <th class="text-center">Status</th>
-                                            {{-- <th class="text-center">Action</th> --}}
+                                            <th class="text-center">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -110,6 +110,9 @@
                                             <td>{{ $md->docDooring->docTracking->detailTracking->kapal->nama_kapal }}</td>
                                             <td>{{ $md->docDooring->docTracking->detailTracking->td }}</td>
                                             <td class="text-center">{!! $md->status == 1 ? '<span class="shadow-none badge badge-success">Proses Muat</span>' : ($md->status == 2 ? '<span class="shadow-none badge badge-warning">Selesai Muat</span>' : '') !!}</td>
+                                            <td>
+                                                <a href="{{route('monitoring.dooring.spk', $md->id_detail_door)}}" class="btn btn-outline-primary mb-1">SPK Dooring</a>
+                                            </td>
                                         </tr>
                                         @endforeach
                                     </tbody>

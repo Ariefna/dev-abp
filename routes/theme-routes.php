@@ -70,7 +70,6 @@ foreach ($prefixRouters as $prefixRouter) {
                 Route::resource('/customer', \App\Http\Controllers\CustomerController::class);
                 // Route::put('/customer/{customer}', [CustomerController::class, 'update'])->name('customer.update');
 
-<<<<<<< Updated upstream
         /**
          * ==============================
          *       @Router -  Monitoring
@@ -90,9 +89,9 @@ foreach ($prefixRouters as $prefixRouter) {
             Route::get('/mon-dooring', function () {
                 return view('pages.abp-page.mondooring', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
             })->name('mon-dooring.index');
+            Route::get('/mon-dooring/print/spk/{id_detail_door}', [\App\Http\Controllers\MDooringController::class, 'printSPK'])->name('monitoring.dooring.spk');
             Route::resource('/mon-dooring', \App\Http\Controllers\MDooringController::class);
         });
-=======
                 // Route::post('/data-insert', [CustomerController::class, 'store'])->name('data.insert');
                 // Route::resource('customer', ); 
                 Route::get('/barang', function () {
@@ -167,7 +166,6 @@ foreach ($prefixRouters as $prefixRouter) {
                 Route::get('/purchase-order/po/getDetailOA/{id}', [\App\Http\Controllers\POController::class, 'getDetailOA'])->name('getDetailOA');
                 Route::match(['get', 'post'], '/purchase-order/approve/{po_muat}', [\App\Http\Controllers\POController::class, 'approve'])->name('purchase-order.approve');
                 Route::match(['get', 'post'], '/purchase-order/removed/{po_muat}', [\App\Http\Controllers\POController::class, 'removed'])->name('purchase-order.removed');
->>>>>>> Stashed changes
 
                 Route::get('/surat-perintah-kerja', function () {
                     return view('pages.abp-page.dspk', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
