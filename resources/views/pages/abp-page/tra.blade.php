@@ -314,7 +314,7 @@
                                             <th>Timbangan</th>
                                             <th>No Surat Jalan</th>
                                             <th class="text-center">Status</th>
-                                            <th class="text-center">Action</th>
+                                            {{-- <th class="text-center">Action</th> --}}
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -330,9 +330,9 @@
                                             <td>{{ $tra->qty_timbang }}</td>
                                             <td>{{ $tra->no_sj }}</td>
                                             <td class="text-center"><span class="shadow-none badge badge-danger">{{ $tra->status == 1 ? 'Pending' : '' }}</span></td>
-                                            <td class="text-center">
+                                            {{-- <td class="text-center">
                                                 <a href="" class="bs-tooltip" data-bs-toggle="modal" data-bs-placement="top" title="Delete" data-original-title="Delete"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash p-1 br-8 mb-1"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></a>
-                                            </td>
+                                            </td> --}}
                                         </tr>
                                         @endforeach                                                                    
                                     </tbody>
@@ -365,84 +365,158 @@
                                 <div class="input-group has-validation">
                                     <input name="tgl_muat" id="basicFlatpickr" value="2022-09-04" class="form-control flatpickr flatpickr-input active" type="text" placeholder="Select Date..">
                                 </div>
-                            </div>      
-                            @if ($lastcont)
-                            <div class="col-md-3">                       
-                                <label for="validationCustom03" class="form-label">Gudang Muat</label>
-                                <select class="form-select" name="id_gudang" id="validationDefault01" required>
-                                    <option selected disabled value="">Pilih...</option>                                    
-                                        @foreach ($gudang as $gd)
-                                            <option {{ $lastcont->id_gudang == $gd->id_gudang ? 'selected' : '' }} value="{{ $gd->id_gudang }}">{{ $gd->nama_gudang }}</option>
-                                        @endforeach                                    
-                                </select>
-                            </div>                                                
-                            <div class="col-md-3">
-                                <label for="validationCustom03" class="form-label">Kapal</label>
-                                <select class="form-select" name="id_kapal" id="validationDefault01" required>
-                                    <option selected disabled value="">Pilih...</option>
-                                    @foreach ($kapal as $kpl)
-                                        <option {{ $lastcont->id_kapal == $kpl->id ? 'selected' : '' }} value="{{ $kpl->id }}">{{ $kpl->kode_kapal }} {{ $kpl->nama_kapal }}</option>
-                                    @endforeach
-                                </select>
                             </div>
-                            <div class="col-md-3">
-                                <label for="validationCustom03" class="form-label">Voyage</label>
-                                <input name="voyage" type="text" value="{{ $lastcont->voyage }}" class="form-control" id="validationCustom01" placeholder="Masukkan Voyage" required>
-                            </div>
-                            <div class="col-md-4">
-                                <label for="validationCustom03" class="form-label">Nopol</label>
-                                <input name="nopol" type="text" class="form-control" id="validationCustom01" placeholder="Masukkan Nopol" required>
-                            </div>
-                            <div class="col-md-4">
-                                <label for="validationCustom04" class="form-label">No Container</label>
-                                <div class="input-group has-validation">
-                                    <input name="no_container" value="{{ $lastcont->no_container }}" type="text" value="" class="form-control" id="validationCustom01" placeholder="Masukkan Nomor Container" required>
-                                </div>
-                            </div>                                                
-                            <div class="col-md-4">
-                                <label for="validationCustom03" class="form-label">No Segel</label>
-                                <input name="no_segel" value="{{ $lastcont->no_segel }}" type="text" class="form-control" id="validationCustom01" placeholder="Masukkan No Segel" required>
-                            </div>
-                            @elseif ($lastcont==0)
-                            <div class="col-md-3">                       
-                                <label for="validationCustom03" class="form-label">Gudang Muat</label>
-                                <select class="form-select" name="id_gudang" id="validationDefault01" required>
-                                    <option selected disabled value="">Pilih...</option>                                    
-                                        @foreach ($gudang as $gd)
-                                            <option value="{{ $gd->id_gudang }}">{{ $gd->nama_gudang }}</option>
+                            @if ($details || $trackzero->count())
+                                @if ($lastcont)
+                                <div class="col-md-3">                       
+                                    <label for="validationCustom03" class="form-label">Gudang Muat</label>
+                                    <select class="form-select" name="id_gudang" id="validationDefault01" required>
+                                        <option selected disabled value="">Pilih...</option>                                    
+                                            @foreach ($gudang as $gd)
+                                                <option {{ $lastcont->id_gudang == $gd->id_gudang ? 'selected' : '' }} value="{{ $gd->id_gudang }}">{{ $gd->nama_gudang }}</option>
+                                            @endforeach                                    
+                                    </select>
+                                </div>                                                
+                                <div class="col-md-3">
+                                    <label for="validationCustom03" class="form-label">Kapal</label>
+                                    <select class="form-select" name="id_kapal" id="validationDefault01" required>
+                                        <option selected disabled value="">Pilih...</option>
+                                        @foreach ($kapal as $kpl)
+                                            <option {{ $lastcont->id_kapal == $kpl->id ? 'selected' : '' }} value="{{ $kpl->id }}">{{ $kpl->kode_kapal }} {{ $kpl->nama_kapal }}</option>
                                         @endforeach
-                                </select>
-                            </div>                                                
-                            <div class="col-md-3">
-                                <label for="validationCustom03" class="form-label">Kapal</label>
-                                <select class="form-select" name="id_kapal" id="validationDefault01" required>
-                                    <option selected disabled value="">Pilih...</option>
-                                    @foreach ($kapal as $kpl)
-                                        <option value="{{ $kpl->id }}">{{ $kpl->kode_kapal }} {{ $kpl->nama_kapal }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <label for="validationCustom03" class="form-label">Voyage</label>
-                                <input name="voyage" type="text" value="" class="form-control" id="validationCustom01" placeholder="Masukkan Voyage" required>
-                            </div>
-                            <div class="col-md-4">
-                                <label for="validationCustom03" class="form-label">Nopol</label>
-                                <input name="nopol" type="text" class="form-control" id="validationCustom01" placeholder="Masukkan Nopol" required>
-                            </div>
-                            <div class="col-md-4">
-                                <label for="validationCustom04" class="form-label">No Container</label>
-                                <div class="input-group has-validation">
-                                    <input name="no_container" value="" type="text" value="" class="form-control" id="validationCustom01" placeholder="Masukkan Nomor Container" required>
+                                    </select>
                                 </div>
-                            </div>                                                
-                            <div class="col-md-4">
-                                <label for="validationCustom03" class="form-label">No Segel</label>
-                                <input name="no_segel" value="" type="text" class="form-control" id="validationCustom01" placeholder="Masukkan No Segel" required>
-                            </div>
+                                <div class="col-md-3">
+                                    <label for="validationCustom03" class="form-label">Voyage</label>
+                                    <input name="voyage" type="text" value="{{ $lastcont->voyage }}" class="form-control" id="validationCustom01" placeholder="Masukkan Voyage" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="validationCustom03" class="form-label">Nopol</label>
+                                    <input name="nopol" type="text" class="form-control" id="validationCustom01" placeholder="Masukkan Nopol" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="validationCustom04" class="form-label">No Container</label>
+                                    <div class="input-group has-validation">
+                                        <input name="no_container" value="{{ $lastcont->no_container }}" type="text" value="" class="form-control" id="validationCustom01" placeholder="Masukkan Nomor Container" required>
+                                    </div>
+                                </div>                                                
+                                <div class="col-md-4">
+                                    <label for="validationCustom03" class="form-label">No Segel</label>
+                                    <input name="no_segel" value="{{ $lastcont->no_segel }}" type="text" class="form-control" id="validationCustom01" placeholder="Masukkan No Segel" required>
+                                </div>
+                                @elseif ($lastcont==0)
+                                <div class="col-md-3">                       
+                                    <label for="validationCustom03" class="form-label">Gudang Muat</label>
+                                    <select class="form-select" name="id_gudang" id="validationDefault01" required>
+                                        <option selected disabled value="">Pilih...</option>                                    
+                                            @foreach ($gudang as $gd)
+                                                <option value="{{ $gd->id_gudang }}">{{ $gd->nama_gudang }}</option>
+                                            @endforeach
+                                    </select>
+                                </div>                                                
+                                <div class="col-md-3">
+                                    <label for="validationCustom03" class="form-label">Kapal</label>
+                                    <select class="form-select" name="id_kapal" id="validationDefault01" required>
+                                        <option selected disabled value="">Pilih...</option>
+                                        @foreach ($kapal as $kpl)
+                                            <option value="{{ $kpl->id }}">{{ $kpl->kode_kapal }} {{ $kpl->nama_kapal }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="validationCustom03" class="form-label">Voyage</label>
+                                    <input name="voyage" type="text" value="" class="form-control" id="validationCustom01" placeholder="Masukkan Voyage" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="validationCustom03" class="form-label">Nopol</label>
+                                    <input name="nopol" type="text" class="form-control" id="validationCustom01" placeholder="Masukkan Nopol" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="validationCustom04" class="form-label">No Container</label>
+                                    <div class="input-group has-validation">
+                                        <input name="no_container" value="" type="text" value="" class="form-control" id="validationCustom01" placeholder="Masukkan Nomor Container" required>
+                                    </div>
+                                </div>                                                
+                                <div class="col-md-4">
+                                    <label for="validationCustom03" class="form-label">No Segel</label>
+                                    <input name="no_segel" value="" type="text" class="form-control" id="validationCustom01" placeholder="Masukkan No Segel" required>
+                                </div>
+                                @endif
+                            @elseif($details==0 && $trackzero->count()==0)
+                                <div class="col-md-3">                       
+                                    <label for="validationCustom03" class="form-label">Gudang Muat</label>
+                                    <select class="form-select" name="id_gudang" id="validationDefault01" required>
+                                        <option selected disabled value="">Pilih...</option>                                    
+                                            @foreach ($gudang as $gd)
+                                                <option value="{{ $gd->id_gudang }}">{{ $gd->nama_gudang }}</option>
+                                            @endforeach
+                                    </select>
+                                </div>                                                
+                                <div class="col-md-3">
+                                    <label for="validationCustom03" class="form-label">Kapal</label>
+                                    <select class="form-select" name="id_kapal" id="validationDefault01" required>
+                                        <option selected disabled value="">Pilih...</option>
+                                        @foreach ($kapal as $kpl)
+                                            <option value="{{ $kpl->id }}">{{ $kpl->kode_kapal }} {{ $kpl->nama_kapal }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="validationCustom03" class="form-label">Voyage</label>
+                                    <input name="voyage" type="text" value="" class="form-control" id="validationCustom01" placeholder="Masukkan Voyage" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="validationCustom03" class="form-label">Nopol</label>
+                                    <input name="nopol" type="text" class="form-control" id="validationCustom01" placeholder="Masukkan Nopol" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="validationCustom04" class="form-label">No Container</label>
+                                    <div class="input-group has-validation">
+                                        <input name="no_container" value="" type="text" value="" class="form-control" id="validationCustom01" placeholder="Masukkan Nomor Container" required>
+                                    </div>
+                                </div>                                                
+                                <div class="col-md-4">
+                                    <label for="validationCustom03" class="form-label">No Segel</label>
+                                    <input name="no_segel" value="" type="text" class="form-control" id="validationCustom01" placeholder="Masukkan No Segel" required>
+                                </div>
                             @endif
                             <div class="col-md-3">
-                                @if ($lastcont)
+                                @if ($details && $trackzero->count())
+                                    @if ($lastcont)
+                                        @foreach ($getcontqty as $tra)
+                                            <label for="notAllowCont" class="form-label">Quantity Tonase</label>
+                                            <div class="input-group">
+                                                <input name="qty_tonase" step="any" min="0" id="qty_cont" type="number" class="form-control qty_cont" placeholder="QTY Tonase" required>
+                                                <span class="input-group-text" id="inputGroupPrepend">KG</span>
+                                            </div>          
+                                            <span class="shadow-none badge badge-danger mt-2">Sisa: {{ $tra->qty_tonase_sisa }}</span><div class="notAllowCont"></div>
+                                            <input name="qty_cont_total" id="qty_cont_total" value="{{ $tra->qty_tonase_sisa }}" type="hidden" step="any" min="0">
+                                            <input type="hidden" name="qty_cont_ada" id="qty_sisa_cont" value="0" step="any" min="0">
+                                        @endforeach
+                                    @elseif($lastcont==0)
+                                        @foreach ($zerocont as $tra)
+                                            <label for="notAllowCont" class="form-label">Quantity Tonase</label>
+                                            <div class="input-group">
+                                                <input name="qty_tonase" step="any" min="0" id="qty_cont" type="number" class="form-control qty_cont" placeholder="QTY Tonase" required>
+                                                <span class="input-group-text" id="inputGroupPrepend">KG</span>
+                                            </div>          
+                                            <span class="shadow-none badge badge-danger mt-2">Sisa: {{ $tra->qty2 }}</span><div class="notAllowCont"></div>
+                                            <input name="qty_cont_total" id="qty_cont_total" value="{{ $tra->qty2 }}" type="hidden" step="any" min="0">
+                                            <input name="qty_cont_emp" id="qty_sisa_cont" value="0" type="hidden" step="any" min="0">
+                                        @endforeach
+                                    @endif
+                                @elseif($details==0 && $trackzero->count() == 0)
+                                    @foreach ($zerocont as $tra)
+                                        <label for="notAllowCont" class="form-label">Quantity Tonase</label>
+                                        <div class="input-group">
+                                            <input name="qty_tonase" step="any" min="0" id="qty_cont" type="number" class="form-control qty_cont" placeholder="QTY Tonase" required>
+                                            <span class="input-group-text" id="inputGroupPrepend">KG</span>
+                                        </div>          
+                                        <span class="shadow-none badge badge-danger mt-2">Sisa: {{ $tra->qty2 }}</span><div class="notAllowCont"></div>
+                                        <input name="qty_cont_total" id="qty_cont_total" value="{{ $tra->qty2 }}" type="hidden" step="any" min="0">
+                                        <input name="qty_cont_emp" id="qty_sisa_cont" value="0" type="hidden" step="any" min="0">
+                                    @endforeach                              
+                                @elseif($details==0 && $trackzero->count() > 0)
                                     @foreach ($getcontqty as $tra)
                                         <label for="notAllowCont" class="form-label">Quantity Tonase</label>
                                         <div class="input-group">
@@ -453,18 +527,7 @@
                                         <input name="qty_cont_total" id="qty_cont_total" value="{{ $tra->qty_tonase_sisa }}" type="hidden" step="any" min="0">
                                         <input type="hidden" name="qty_cont_ada" id="qty_sisa_cont" value="0" step="any" min="0">
                                     @endforeach
-                                @elseif($lastcont==0)
-                                    @foreach ($zerocont as $tra)
-                                        <label for="notAllowCont" class="form-label">Quantity Tonase</label>
-                                        <div class="input-group">
-                                            <input name="qty_tonase" step="any" min="0" id="qty_cont" type="number" class="form-control qty_cont" placeholder="QTY Tonase" required>
-                                            <span class="input-group-text" id="inputGroupPrepend">KG</span>
-                                        </div>          
-                                        <span class="shadow-none badge badge-danger mt-2">Sisa: {{ $tra->qty2 }}</span><div class="notAllowCont"></div>
-                                        <input name="qty_cont_total" id="qty_cont_total" value="{{ $tra->qty2 }}" type="hidden" step="any" min="0">
-                                        <input name="qty_cont_emp" id="qty_sisa_cont" value="0" type="hidden" step="any" min="0">
-                                    @endforeach
-                                @endif                                                 
+                                @endif
                             </div>
                             <div class="col-md-3">
                                 <label for="validationCustom03" class="form-label">Jumlah Sak</label>
@@ -527,44 +590,65 @@
                                 </div>
                             </div>
                             {{-- @if ($details && $trackzero->count()) --}}
-                            @if ($details || $trackzero->count() && $lastcurah)     
-                            <div class="col-lg-3 col-md-6 col-sm-12">                       
-                                <label for="validationCustom03" class="form-label">Gudang Muat</label>
-                                <select class="form-select" name="id_gudang" id="validationDefault01" required>
-                                    <option selected disabled value="">Pilih...</option>                                    
-                                        @foreach ($gudang as $gd)
-                                            <option {{ $lastcurah->id_gudang == $gd->id_gudang ? 'selected' : '' }} value="{{ $gd->id_gudang }}">{{ $gd->nama_gudang }}</option>
-                                        @endforeach                                    
-                                </select>
-                            </div>                                                
-                            <div class="col-lg-3 col-md-6 col-sm-12">
-                                <label for="validationCustom03" class="form-label">Kapal</label>
-                                <select class="form-select" name="id_kapal" id="validationDefault01" required>
-                                    <option selected disabled value="">Pilih...</option>
-                                    @foreach ($kapal as $kpl)
-                                        <option {{ $lastcurah->id_kapal == $kpl->id ? 'selected' : '' }} value="{{ $kpl->id }}">{{ $kpl->kode_kapal }} {{ $kpl->nama_kapal }} {{ $lastcurah->id_kapal }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
+                            @if ($details || $trackzero->count())
+                                @if ($lastcurah) 
+                                    <div class="col-lg-3 col-md-6 col-sm-12">                       
+                                        <label for="validationCustom03" class="form-label">Gudang Muat</label>
+                                        <select class="form-select" name="id_gudang" id="validationDefault01" required>
+                                            <option selected disabled value="">Pilih...</option>                                    
+                                                @foreach ($gudang as $gd)
+                                                    <option {{ $lastcurah->id_gudang == $gd->id_gudang ? 'selected' : '' }} value="{{ $gd->id_gudang }}">{{ $gd->nama_gudang }}</option>
+                                                @endforeach                                    
+                                        </select>
+                                    </div>                        
+                                    <div class="col-lg-3 col-md-6 col-sm-12">
+                                        <label for="validationCustom03" class="form-label">Kapal</label>
+                                        <select class="form-select" name="id_kapal" id="validationDefault01" required>
+                                            <option selected disabled value="">Pilih...</option>
+                                            @foreach ($kapal as $kpl)
+                                                <option {{ $lastcurah->id_kapal == $kpl->id ? 'selected' : '' }} value="{{ $kpl->id }}">{{ $kpl->kode_kapal }} {{ $kpl->nama_kapal }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                @elseif($lastcurah == 0)
+                                    <div class="col-lg-3 col-md-6 col-sm-12">                       
+                                        <label for="validationCustom03" class="form-label">Gudang Muat</label>
+                                        <select class="form-select" name="id_gudang" id="validationDefault01" required>
+                                            <option selected disabled value="">Pilih...</option>                                    
+                                                @foreach ($gudang as $gd)
+                                                    <option value="{{ $gd->id_gudang }}">{{ $gd->nama_gudang }}</option>
+                                                @endforeach                                    
+                                        </select>
+                                    </div>                                                
+                                    <div class="col-lg-3 col-md-6 col-sm-12">
+                                        <label for="validationCustom03" class="form-label">Kapal</label>
+                                        <select class="form-select" name="id_kapal" id="validationDefault01" required>
+                                            <option selected disabled value="">Pilih...</option>
+                                            @foreach ($kapal as $kpl)
+                                                <option value="{{ $kpl->id }}">{{ $kpl->kode_kapal }} {{ $kpl->nama_kapal }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                @endif
                             @elseif($details==0 && $trackzero->count()==0)
-                            <div class="col-lg-3 col-md-6 col-sm-12">                       
-                                <label for="validationCustom03" class="form-label">Gudang Muat</label>
-                                <select class="form-select" name="id_gudang" id="validationDefault01" required>
-                                    <option selected disabled value="">Pilih...</option>                                    
-                                        @foreach ($gudang as $gd)
-                                            <option value="{{ $gd->id_gudang }}">{{ $gd->nama_gudang }}</option>
-                                        @endforeach                                    
-                                </select>
-                            </div>                                                
-                            <div class="col-lg-3 col-md-6 col-sm-12">
-                                <label for="validationCustom03" class="form-label">Kapal</label>
-                                <select class="form-select" name="id_kapal" id="validationDefault01" required>
-                                    <option selected disabled value="">Pilih...</option>
-                                    @foreach ($kapal as $kpl)
-                                        <option value="{{ $kpl->id }}">{{ $kpl->kode_kapal }} {{ $kpl->nama_kapal }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
+                                <div class="col-lg-3 col-md-6 col-sm-12">                       
+                                    <label for="validationCustom03" class="form-label">Gudang Muat</label>
+                                    <select class="form-select" name="id_gudang" id="validationDefault01" required>
+                                        <option selected disabled value="">Pilih...</option>                                    
+                                            @foreach ($gudang as $gd)
+                                                <option value="{{ $gd->id_gudang }}">{{ $gd->nama_gudang }}</option>
+                                            @endforeach                                    
+                                    </select>
+                                </div>                                                
+                                <div class="col-lg-3 col-md-6 col-sm-12">
+                                    <label for="validationCustom03" class="form-label">Kapal</label>
+                                    <select class="form-select" name="id_kapal" id="validationDefault01" required>
+                                        <option selected disabled value="">Pilih...</option>
+                                        @foreach ($kapal as $kpl)
+                                            <option value="{{ $kpl->id }}">{{ $kpl->kode_kapal }} {{ $kpl->nama_kapal }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             @endif
                             <div class="col-lg-3 col-md-6 col-sm-12">
                                 <label for="validationCustom03" class="form-label">Nopol</label>

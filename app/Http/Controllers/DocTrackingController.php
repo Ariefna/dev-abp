@@ -161,24 +161,29 @@ class DocTrackingController extends Controller
                 ->orderBy('detail_tracking.id_detail_track', 'desc')
                 ->get();    
         $lastcont = DetailTracking::join('detail_tracking_sisa','detail_tracking_sisa.id_track','=','detail_tracking.id_track')
-                    ->where(function ($query) {
-                        $query->where('detail_tracking.status', 1)
-                            ->whereNotNull('detail_tracking.no_container');
-                    })
-                    ->orWhere(function ($query) {
-                        $query->where('detail_tracking_sisa.tipe', 'Container');
-                    })
-                    ->latest('detail_tracking.created_at')
+                    // ->where(function ($query) {
+                    //     $query->where('detail_tracking.status', 1)
+                    //         ->whereNotNull('detail_tracking.no_container');
+                    // })
+                    ->where('detail_tracking.status', 1)
+                    ->whereNotNull('detail_tracking.no_container')
+                    ->where('detail_tracking_sisa.tipe', 'Container')
+                    // ->orWhere(function ($query) {
+                    //     $query->where('detail_tracking_sisa.tipe', 'Container');
+                    // })
+                    // ->latest('detail_tracking.created_at')
                     ->first();
         $lastcurah = DetailTracking::join('detail_tracking_sisa', 'detail_tracking_sisa.id_track', '=', 'detail_tracking.id_track')
-                    ->where(function ($query) {
-                        $query->where('detail_tracking.status', 1)
-                            ->whereNull('detail_tracking.no_container');
-                    })
-                    ->orWhere(function ($query) {
-                        $query->where('detail_tracking_sisa.tipe', 'Curah');
-                    })
-                    ->latest('detail_tracking.created_at')
+                    // ->where(function ($query) {
+                    //     $query->where('detail_tracking.status', 1)
+                    //         ->whereNull('detail_tracking.no_container');
+                    // })
+                    ->where('detail_tracking.status', 1)
+                    ->whereNull('detail_tracking.no_container')
+                    ->where('detail_tracking_sisa.tipe', 'Curah')
+                    // ->orWhere(function ($query) {
+                    //     $query->where('detail_tracking_sisa.tipe', 'Curah');
+                    // })
                     ->first();
         $sisacurah = DetailTrackingSisa::where('tipe','Curah')
                     // ->select('qty_tonase_sisa','id_track')
