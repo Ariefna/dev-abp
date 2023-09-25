@@ -113,6 +113,7 @@
                                     </div>
                                     <div class="col-md-12">
                                         <button class="btn btn-primary" type="submit">Cari</button>
+                                        <a href="#tambahModal" class="btn btn-primary" data-bs-toggle="modal" data-bs-placement="top" title="Tambah Akses Halaman">Tambah Akses Halaman</a>
                                     </div>
                                 </form>
                             </div>
@@ -125,7 +126,7 @@
                                     <div class="col-xl-12 col-md-12 col-sm-12 col-12">
                                         <div class="d-flex justify-content-between mb-2">
                                             <h4>Tabel Data Menu Halaman</h4>
-                                            <a href="#tambahModal" class="btn btn-primary" data-bs-toggle="modal" data-bs-placement="top" title="Tambah Akses Halaman">Tambah Akses Halaman</a>
+                                            {{-- <a href="#tambahModal" class="btn btn-primary" data-bs-toggle="modal" data-bs-placement="top" title="Tambah Akses Halaman">Tambah Akses Halaman</a> --}}
                                         </div>
                                     </div>
                                 </div>

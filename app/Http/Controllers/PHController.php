@@ -78,7 +78,7 @@ class PHController extends Controller
         // return ['data' => $data];
         $pdf = PDF::loadView('pdf.example', ['data1' => $data, 'data2' => $dataDetailPH]);
 
-        return $pdf->download('surat_pesanawaran.pdf');
+        return $pdf->stream('surat_pesanawaran.pdf');
     }
 
     public function getDetails($id)

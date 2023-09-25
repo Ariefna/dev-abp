@@ -17,6 +17,7 @@ use App\Models\DetailTracking;
 use App\Models\DetailTrackingSisa;
 use App\Http\Controllers\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -115,11 +116,62 @@ class MTrackingController extends Controller
                 ->where('doc_tracking.status', [2,3,4])
                 ->where('doc_tracking.id_track', $DetailTracking->id_track)
                 ->where('detail_tracking.id_kapal', $DetailTracking->id_kapal)
-                // ->groupBy('kapals.nama_kapal')
                 ->get();
 
         $pdf = \App::make('dompdf.wrapper');
         $pdf->loadHTML(view('pages.abp-page.print.loading_report', compact('DetailTracking', 'tbl_po')));
+        return $pdf->stream();
+    }
+
+    public function printSPK(Request $request, $id_detail_track)
+    {
+        $DetailTracking = DetailTracking::with([
+                'docTracking.portOfLoading',
+                'docTracking.portOfDestination',
+                'docTracking.po.barang',
+                'docTracking.po.detailPhs.penerima.ptPenerima',
+                'kapal.cPort',
+        ])->where('id_detail_track', $id_detail_track)->first();
+
+        $DocTracking = DocTracking::with([
+                'detailTrackingMultiple.kapal',
+        ])->where('id_track', $DetailTracking->id_track)->first();
+
+        $groupedData = $DocTracking->detailTrackingMultiple->groupBy(function ($query) use ($DetailTracking) {
+                if ($query->id_kapal == $DetailTracking->id_kapal) {
+                        return $query->id_kapal;
+                }
+        });
+
+        $groupedData->transform(function ($group, $groupId) use ($DetailTracking) {
+                $sum = $group->sum('qty_tonase'); 
+                $trac = $group->first();
+                $kapal = $group->first()->kapal;
+                if ($trac->id_kapal == $DetailTracking->id_kapal) {
+                        return [
+                            'group' => $group,
+                            'kapal' => "$kapal->kode_kapal $kapal->nama_kapal",
+                            'qty_tonase' => $sum,
+                        ];
+                }
+        });
+
+        $totalSum = $groupedData->sum('qty_tonase');
+
+        // set tanggal spk
+        setlocale(LC_TIME, 'id_ID');
+        $date = Carbon::parse($DetailTracking->tgl_muat);
+        $taggal_spk = $date->formatLocalized('%d %B %Y');
+        
+        // set nomor spk
+        $date = Carbon::parse($DetailTracking->tgl_muat);
+        $month = $date->format('F');
+        $romawi = formatMonthInRoman($month);
+        $year = date('Y');
+        $nomor = "$DetailTracking->id_track / ABP / SPK / $romawi / $year";
+
+        $pdf = \App::make('dompdf.wrapper');
+        $pdf->loadHTML(view('pages.abp-page.print.spk', compact('DetailTracking','DocTracking','groupedData','taggal_spk','nomor','totalSum')));
         return $pdf->stream();
     }
 }

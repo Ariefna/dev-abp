@@ -130,3 +130,26 @@ if (!function_exists('getRouterValue')) {
         return $__getRoutingValue;
     }
 }
+
+if (! function_exists('currentMonthInRoman')) {
+    function formatMonthInRoman($month) {
+        $months = [
+            'January', 'February', 'March', 'April',
+            'May', 'June', 'July', 'August',
+            'September', 'October', 'November', 'December'
+        ];
+    
+        $currentMonth = $month;
+        $monthIndex = array_search($currentMonth, $months);
+    
+        if ($monthIndex !== false) {
+            $romanNumerals = [
+                'I', 'II', 'III', 'IV', 'V', 'VI',
+                'VII', 'VIII', 'IX', 'X', 'XI', 'XII'
+            ];
+            return $romanNumerals[$monthIndex];
+        }
+    
+        return null;
+    }
+}
