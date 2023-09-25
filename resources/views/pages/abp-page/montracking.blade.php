@@ -180,7 +180,11 @@
                                                     <span class="shadow-none badge badge-danger">Kapal TD Jakarta</span>
                                                 @endif
                                             </td>
-                                            <td><a href="{{route('monitoring.tracking.print', $tra->id_detail_track)}}" class="btn btn-outline-primary mb-2 me-4">Print</a></td>
+                                            <td>
+                                                <a href="{{route('monitoring.tracking.print', $tra->id_detail_track)}}" class="btn btn-outline-primary mb-1">Loading Report</a>
+                                                <br>
+                                                <a href="{{route('monitoring.tracking.spk', $tra->id_detail_track)}}" class="btn btn-outline-primary mb-1">SPK Tracking</a>
+                                            </td>
                                         </tr>
                                         @endforeach                                                                    
                                     </tbody>
