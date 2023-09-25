@@ -31,7 +31,9 @@ class POController extends Controller
         $barang = Barang::where('status', 1)
                     ->orderBy('id', 'desc')
                     ->get();
-        $po = PurchaseOrder::select('purchase_orders.po_muat', 'purchase_orders.po_kebun', 'customers.nama_customer', 'purchase_orders.status')
+        $po = PurchaseOrder::select('purchase_orders.id_po','purchase_orders.po_muat', 'purchase_orders.po_kebun', 
+                    'customers.nama_customer', 'purchase_orders.status','purchase_orders.qty','purchase_orders.qty2'
+                    ,'purchase_orders.total_qty')
                     ->join('detail_p_h_s', 'purchase_orders.id_detail_ph', '=', 'detail_p_h_s.id_detail_ph')
                     ->join('penawaran_hargas', 'penawaran_hargas.id_penawaran', '=', 'detail_p_h_s.id_penawaran')
                     ->join('customers', 'customers.id', '=', 'penawaran_hargas.id_customer')
@@ -150,5 +152,23 @@ class POController extends Controller
             'status' => '2'
         ]);
         return redirect()->back();
-    }    
+    }
+    public function destroy($id) {
+        $po = PurchaseOrder::find($id);
+        $po->update([
+            'status' => '0'
+        ]);
+        return redirect()->back();
+    }
+
+    public function update(Request $request, PurchaseOrder $purchase_order) {
+        PurchaseOrder::where('id_po', $purchase_order->id_po)
+            ->update([
+                'qty' => $request->qty_curah,
+                'qty2' => $request->qty_cont,
+                'total_qty'=>$request->qty_new,
+                'status' => '1'
+            ]);
+        return redirect()->back();
+    }
 }

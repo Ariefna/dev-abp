@@ -9,6 +9,7 @@ class PurchaseOrder extends Model
 {
     use HasFactory;
     protected $fillable = ['po_muat','po_kebun', 'no_pl','simb','tgl', 'id_detail_ph', 'id','qty','qty2','total_curah','total_container','total_qty','total_all','file_name','file_path','status'];
+    protected  $primaryKey = 'id_po';
     
     public function detailPhs()
     {

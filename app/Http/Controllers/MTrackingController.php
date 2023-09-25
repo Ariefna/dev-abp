@@ -90,7 +90,8 @@ class MTrackingController extends Controller
                 'docTracking.po.barang',
                 'docTracking.po.detailPhs.penerima.ptPenerima',
                 'kapal',
-        ])->where('id_detail_track', $id_detail_track)->first();
+        ])->where('id_detail_track', $id_detail_track)
+        ->first();
 
         $tbl_po = DocTracking::select('doc_tracking.no_po', 'purchase_orders.po_kebun', 
                 'purchase_orders.total_qty', 'port_of_loading.nama_pol', 'port_of_destination.nama_pod',

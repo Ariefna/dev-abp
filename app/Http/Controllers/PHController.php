@@ -8,6 +8,7 @@ use App\Models\Customer;
 use App\Models\PenawaranHarga;
 use App\Http\Controllers\DB;
 use Illuminate\Http\Request;
+use PDF;
 
 class PHController extends Controller
 {
@@ -52,6 +53,32 @@ class PHController extends Controller
         $title = 'Adhipramana Bahari Perkasa';
         $breadcrumb = 'This Breadcrumb';
         return view('pages.abp-page.dph', compact('title', 'breadcrumb','detail', 'estate','customer','ph','phtbl','penerima','detailph'));
+    }
+
+    public function generatepdf($id)
+    {
+        set_time_limit(5);
+        $penawaranHargas = PenawaranHarga::select('nama_customer', 'nama_pic', 'ketentuan', 'kota', 'penawaran_hargas.updated_at')
+            ->join('customers', 'penawaran_hargas.id_customer', '=', 'customers.id')
+            ->where('id_penawaran', $id)
+            ->get();
+
+        if ($penawaranHargas->isEmpty()) {
+            return redirect()->back()->with('error', 'Data not found.');
+        }
+
+        $data = $penawaranHargas->first()->toArray();
+
+        $dataDetailPH = DetailPH::join('penerimas', 'detail_p_h_s.id_penerima', '=', 'penerimas.id_penerima')
+            ->where('id_penawaran', $id)
+            ->select('detail_p_h_s.oa_container', 'detail_p_h_s.oa_kpl_kayu', 'penerimas.estate')
+            ->get()->toArray();
+
+
+        // return ['data' => $data];
+        $pdf = PDF::loadView('pdf.example', ['data1' => $data, 'data2' => $dataDetailPH]);
+
+        return $pdf->download('surat_pesanawaran.pdf');
     }
 
     public function getDetails($id)
@@ -134,7 +161,7 @@ class PHController extends Controller
     public function updatephd(Request $request, $id_detail_ph) {
         DetailPH::where('id_detail_ph', $id_detail_ph)->update([
             'id_penawaran'     => $request->id_ph,
-            'id_penerima'     => $request->id_pen,
+            // 'id_penerima'     => $request->id_pen,
             'oa_kpl_kayu'     => $request->oa_kk,
             'oa_container'   => $request->oa_cont,
             'status' => '1'
