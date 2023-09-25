@@ -81,8 +81,12 @@
                                 <td>{{ $phs->nama_customer }}</td>
                                 <td class="text-center">{!! $phs->status == 2 ? '<span class="shadow-none badge badge-success">Approved</span>' : ($phs->status == 3 ? '<span class="shadow-none badge badge-warning">Not Approved</span>' : '') !!}</td>
                                 <td class="text-center">
-                                    <a href="{{ route('penawaran-harga.edit', ['id_penawaran' => $phs->id_penawaran]) }}" class="bs-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit" data-original-title="Edit"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></a>
-                                    {!! $phs->status == 3 ? '<a href="'. route('penawaran-harga.approve', ['id_penawaran' => $phs->id_penawaran]) .'" id="approve-link" class="bs-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Approve" data-original-title="Approve"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check"><polyline points="20 6 9 17 4 12"></polyline></svg></a>' : ($phs->status == 2 ? '':'') !!}
+                                    @if (in_array('document-penawaran-harga-UPDATE', Session::get('nama_action')) || Session::get('role') == 'superadmin')
+                                        <a href="{{ route('penawaran-harga.edit', ['id_penawaran' => $phs->id_penawaran]) }}" class="bs-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit" data-original-title="Edit"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></a>
+                                    @endif
+                                    @if (in_array('document-penawaran-harga-APPROVE', Session::get('nama_action')) || Session::get('role') == 'superadmin')
+                                        {!! $phs->status == 3 ? '<a href="'. route('penawaran-harga.approve', ['id_penawaran' => $phs->id_penawaran]) .'" id="approve-link" class="bs-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Approve" data-original-title="Approve"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check"><polyline points="20 6 9 17 4 12"></polyline></svg></a>' : ($phs->status == 2 ? '':'') !!}
+                                    @endif
                                     <a href="{{route('penawaran-harga.generatepdf', ['id_penawaran' => $phs->id_penawaran])}}" class="bs-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Print" data-original-title="Print"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-printer">
                                                         <polyline points="6 9 6 2 18 2 18 9"></polyline>
                                                         <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
@@ -250,7 +254,7 @@
                         @endforeach
                         <div class="col-md-6">
                             <label for="validationCustom03" class="form-label">Estate</label>
-                            <select name="id_pen-est" class="form-select" id="sel_emp" required>
+                            <select name="id_pen" class="form-select" id="sel_emp" required>
                                 <option disabled selected value="">Pilih...</option>
                             </select>
                             <div class="invalid-feedback">
@@ -439,7 +443,7 @@
                             @endforeach
                             <div class="col-md-6">
                                 <label for="validationCustom03" class="form-label">Estate</label>
-                                <select disabled name="id_pen" class="form-select" id="cbe_est" required>
+                                <select disabled name="id_pen-est" class="form-select" id="cbe_est" required>
                                     <option disabled value="">Pilih...</option>
                                     @foreach ($estate as $est)
                                         <option disabled {{ $est->id_pt_penerima == $phd->id_pt_penerima ? 'selected' : '' }} value="{{ $est->id_penerima }}">{{ $est->estate }}</option>
