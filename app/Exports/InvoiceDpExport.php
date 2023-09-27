@@ -35,39 +35,86 @@ class InvoiceDpExport implements FromView, WithStyles, WithColumnWidths, WithEve
     }
     public function registerEvents(): array
     {
-        return [
-            AfterSheet::class => function (AfterSheet $event) {
-                $event->sheet->getDelegate()->getRowDimension(1)->setRowHeight(30);
-                $event->sheet->getDelegate()->getRowDimension(18)->setRowHeight(20);
-                $event->sheet->getDelegate()->getRowDimension(3)->setRowHeight(20);
-                $event->sheet->getDelegate()->getRowDimension(2)->setRowHeight(40);
-                $event->sheet->getDelegate()->getRowDimension(26)->setRowHeight(70);
-            },
+        
+return [
+    AfterSheet::class => function (AfterSheet $event) {
+        $rowHeights = [
+            1 => 30,
+            2 => 40,
+            3 => 20,
+            14 => 20,
+            22 => 70,
         ];
+        $data = $this->data;
+
+        $delegate = $event->sheet->getDelegate();
+
+        foreach ($rowHeights as $rowIndex => $height) {
+            if ($rowIndex >= 14) {
+                $rowIndex+=count($data['kapal']);
+            }
+            $delegate->getRowDimension($rowIndex)->setRowHeight($height);
+        }
+    },
+];
     }
 
     public function styles(Worksheet $sheet)
     {
+        $data = $this->data;
+        $stylingRules = [
+            'A3:C3',
+            'D3:G3',
+            'A4:C6',
+            'A7:G13',
+            'D3:G6',
+            'A14:C14',
+            'D14:G14',
+            'A14:C20',
+            'D14:G20',
+            'A22:C22',
+            'F22:G22',
+        ];
+        
+        $countKapal = count($data['kapal']);
+        
+        foreach ($stylingRules as &$rule) {
+            // Pisahkan range kolom dan baris
+            list($start, $end) = explode(':', $rule);
+        
+            // Ambil nomor baris awal
+            $startRow = (int) filter_var($start, FILTER_SANITIZE_NUMBER_INT);
+        
+            // Jika nomor baris awal lebih besar atau sama dengan 14, tambahkan count($data['kapal']) ke range tersebut
+            if ($startRow >= 14) {
+                $endRow = (int) filter_var($end, FILTER_SANITIZE_NUMBER_INT);
+                $newStartRow = $startRow + $countKapal;
+                $newEndRow = $endRow + $countKapal;
+        
+                // Update aturan styling dengan range yang diperbarui
+                $rule = "A{$newStartRow}:C{$newEndRow}";
+            }
+        }
         return [
-            'A4:C6' => [
+            $stylingRules[0] => [
                 'alignment' => [
                     'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_TOP, // Align text to the top
                     'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT, // Align text to the left
                 ],
             ],
-            'F26:G26' => [
+            $stylingRules[1] => [
                 'alignment' => [
                     'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_TOP, // Align text to the top
                     'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT, // Align text to the left
                 ],
             ],
-            'A26:C26' => [
+            $stylingRules[2] => [
                 'alignment' => [
                     'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_TOP, // Align text to the top
                     'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT, // Align text to the left
                 ],
             ],
-            'A3:C6' => [
+            $stylingRules[3] => [
                 'borders' => [
                     'outline' => [
                         'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK,
@@ -75,7 +122,7 @@ class InvoiceDpExport implements FromView, WithStyles, WithColumnWidths, WithEve
                     ],
                 ],
             ],
-            'A7:G17' => [
+            $stylingRules[4] => [
                 'borders' => [
                     'outline' => [
                         'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK,
@@ -83,7 +130,7 @@ class InvoiceDpExport implements FromView, WithStyles, WithColumnWidths, WithEve
                     ],
                 ],
             ],
-            'D3:G6' => [
+            $stylingRules[5] => [
                 'borders' => [
                     'outline' => [
                         'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK,
@@ -91,7 +138,7 @@ class InvoiceDpExport implements FromView, WithStyles, WithColumnWidths, WithEve
                     ],
                 ],
             ],
-            'A3:C3' => [
+            $stylingRules[6] => [
                 'borders' => [
                     'outline' => [
                         'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK,
@@ -103,7 +150,7 @@ class InvoiceDpExport implements FromView, WithStyles, WithColumnWidths, WithEve
                     'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER, 
                 ],
             ],
-            'D3:G3' => [
+            $stylingRules[7] => [
                 'borders' => [
                     'outline' => [
                         'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK,
@@ -115,7 +162,7 @@ class InvoiceDpExport implements FromView, WithStyles, WithColumnWidths, WithEve
                     'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER, 
                 ],
             ],
-            'D18:G24' => [
+            $stylingRules[8] => [
                 'borders' => [
                     'outline' => [
                         'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK,
@@ -123,7 +170,7 @@ class InvoiceDpExport implements FromView, WithStyles, WithColumnWidths, WithEve
                     ],
                 ],
             ],
-            'A18:C24' => [
+            $stylingRules[9] => [
                 'borders' => [
                     'outline' => [
                         'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK,
@@ -131,7 +178,7 @@ class InvoiceDpExport implements FromView, WithStyles, WithColumnWidths, WithEve
                     ],
                 ],
             ],
-            'D18:G18' => [
+            $stylingRules[10] => [
                 'borders' => [
                     'outline' => [
                         'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK,
@@ -143,7 +190,7 @@ class InvoiceDpExport implements FromView, WithStyles, WithColumnWidths, WithEve
                     'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER, 
                 ],
             ],
-            'A18:C18' => [
+            $stylingRules[11] => [
                 'borders' => [
                     'outline' => [
                         'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK,
@@ -156,5 +203,62 @@ class InvoiceDpExport implements FromView, WithStyles, WithColumnWidths, WithEve
                 ],
             ], 
         ];
+        // $stylingRules = [
+        //     'A3:C3',
+        //     'D3:G3',
+        //     'A4:C6',
+        //     'A7:G13',
+        //     'D3:G6',
+        //     'A14:C14',
+        //     'D14:G14',
+        //     'A14:C20',
+        //     'D14:G20',
+        //     'A22:C22',
+        //     'F22:G22',
+        // ];
+
+        // $stylingRules = [
+        //     'A3:C3',
+        //     'D3:G3',
+        //     'A4:C6',
+        //     'A7:G17',
+        //     'D3:G6',
+        //     'A18:C18',
+        //     'D18:G18',
+        //     'A18:C24',
+        //     'D18:G24',
+        //     'A26:C26',
+        //     'F26:G26',
+        // ];
+    
+        // $borderStyle = [
+        //     'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK,
+        //     'color' => ['rgb' => '000000'],
+        // ];
+    
+        // $centeredRanges = [0, 1, 5, 6];
+        // $outlinedRanges = [0, 1, 5, 6];
+    
+        // foreach ($stylingRules as $index => $range) {
+        //     $style = [
+        //         'alignment' => [
+        //             'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_TOP,
+        //             'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT,
+        //         ],
+        //     ];
+    
+        //     if (in_array($index, $centeredRanges)) {
+        //         $style['alignment'] = [
+        //             'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+        //             'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+        //         ];
+        //     }
+    
+        //     if (in_array($index, $outlinedRanges)) {
+        //         $style['borders']['outline'] = $borderStyle;
+        //     }
+    
+        //     $sheet->getStyle($range)->applyFromArray($style);
+        // }
     }
 }
