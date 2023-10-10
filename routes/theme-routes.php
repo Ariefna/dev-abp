@@ -154,16 +154,22 @@ foreach ($prefixRouters as $prefixRouter) {
                 Route::get('/tracking/tr/getPo/{id}', [\App\Http\Controllers\DocTrackingController::class, 'getPo'])->name('getPo');
                 Route::match(['get', 'post'], '/tracking/savecontainer', [\App\Http\Controllers\DocTrackingController::class, 'savecontainer'])->name('tracking.savecontainer');
                 Route::match(['get', 'post'], '/tracking/savecurah', [\App\Http\Controllers\DocTrackingController::class, 'savecurah'])->name('tracking.savecurah');
+                Route::match(['put'], '/tracking/cek/batal', [\App\Http\Controllers\DocTrackingController::class, 'batal'])->name('tracking.batal');
 
                 Route::get('/dooring', function () {
                     return view('pages.abp-page.dor', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
                 })->name('dooring.index');            
                 Route::resource('/dooring', \App\Http\Controllers\DooringController::class);
-                Route::get('/dooring/dr/getKapalDooring/{id}', [\App\Http\Controllers\DooringController::class, 'getKapalDooring'])->name('getKapalDooring');
+                Route::get('/dooring/dr/getKapalDooring/{id}/{voyage}', [\App\Http\Controllers\DooringController::class, 'getKapalDooring'])
+                        ->where('voyage', '(.*)') // Use a wildcard pattern for 'voyage'
+                        ->name('getKapalDooring');
                 Route::get('/dooring/dr/getContainer/{id}', [\App\Http\Controllers\DooringController::class, 'getContainer'])->name('getContainer');            
                 Route::get('/dooring/dr/getPoDooring/{id}', [\App\Http\Controllers\DooringController::class, 'getPoDooring'])->name('getPoDooring');
                 Route::match(['get', 'post'], '/dooring/savecurah', [\App\Http\Controllers\DooringController::class, 'savecurah'])->name('dooring.savecurah');
                 Route::match(['get', 'post'], '/dooring/savecontainer', [\App\Http\Controllers\DooringController::class, 'savecontainer'])->name('dooring.savecontainer');
+                // Route::match(['delete'], '/dooring/deletedata/{$id}/{$tonase}', [\App\Http\Controllers\DooringController::class, 'deletedata'])->name('dooring.deletedata');
+                Route::put('/dooring/dr/deletedata/{id_dooring}/{id_detail_door}/{tonase}', [\App\Http\Controllers\DooringController::class, 'deletedata'])->name('dooring.deletedata');
+                // Route::match(['PUT', 'PATCH'], '/dooring/deletedata/{id}/{tonase}', [\App\Http\Controllers\DooringController::class, 'updatedata'])->name('dooring.updatedata');
             });
 
             /**
@@ -179,7 +185,14 @@ foreach ($prefixRouters as $prefixRouter) {
                 Route::get('/mon-tracking/print/{id_detail_track}', [\App\Http\Controllers\MTrackingController::class, 'print'])->name('monitoring.tracking.print');
                 Route::get('/mon-tracking/print/spk/{id_detail_track}', [\App\Http\Controllers\MTrackingController::class, 'printSPK'])->name('monitoring.tracking.spk');
                 Route::resource('/mon-tracking', \App\Http\Controllers\MTrackingController::class);
+                Route::get('/mon-tracking/tr/getPoDate/{id}', [\App\Http\Controllers\MTrackingController::class, 'getPoDate'])->name('getPoDate');
+                // Route::get('/mon-tracking/tr/getPoKapal/{id_track}/{id}/{voyage}', [\App\Http\Controllers\MTrackingController::class, 'getPoKapal'])->name('getPoKapal');
+                Route::get('/mon-tracking/tr/getPoKapal/{id_track}/{id}/{voyage}', [\App\Http\Controllers\MTrackingController::class, 'getPoKapal'])
+                    ->where('voyage', '(.*)') // Use a wildcard pattern for 'voyage'
+                    ->name('getPoKapal');
+                Route::get('/mon-tracking/tr/downloadspktrack/{path}', [\App\Http\Controllers\MTrackingController::class, 'downloadspktrack'])->name('downloadspktrack');
                 Route::put('/mon-tracking', [\App\Http\Controllers\MTrackingController::class, 'update'])->name('mon-tracking.update');
+                // Route::get('/mon-tracking/download/spk-dooring/{filename}', [\App\Http\Controllers\MTrackingController::class, 'download'])->name('monitoring.down.dooring');
                 // Route::put('edit/{id}','ProductController@update')->name('product.update');
                 // Route::match(['post'], '/mon-tracking/mt/tambahdt', [\App\Http\Controllers\MTrackingController::class, 'tambahdt'])->name('mon-tracking.tambahdt');
                 Route::get('/mon-dooring', function () {
@@ -187,7 +200,18 @@ foreach ($prefixRouters as $prefixRouter) {
                 })->name('mon-dooring.index');
                 Route::get('/mon-dooring/print/spk/{id_detail_door}', [\App\Http\Controllers\MDooringController::class, 'printSPK'])->name('monitoring.dooring.spk');
                 Route::resource('/mon-dooring', \App\Http\Controllers\MDooringController::class);
+                Route::put('/mon-dooring', [\App\Http\Controllers\MDooringController::class, 'update'])->name('mon-dooring.update');
+                Route::get('/mon-dooring/dr/downloadfile/{path}', [\App\Http\Controllers\MDooringController::class, 'downloadfile'])->name('downloadfile');
             });
+
+            // routes/web.php
+
+            Route::prefix('report')->group(function () {
+                // Define a route for /mon-tracking
+                Route::get('/mon-tracking', [\App\Http\Controllers\MTrackingController::class, 'history'])->name('mon-tracking-h.index');
+                Route::get('/mon-dooring', [\App\Http\Controllers\MDooringController::class, 'history'])->name('mon-dooring-h.index');
+            });
+
 
             Route::prefix('finance')->group(function () {
                 Route::get('/invoice-dp', function () {

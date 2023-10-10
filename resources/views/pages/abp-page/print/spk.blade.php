@@ -87,10 +87,10 @@
                     <td>:</td>
                     <td> 
                         @if ($DetailTracking->no_container == null)
-                            Rp. {{number_format($DetailTracking->docTracking->po->detailPhs->oa_kpl_kayu, 0, ',', '.')}},-KG
+                            Rp. {{number_format($DetailTracking->harga_hpp, 0, ',', '.')}},-KG
                             <br>
                         @else
-                            Rp. {{number_format($DetailTracking->docTracking->po->detailPhs->oa_container, 0, ',', '.')}},-KG
+                            Rp. {{number_format($DetailTracking->harga_hpp, 0, ',', '.')}},-KG
                         @endif
                     </td>
                 </tr>
@@ -100,7 +100,7 @@
                     <td>
                         @foreach ($groupedData as $detailTracking)
                             @if ($detailTracking)
-                            {{$detailTracking['kapal']}} {{$detailTracking['qty_tonase']}} KG
+                            {{$detailTracking['kapal']}} {{$DetailTracking->voyage}} {{number_format($detailTracking['qty_tonase'] , 0, ',', '.')}} KG
                             @endif
                         @endforeach
                     </td>
@@ -108,7 +108,7 @@
                 <tr>
                     <td>Total Qty</td>
                     <td>:</td>
-                    <td>{{$totalSum}} KG</td>
+                    <td>{{number_format($totalSum , 0, ',', '.')}} KG</td>
                 </tr>
                 <tr>
                     <td>Lain - Lain</td>

@@ -461,7 +461,7 @@ class InvoiceDPController extends Controller
 
             $data['description'] = [];
             foreach ($pushData as $key => $value) {
-                $value['name'] = 'FREIGHT PO '.$value['no_po'].' ('.$value['total_tonase'].' KG'.' X '.'Rp. '.number_format($value['harga_brg'], 0, ',', '.').')';
+                $value['name'] = 'FREIGHT PO '.$value['no_po'].' ('.number_format($value['total_tonase'], 0, ',', '.').' KG'.' X '.'Rp. '.number_format($value['harga_brg'], 0, ',', '.').')';
                 array_push($data['description'], $value);
             }
 
@@ -475,19 +475,19 @@ class InvoiceDPController extends Controller
         // dd($data);
         return Excel::download(new InvoiceDpExport($data), $filename);
         
-        $pdf = PDF::loadview('pages.abp-page.print.invoice_dp', compact(
-            'title', 'breadcrumb',
-            'data','groupedData'
-        ))->setOptions(['dpi' => 100, 'defaultFont' => 'sans-serif']);
+        // $pdf = PDF::loadview('pages.abp-page.print.invoice_dp', compact(
+        //     'title', 'breadcrumb',
+        //     'data','groupedData'
+        // ))->setOptions(['dpi' => 100, 'defaultFont' => 'sans-serif']);
         // Set custom page size (A4, portrait)
-        $pdf->setPaper('A4');
+        // $pdf->setPaper('A4');
         // $pdf->setOption('dpi','600');
 
         // $pdf->setOption('margin-top', '20mm');
         // $pdf->setOption('margin-right', '0mm');
         // $pdf->setOption('margin-bottom', '0mm');
         // $pdf->setOption('margin-left', '0mm');
-    	return $pdf->stream('invoice-dp.pdf');
+    	// return $pdf->stream('invoice-dp.pdf');
         // return $pdf->download('invoice-dp.pdf');
 
         // return view('pages.abp-page.print.invoice_dp', compact(

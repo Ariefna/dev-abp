@@ -44,14 +44,14 @@
     <div class="page-meta">
         <nav class="breadcrumb-style-one" aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item">Monitoring</li>
-                <li class="breadcrumb-item active" aria-current="page">Tracking</li>
+                <li class="breadcrumb-item">Report History</li>
+                <li class="breadcrumb-item active" aria-current="page">Monitoring Tracking</li>
             </ol>
         </nav>
     </div>
     <!-- /BREADCRUMB -->        
     <div class="row layout-top-spacing">
-        <div id="basic" class="col-lg-12 col-sm-12 col-12 layout-spacing">
+        {{-- <div id="basic" class="col-lg-12 col-sm-12 col-12 layout-spacing">
             <div class="statbox widget box box-shadow">
                 <div class="widget-header">                                
                     <div class="row">
@@ -65,11 +65,11 @@
                         $limitedCollection = $tbl_po->toArray();
                         $limitedCollection = array_slice($limitedCollection, 0, 1);
                     @endphp
-                    {{-- @foreach ($limitedCollection as $getpo) --}}
+                    @foreach ($limitedCollection as $getpo)
                     <form class="row g-3 needs-validation" action="{{ route('mon-tracking.update') }}" method="POST" enctype="multipart/form-data" novalidate>
                         @csrf
                         @method('PUT')
-                        <div class="col-md-6">
+                        <div class="col-md-3">
                             <label for="validationCustom01" class="form-label">No PO </label>
                             <select class="form-select" name="cb_po" id="cb_po" required>
                                 <option selected disabled value="">Pilih...</option>
@@ -78,50 +78,32 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-6">
-                            <label for="validationCustom01" class="form-label">Kapal </label>
-                            <select class="form-select" name="cb_kpl" id="cb_kpl" required>
-                                <option selected disabled value="">Pilih...</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="validationCustom03" class="form-label">Upload SPK Tracking</label>
-                            <div class="mb-3">
-                                <input name="file" accept=".jpg, .png, .pdf" class="form-control file-upload-input" style="height: 48px; padding: 0.75rem 1.25rem;" type="file" id="formFile">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="validationCustom03" class="form-label">Upload SPK Dooring</label>
-                            <div class="mb-3">
-                                <input name="file2" accept=".jpg, .png, .pdf" class="form-control file-upload-input" style="height: 48px; padding: 0.75rem 1.25rem;" type="file" id="formFile">
-                            </div>
-                        </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <label for="validationCustom01" class="form-label">TD</label>
                             <div class="input-group has-validation">
-                                <input name="td" id="td" class="form-control flatpickr flatpickr-input active" type="date" placeholder="Select Date..">
+                                <input name="td" id="td" value="0" class="form-control flatpickr flatpickr-input active" type="date" placeholder="Select Date..">
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <label for="validationCustom01" class="form-label">TD JKT</label>
                             <div class="input-group has-validation">
-                                <input name="td_jkt" id="td_jkt" class="form-control flatpickr flatpickr-input active" type="date" placeholder="Select Date..">
+                                <input name="td_jkt" id="td_jkt" value="0" class="form-control flatpickr flatpickr-input active" type="date" placeholder="Select Date..">
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <label for="validationCustom01" class="form-label">TA</label>
                             <div class="input-group has-validation">
-                                <input name="ta" id="ta" class="form-control flatpickr flatpickr-input active" type="date" placeholder="Select Date..">
+                                <input name="ta" id="ta" value="0" class="form-control flatpickr flatpickr-input active" type="date" placeholder="Select Date..">
                             </div>
                         </div>
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-primary">Simpan</button>
                         </div>
                     </form>        
-                    {{-- @endforeach             --}}
+                    @endforeach            
                 </div>
             </div>
-        </div>
+        </div> --}}
 
         <div id="basic" class="col-lg-12 col-sm-12 col-12 layout-spacing">
             <div class="statbox widget box box-shadow">
@@ -144,7 +126,6 @@
                                             <th>Rute</th>
                                             <th>Gudang Muat</th>
                                             <th>PT Kebun</th>
-                                            <th>Estate</th>
                                             <th>Jenis Pupuk</th>
                                             <th>No. PL</th>
                                             <th>SO/DO/SPK/CA</th>
@@ -167,18 +148,17 @@
                                         @foreach ($tbl_po as $tra)
                                         <tr>
                                             <td>{{ $tra->nama_customer }}</td>
-                                            <td>{{ number_format($tra->total_qty , 0, ',', ',') }}</td>
+                                            <td>{{ $tra->total_qty }}</td>
                                             <td>{{ $tra->nama_pol }} - {{ $tra->nama_pod }}</td>
                                             <td>{{ $tra->nama_gudang }}</td>
                                             <td>{{ $tra->nama_penerima }}</td>
-                                            <td>{{ $tra->estate }}</td>
                                             <td>{{ $tra->nama_barang }}</td>
                                             <td>{{ $tra->no_pl }}</td>
                                             <td>{{ $tra->no_po }}</td>
                                             <td>{{ $tra->po_kebun }}</td>
-                                            <td>{{ number_format($tra->qty_tonase , 0, ',', ',') }}</td>
-                                            <td>{{ number_format($tra->jml_sak , 0, ',', ',') }}</td>
-                                            <td>{{ number_format($tra->qty_timbang , 0, ',', ',') }}</td>
+                                            <td>{{ $tra->qty_tonase }}</td>
+                                            <td>{{ $tra->jml_sak }}</td>
+                                            <td>{{ $tra->qty_timbang }}</td>
                                             <td>{{ $tra->nopol }}</td>
                                             @if($tra->no_container !== null)
                                                 <td>{{ $tra->no_container }}</td>
@@ -186,10 +166,10 @@
                                                 <td>-</td>
                                             @endif
                                             <td>{{ $tra->kode_kapal }} {{ $tra->nama_kapal }} {{ $tra->voyage }}</td>
-                                            <td>{{ $tra->tgl_muat ? date('d-M-Y', strtotime($tra->tgl_muat)) : '' }}</td>
-                                            <td>{{ $tra->td ? date('d-M-Y', strtotime($tra->td)) : '' }}</td>
-                                            <td>{{ $tra->td_jkt ? date('d-M-Y', strtotime($tra->td_jkt)) : '' }}</td>
-                                            <td>{{ $tra->ta ? date('d-M-Y', strtotime($tra->ta)) : '' }}</td>
+                                            <td>{{ $tra->tgl_muat }}</td>                                            
+                                            <td>{{ $tra->td }}</td>
+                                            <td>{{ $tra->td_jkt }}</td>
+                                            <td>{{ $tra->ta }}</td>
                                             <td class="text-center">
                                                 @if ($tra->status_kapal == 1)
                                                     <span class="shadow-none badge badge-success">Proses Muat</span>
@@ -204,23 +184,9 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                <a href="{{route('monitoring.tracking.print', $tra->id_detail_track)}}" class="bs-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Loading Report" data-original-title="Print">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-download"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                                                </a>
-                                                {!! $tra->track_file != null
-                                                    ?
-                                                        '<a href="'.route('downloadspktrack', ['path' => $tra->track_file]).'" 
-                                                            class="bs-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Download Spk Tracking" data-original-title="Print">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-download">
-                                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></a>'     
-                                                    : ''
-                                                !!}
-                                                {!! $tra->door_file != null
-                                                    ?
-                                                        '<a href="'.route('downloadspktrack', ['path' => $tra->door_file]).'" class="bs-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Download Spk Dooring" data-original-title="Print"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-download"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                                                        </svg></a>'     
-                                                    : ''
-                                                !!}
+                                                <a href="{{route('monitoring.tracking.print', $tra->id_detail_track)}}" class="btn btn-outline-primary mb-1">Loading Report</a>
+                                                <br>
+                                                <a href="{{route('monitoring.tracking.spk', $tra->id_detail_track)}}" class="btn btn-outline-primary mb-1">SPK Tracking</a>
                                             </td>
                                         </tr>
                                         @endforeach                                                                    
@@ -232,6 +198,44 @@
                 </div>
             </div>
         </div>
+        @foreach ($tbl_po as $tra)
+            <div class="modal fade bd-example-modal-xl" id="update-{{ $tra->id_track }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-xl" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Update data</h5>
+                            {{-- <input type="text" name="id_gd" id="id_gd" value="{{ $gd->id_gudang }}"> --}}
+                        </div>
+                        <div class="modal-body">
+                            <form class="row g-3 needs-validation" action=""  method="POST" enctype="multipart/form-data" novalidate>
+                                @csrf
+                                @method('PUT')
+                                <div class="col-md-4">
+                                    <label for="validationCustom01" class="form-label">TD</label>
+                                    <div class="input-group has-validation">
+                                        <input name="td" id="td" value="2022-09-04" class="form-control flatpickr flatpickr-input active" type="date" placeholder="Select Date..">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="input-group has-validation">
+                                        <input name="td" id="td_jkt" value="2022-09-04" class="form-control flatpickr flatpickr-input active" type="text" placeholder="Select Date..">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="input-group has-validation">
+                                        <input name="td" id="ta" value="2022-09-04" class="form-control flatpickr flatpickr-input active" type="text" placeholder="Select Date..">
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn btn-light-dark" data-bs-dismiss="modal"><i class="flaticon-cancel-12"></i>Batal</button>
+                                    <button type="submit" class="btn btn-primary">Simpan</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endforeach         
     </div>            
 
     <!--  BEGIN CUSTOM SCRIPTS FILE  -->
@@ -272,26 +276,27 @@
                         // $('#sel_emp').find('option').not(':first').remove();
                         if (selectedId !== '') {
                             $.ajax({
-                                url: "{{ route('getPoDate', ['id' => ':id']) }}"
+                                url: "{{ route('getPo', ['id' => ':id']) }}"
                                     .replace(':id', selectedId),
                                 type: 'GET',
                                 dataType: 'json',
                                 success: function(response) {
                                     var data = response[0];
-                                    $("#cb_kpl").empty();
+                                    $("#po_kebun").empty();
+                                    $("#nm_kebun").empty();
+                                    $("#no_pl").empty();
+                                    $("#simb").empty();
+                                    $("#est").empty();
+                                    $("#brg").empty();                                                                        
                                     if (response.length > 0) {
-                                        var defaultOption =
-                                                    "<option value='0' disabled selected required>Pilih...</option>";
-                                                $("#cb_kpl").append(defaultOption);
                                         for (var i=0; i<response.length; i++) {
-                                            var idkpl = response[i].id_kapal;
-                                            var voyage = response[i].voyage != null ? response[i].voyage : '';
-                                            var namakpl = "<option value='" + idkpl +'-'+ voyage + "' required>"
-                                                        + response[i].kode_kapal + ' '
-                                                        + response[i].nama_kapal + ' '
-                                                        + voyage +
-                                                        "</option>";
-                                            $("#cb_kpl").append(namakpl);
+
+                                            $('#po_kebun').val(response[i].po_kebun);
+                                            $('#nm_kebun').val(response[i].nama_penerima);
+                                            $('#no_pl').val(response[i].no_pl);
+                                            $('#simb').val(response[i].simb);
+                                            $('#est').val(response[i].estate);
+                                            $('#brg').val(response[i].nama_barang);
                                         }
                                     }else{
                                         console.log("no data");
@@ -302,84 +307,12 @@
                                 }
                             });
                         } else {
-                            $("#cb_kpl").val('');
-                        }
-                });
-                $('#cb_kpl').change(function() {
-                        var selectedId = $(this).val();
-                        var parts = selectedId.split('-');
-                        var id_kapal = parts[0];
-                        var voyage =  escape(parts[1]);
-                        var selectedIdT = $('#cb_po').val();
-                        if (voyage==''){
-                            console.log('null');
-                            var v = 'null';
-                            if (selectedId !== '' && selectedIdT !== '') {
-                                $.ajax({
-                                    url: "{{ route('getPoKapal', ['id_track' => ':id_track', 'id' => ':id', 'voyage' => ':voyage']) }}"
-                                        .replace(':id_track', selectedIdT)
-                                        .replace(':id', id_kapal)
-                                        .replace(':voyage', v),
-                                    type: 'GET',
-                                    dataType: 'json',
-                                    success: function(response) {
-                                        var data = response[0];
-                                        $('#td').empty();
-                                        $('#td_jkt').empty();
-                                        $('#ta').empty();
-                                        if (response.length > 0) {
-                                            for (var i=0; i<response.length; i++) {
-                                                $('#td').val(response[i].td);
-                                                $('#td_jkt').val(response[i].td_jkt);
-                                                $('#ta').val(response[i].ta);
-                                            }
-                                        }else{
-                                            console.log("no data");
-                                        }
-                                    },
-                                    error: function(xhr, status, error) {
-                                        console.log("AJAX Error: " + error);
-                                    }
-                                });
-                            } else {
-                                $('#td').val('');
-                                $('#td_jkt').val('');
-                                $('#ta').val('');
-                            }
-                        }else if(voyage !== ''){
-                            console.log(voyage);
-                            if (selectedId !== '' && selectedIdT !== '') {
-                                $.ajax({
-                                    url: "{{ route('getPoKapal', ['id_track' => ':id_track', 'id' => ':id', 'voyage' => ':voyage']) }}"
-                                        .replace(':id_track', selectedIdT)
-                                        .replace(':id', id_kapal)
-                                        .replace(':voyage', voyage),
-                                    type: 'GET',
-                                    dataType: 'json',
-                                    success: function(response) {
-                                        var data = response[0];
-                                        $('#td').empty();
-                                        $('#td_jkt').empty();
-                                        $('#ta').empty();
-                                        if (response.length > 0) {
-                                            for (var i=0; i<response.length; i++) {
-                                                $('#td').val(response[i].td);
-                                                $('#td_jkt').val(response[i].td_jkt);
-                                                $('#ta').val(response[i].ta);
-                                            }
-                                        }else{
-                                            console.log("no data");
-                                        }
-                                    },
-                                    error: function(xhr, status, error) {
-                                        console.log("AJAX Error: " + error);
-                                    }
-                                });
-                            } else {
-                                $('#td').val('');
-                                $('#td_jkt').val('');
-                                $('#ta').val('');
-                            }
+                            $('#po_kebun').val('');
+                            $('#nm_kebun').val('');
+                            $('#no_pl').val('');
+                            $('#simb').val('');
+                            $('#est').val('');
+                            $('#brg').val('');                                                        
                         }
                 });
             });
@@ -445,18 +378,10 @@
                         }
                     },
                     {
-                        text: 'Estate',
-                        className: 'btn btn-secondary toggle-vis mb-1',
-                        action: function(e, dt, node, config ) {
-                            var column = dt.column( 5 );
-                            column.visible( ! column.visible() );
-                        }
-                    },                    
-                    {
                         text: 'Jenis Pupuk',
                         className: 'btn btn-secondary toggle-vis mb-1',
                         action: function(e, dt, node, config ) {
-                            var column = dt.column( 6 );
+                            var column = dt.column( 5 );
                             column.visible( ! column.visible() );
                         }
                     },
@@ -464,7 +389,7 @@
                         text: 'NO. PL',
                         className: 'btn btn-secondary toggle-vis mb-1',
                         action: function(e, dt, node, config ) {
-                            var column = dt.column( 7 );
+                            var column = dt.column( 6 );
                             column.visible( ! column.visible() );
                         }
                     },
@@ -472,7 +397,7 @@
                         text: 'SO/DO/SPK/CA',
                         className: 'btn btn-secondary toggle-vis mb-1',
                         action: function(e, dt, node, config ) {
-                            var column = dt.column( 8 );
+                            var column = dt.column( 7 );
                             column.visible( ! column.visible() );
                         }
                     },
@@ -480,7 +405,7 @@
                         text: 'PO Kebun',
                         className: 'btn btn-secondary toggle-vis mb-1',
                         action: function(e, dt, node, config ) {
-                            var column = dt.column( 9 );
+                            var column = dt.column( 8 );
                             column.visible( ! column.visible() );
                         }
                     },
@@ -488,7 +413,7 @@
                         text: 'QTY Muat',
                         className: 'btn btn-secondary toggle-vis mb-1',
                         action: function(e, dt, node, config ) {
-                            var column = dt.column( 10 );
+                            var column = dt.column( 9 );
                             column.visible( ! column.visible() );
                         }
                     },
@@ -496,7 +421,7 @@
                         text: 'QTY Bag',
                         className: 'btn btn-secondary toggle-vis mb-1',
                         action: function(e, dt, node, config ) {
-                            var column = dt.column( 11 );
+                            var column = dt.column( 10 );
                             column.visible( ! column.visible() );
                         }
                     },
@@ -504,7 +429,7 @@
                         text: 'QTY Timbang',
                         className: 'btn btn-secondary toggle-vis mb-1',
                         action: function(e, dt, node, config ) {
-                            var column = dt.column( 12 );
+                            var column = dt.column( 11 );
                             column.visible( ! column.visible() );
                         }
                     },
@@ -512,7 +437,7 @@
                         text: 'Nopol',
                         className: 'btn btn-secondary toggle-vis mb-1',
                         action: function(e, dt, node, config ) {
-                            var column = dt.column( 13 );
+                            var column = dt.column( 12 );
                             column.visible( ! column.visible() );
                         }
                     },
@@ -520,7 +445,7 @@
                         text: 'No Container',
                         className: 'btn btn-secondary toggle-vis mb-1',
                         action: function(e, dt, node, config ) {
-                            var column = dt.column( 14 );
+                            var column = dt.column( 13 );
                             column.visible( ! column.visible() );
                         }
                     },
@@ -528,7 +453,7 @@
                         text: 'Nama Kapal',
                         className: 'btn btn-secondary toggle-vis mb-1',
                         action: function(e, dt, node, config ) {
-                            var column = dt.column( 15 );
+                            var column = dt.column( 14 );
                             column.visible( ! column.visible() );
                         }
                     },
@@ -536,7 +461,7 @@
                         text: 'Tanggal Muat',
                         className: 'btn btn-secondary toggle-vis mb-1',
                         action: function(e, dt, node, config ) {
-                            var column = dt.column( 16 );
+                            var column = dt.column( 15 );
                             column.visible( ! column.visible() );
                         }
                     },
@@ -544,7 +469,7 @@
                         text: 'TD',
                         className: 'btn btn-secondary toggle-vis mb-1',
                         action: function(e, dt, node, config ) {
-                            var column = dt.column( 17 );
+                            var column = dt.column( 16 );
                             column.visible( ! column.visible() );
                         }
                     },
@@ -552,7 +477,7 @@
                         text: 'TD JKT',
                         className: 'btn btn-secondary toggle-vis mb-1',
                         action: function(e, dt, node, config ) {
-                            var column = dt.column( 18 );
+                            var column = dt.column( 17 );
                             column.visible( ! column.visible() );
                         }
                     },
@@ -560,26 +485,10 @@
                         text: 'TA',
                         className: 'btn btn-secondary toggle-vis mb-1',
                         action: function(e, dt, node, config ) {
-                            var column = dt.column( 19 );
+                            var column = dt.column( 18 );
                             column.visible( ! column.visible() );
                         }
-                    },                    
-                    {
-                        text: 'Status',
-                        className: 'btn btn-secondary toggle-vis mb-1',
-                        action: function(e, dt, node, config ) {
-                            var column = dt.column( 20 );
-                            column.visible( ! column.visible() );
-                        }
-                    },                    
-                    {
-                        text: 'Action',
-                        className: 'btn btn-secondary toggle-vis mb-1',
-                        action: function(e, dt, node, config ) {
-                            var column = dt.column( 21 );
-                            column.visible( ! column.visible() );
-                        }
-                    },                    
+                    },                                                                                                                                                                                                                                                                
                 ],
 
                 "stripeClasses": [],

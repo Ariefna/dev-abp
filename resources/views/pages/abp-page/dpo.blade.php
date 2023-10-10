@@ -20,6 +20,7 @@
             @vite(['resources/scss/dark/plugins/table/datatable/dt-global_style.scss'])
             @vite(['resources/scss/dark/plugins/table/datatable/custom_dt_custom.scss'])
             @vite(['resources/scss/light/assets/components/timeline.scss'])
+            @vite(['resources/scss/dark/assets/components/modal.scss'])
 
             <!--  END CUSTOM STYLE FILE  -->
 
@@ -102,17 +103,17 @@
                                         </div>
                                     </div>
                                     <div class="col-md-3">
-                                        <label for="validationCustom01" class="form-label">SIMB</label>
-                                        <input name="simb" type="text" class="form-control"
-                                            id="validationCustom01" placeholder="Masukkan SIMB jika perlu">
-                                    </div>
-                                    <div class="col-md-4">
                                         <label for="validationCustom04" class="form-label">Date</label>
                                         <div class="input-group has-validation">
                                             <input name="tgl_po" id="basicFlatpickr" value="2022-09-04"
                                                 class="form-control flatpickr flatpickr-input active" type="date"
                                                 placeholder="Select Date..">
                                         </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="validationCustom01" class="form-label">SIMB</label>
+                                        <input name="simb" type="text" class="form-control"
+                                            id="validationCustom01" placeholder="Masukkan SIMB jika perlu">
                                     </div>
                                     <div class="col-md-4">
                                         <label for="validationCustom03" class="form-label">Upload File PO from
@@ -581,25 +582,33 @@
                             function updateValues() {
                                 var qty = parseFloat($('#t_qty').val()) || 0;
                                 var qty2 = parseFloat($('#t_qty2').val()) || 0;
-                                var eqty = parseFloat($('#qty_curah').val()) || 0;
-                                var eqty2 = parseFloat($('#qty_cont').val()) || 0;
+                                // var eqty = parseFloat($('#qty_curah').val()) || 0;
+                                // var eqty2 = parseFloat($('#qty_cont').val()) || 0;
                                 var oa_kpl_kayu = parseFloat($('#oa_kpl_kayu').val().replace(/\D/g, '')) || 0;
                                 var oa_container = parseFloat($('#oa_container').val().replace(/\D/g, '')) || 0;
                                 var am_container = qty2 * oa_container;
                                 var am_kayu = qty * oa_kpl_kayu;
                                 var total_qty = qty + qty2;
-                                var etotal_qty = eqty + eqty2;
+                                // var etotal_qty = eqty + eqty2;
                                 var total_all = am_container + am_kayu;
 
                                 $('#total_qty').val(total_qty);
                                 $('#am_kayu').val(formatter.format(am_kayu));
                                 $('#am_container').val(formatter.format(am_container));
                                 $('#total_all').val(formatter.format(total_all));
-                                $('#qty_new').val(etotal_qty);
+                                // $('#qty_new').val(etotal_qty);
+                            }
+                            function editvalues(){
+                                var eqty = parseFloat($('#qty_curah').val()) || 0;
+                                var eqty2 = parseFloat($('#qty_cont').val()) || 0;
+                                var etotal_qty = eqty + eqty2;
+                                // $('#qty_new').val(etotal_qty);
                             }
 
-                            $('#t_qty, #t_qty2, #oa_kpl_kayu, #oa_container, #qty_curah,#qty_cont').on('input', updateValues);
+                            $('#t_qty, #t_qty2, #oa_kpl_kayu, #oa_container').on('input', updateValues);
+                            $('#qty_curah, #qty_cont').on('input', editvalues);
                             updateValues();
+                            editvalues();
                             $('#approve-link').click(function() {
 
                                 // Get the link's href attribute

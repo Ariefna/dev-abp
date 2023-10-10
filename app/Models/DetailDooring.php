@@ -25,13 +25,18 @@ class DetailDooring extends Model
         'sj_file_path',
         'tipe',
         'status',
-        'id_kapal'
+        'id_kapal',
+        'id_detail_track'
     ];
     protected $table = 'detail_dooring';
 
     public function detailTracking()
     {
         return $this->hasOne(DetailTracking::class,'id_kapal','id_kapal');
+    }
+    public function detailTrackingCont()
+    {
+        return $this->belongsTo(DetailTracking::class,'id_detail_track','id_detail_track');
     }
     
     public function sisa()

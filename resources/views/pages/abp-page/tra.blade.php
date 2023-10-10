@@ -54,7 +54,7 @@
     <div class="row layout-top-spacing">
 
         {{-- @if ($details == 0 && $trackzero->count() == 0 || $trackzero->count() > 0)  --}}
-        @if ($track->where('status',1)->count()>0) 
+        @if ($cek->where('status', 1)->count() > 0)
         <div id="alertIcon" class="col-lg-12 mb-2">
             <div class="widget-content widget-content-area">
                 <div class="alert alert-warning alert-dismissible fade show" role="alert">
@@ -63,7 +63,7 @@
                 </div>
             </div>
         </div>        
-        @elseif($track->where('status',1)->count()==0)
+        @else
         <div id="basic" class="col-lg-12 col-sm-12 col-12 layout-spacing">
             <div class="statbox widget box box-shadow">
                 <div class="widget-header">                                
@@ -160,8 +160,8 @@
                     <div class="row">
                         <div class="col-xl-12 col-md-12 col-sm-12 col-12">
                             <h4>Tabel Tracking</h4>
-                            <p>detail{{ $details }}</p>
-                            <p>trackzero{{ $trackzero->count() }}</p>
+                            {{-- <p>detail{{ $details }}</p>
+                            <p>trackzero{{ $trackzero->count() }}</p> --}}
                         </div>
                     </div>
                 </div>
@@ -191,7 +191,7 @@
                                                 <td>0</td>
                                                 <td>0</td>
                                                 <td>0</td>
-                                                <td>{{ $tra->total_qty }}</td>
+                                                <td>{{ number_format($tra->total_qty , 0, ',', '.') }}</td>
                                                 <td class="text-center"><span class="shadow-none badge badge-danger">{{ $tra->status == 1 ? 'Pending' : '' }}</span></td>
                                                 {{-- <td class="text-center">{!! $tra->status == 1 ? '<span class="shadow-none badge badge-success">Proses Muat</span>' : ($tra->status == 2 ? '<span class="shadow-none badge badge-warning">Selesai Muat</span>' : '') !!}</td> --}}
                                                 <td class="text-center">
@@ -213,18 +213,18 @@
                                                     @if ($tra->qty_curah_track==null)
                                                         <td>0</td>
                                                     @else
-                                                        <td>{{ $tra->qty_curah_track }}</td>
+                                                        <td>{{ number_format($tra->qty_curah_track , 0, ',', '.') }}</td>
                                                     @endif
                                                     @if ($tra->qty_curah_cont==null)
                                                         <td>0</td>
                                                     @else
-                                                        <td>{{ $tra->qty_curah_cont }}</td>
+                                                        <td>{{ number_format($tra->qty_curah_cont , 0, ',', '.') }}</td>
                                                     @endif
                                                     <td>{{ $tra->qty_curah_track + $tra->qty_curah_cont }}</td>
                                                     @if($tra->qty_curah_cont==null && $tra->qty_curah_track==null)
-                                                        <td>{{ $tra->total_qty }}</td>
+                                                        <td>{{ number_format($tra->total_qty , 0, ',', '.') }}</td>
                                                     @else
-                                                        <td>{{ $tra->qty_tonase_sisa }}</td>
+                                                        <td>{{ number_format($tra->qty_tonase_sisa , 0, ',', '.') }}</td>
                                                     @endif
                                                     <td class="text-center"><span class="shadow-none badge badge-danger">{{ $tra->status == 1 ? 'Pending' : '' }}</span></td>
                                                     <td class="text-center">
@@ -242,10 +242,10 @@
                                                 <tr>
                                                     <td>{{ $trac->no_po }}</td>
                                                     <td>{{ $trac->nama_pol }} - {{ $trac->nama_pod }}</td>
-                                                    <td>{{ $trac->muat_curah ?? '0' }}</td>
-                                                    <td>{{ $trac->muat_container ?? '0' }}</td>
-                                                    <td>{{ $trac->muat_container + $trac->muat_curah }}</td>
-                                                    <td>{{ $trac->total_all_sisa }}</td>
+                                                    <td>{{ number_format($trac->muat_curah , 0, ',', '.') ?? '0' }}</td>
+                                                    <td>{{ number_format($trac->muat_container , 0, ',', '.') ?? '0' }}</td>
+                                                    <td>{{ number_format($trac->muat_container + $trac->muat_curah, 0, ',', '.') }}</td>
+                                                    <td>{{ number_format($trac->total_qty-($trac->muat_container + $trac->muat_curah) , 0, ',', '.') }}</td>
                                                     <td class="text-center"><span class="shadow-none badge badge-danger">{{ $trac->status == 1 ? 'Pending' : '' }}</span></td>
                                                     <td class="text-center">
                                                         @if($trac->qty != 0)
@@ -262,11 +262,11 @@
                                                 <tr>
                                                     <td>{{ $trac->no_po }}</td>
                                                     <td>{{ $trac->nama_pol }} - {{ $trac->nama_pod }}</td>
-                                                    <td>{{ $trac->muat_curah ?? '0' }}</td>
-                                                    <td>{{ $trac->muat_container ?? '0' }}</td>
+                                                    <td>{{ number_format($trac->muat_curah , 0, ',', '.') ?? '0' }}</td>
+                                                    <td>{{ number_format($trac->muat_container , 0, ',', '.') ?? '0' }}</td>
                                                     <td>{{ $trac->muat_container + $trac->muat_curah }}</td>
                                                     {{-- <td>{{ ($trac->qty_total_tonase)}}</td> --}}
-                                                    <td>{{ $trac->total_all_sisa }}</td>
+                                                    <td>{{ number_format($trac->total_all_sisa , 0, ',', '.') }}</td>
                                                     <td class="text-center"><span class="shadow-none badge badge-danger">{{ $trac->status == 1 ? 'Pending' : '' }}</span></td>
                                                     <td class="text-center">
                                                         @if($trac->qty != 0)
@@ -325,16 +325,16 @@
                                             <td>{{ $tra->nopol }}</td>
                                             <td>{{ $tra->no_container }}</td>
                                             <td>{{ $tra->no_segel }}</td>
-                                            <td>{{ $tra->qty_tonase }}</td>
-                                            <td>{{ $tra->jml_sak }}</td>
-                                            <td>{{ $tra->qty_timbang }}</td>
+                                            <td>{{ number_format($tra->qty_tonase , 0, ',', '.') }}</td>
+                                            <td>{{ number_format($tra->jml_sak , 0, ',', '.') }}</td>
+                                            <td>{{ number_format($tra->qty_timbang , 0, ',', '.') }}</td>
                                             <td>{{ $tra->no_sj }}</td>
                                             <td class="text-center"><span class="shadow-none badge badge-danger">{{ $tra->status == 1 ? 'Pending' : '' }}</span></td>
                                             {{-- <td class="text-center">
                                                 <a href="" class="bs-tooltip" data-bs-toggle="modal" data-bs-placement="top" title="Delete" data-original-title="Delete"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash p-1 br-8 mb-1"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></a>
                                             </td> --}}
                                         </tr>
-                                        @endforeach                                                                    
+                                        @endforeach
                                     </tbody>
                                 </table>
                             </div>
@@ -489,7 +489,7 @@
                                                 <input name="qty_tonase" step="any" min="0" id="qty_cont" type="number" class="form-control qty_cont" placeholder="QTY Tonase" required>
                                                 <span class="input-group-text" id="inputGroupPrepend">KG</span>
                                             </div>          
-                                            <span class="shadow-none badge badge-danger mt-2">Sisa: {{ $tra->qty_tonase_sisa }}</span><div class="notAllowCont"></div>
+                                            <span class="shadow-none badge badge-danger mt-2">Sisa: {{ number_format($tra->qty_tonase_sisa , 0, ',', '.')}}</span><div class="notAllowCont"></div>
                                             <input name="qty_cont_total" id="qty_cont_total" value="{{ $tra->qty_tonase_sisa }}" type="hidden" step="any" min="0">
                                             <input type="hidden" name="qty_cont_ada" id="qty_sisa_cont" value="0" step="any" min="0">
                                         @endforeach
@@ -500,7 +500,7 @@
                                                 <input name="qty_tonase" step="any" min="0" id="qty_cont" type="number" class="form-control qty_cont" placeholder="QTY Tonase" required>
                                                 <span class="input-group-text" id="inputGroupPrepend">KG</span>
                                             </div>          
-                                            <span class="shadow-none badge badge-danger mt-2">Sisa: {{ $tra->qty2 }}</span><div class="notAllowCont"></div>
+                                            <span class="shadow-none badge badge-danger mt-2">Sisa: {{ number_format($tra->qty2 , 0, ',', '.') }}</span><div class="notAllowCont"></div>
                                             <input name="qty_cont_total" id="qty_cont_total" value="{{ $tra->qty2 }}" type="hidden" step="any" min="0">
                                             <input name="qty_cont_emp" id="qty_sisa_cont" value="0" type="hidden" step="any" min="0">
                                         @endforeach
@@ -512,7 +512,7 @@
                                             <input name="qty_tonase" step="any" min="0" id="qty_cont" type="number" class="form-control qty_cont" placeholder="QTY Tonase" required>
                                             <span class="input-group-text" id="inputGroupPrepend">KG</span>
                                         </div>          
-                                        <span class="shadow-none badge badge-danger mt-2">Sisa: {{ $tra->qty2 }}</span><div class="notAllowCont"></div>
+                                        <span class="shadow-none badge badge-danger mt-2">Sisa: {{ number_format($tra->qty2 , 0, ',', '.') }}</span><div class="notAllowCont"></div>
                                         <input name="qty_cont_total" id="qty_cont_total" value="{{ $tra->qty2 }}" type="hidden" step="any" min="0">
                                         <input name="qty_cont_emp" id="qty_sisa_cont" value="0" type="hidden" step="any" min="0">
                                     @endforeach                              
@@ -523,7 +523,7 @@
                                             <input name="qty_tonase" step="any" min="0" id="qty_cont" type="number" class="form-control qty_cont" placeholder="QTY Tonase" required>
                                             <span class="input-group-text" id="inputGroupPrepend">KG</span>
                                         </div>          
-                                        <span class="shadow-none badge badge-danger mt-2">Sisa: {{ $tra->qty_tonase_sisa }}</span><div class="notAllowCont"></div>
+                                        <span class="shadow-none badge badge-danger mt-2">Sisa: {{ number_format($tra->qty_tonase_sisa , 0, ',', '.') }}</span><div class="notAllowCont"></div>
                                         <input name="qty_cont_total" id="qty_cont_total" value="{{ $tra->qty_tonase_sisa }}" type="hidden" step="any" min="0">
                                         <input type="hidden" name="qty_cont_ada" id="qty_sisa_cont" value="0" step="any" min="0">
                                     @endforeach
@@ -546,13 +546,19 @@
                                     <input name="file_tbg" accept=".jpg, .png, .pdf" class="form-control file-upload-input" style="height: 48px; padding: 0.75rem 1.25rem;" type="file" id="formFile">
                                 </div>
                             </div>                            
-                            <div class="col-md-6">
+                            <div class="col-md-4">
+                                <label for="validationCustom04" class="form-label">Harga HPP Kapal</label>
+                                <div class="input-group has-validation">
+                                    <input name="hpp_kpl" type="number" value="" class="form-control" id="validationCustom01" placeholder="Masukkan HPP Kapal" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
                                 <label for="validationCustom04" class="form-label">No Surat Jalan</label>
                                 <div class="input-group has-validation">
                                     <input name="no_sj" type="text" value="" class="form-control" id="validationCustom01" placeholder="Masukkan Nomor Container" required>
                                 </div>
                             </div>                            
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <label for="validationCustom03" class="form-label">Upload File Surat Jalan</label>
                                 <div class="mb-3">
                                     <input name="file" accept=".jpg, .png, .pdf" class="form-control file-upload-input" style="height: 48px; padding: 0.75rem 1.25rem;" type="file" id="formFile">
@@ -663,23 +669,23 @@
                                                 <input name="qty_tonase" id="qty_curah" type="number" step="any" min="0" class="form-control qty_curah" placeholder="QTY Tonase" required>
                                                 <span class="input-group-text" id="inputGroupPrepend">KG</span>
                                             </div>
-                                            <span class="shadow-none badge badge-danger mt-2">Sisa: {{ $tra->qty_tonase_sisa }}</span><div class="validationMessage"></div>
+                                            <span class="shadow-none badge badge-danger mt-2">Sisa: {{ number_format($tra->qty_tonase_sisa , 0, ',', '.') }}</span><div class="validationMessage"></div>
                                             <input name="qty_curah_total" id="qty_curah_total" value="{{ $tra->qty_tonase_sisa }}" type="hidden" step="any" min="0">
                                             <input type="hidden" name="qty" id="qty_sisa_curah" step="any" min="0">
                                         @endforeach
-                                    @else
+                                    @elseif($lastcurah==0)
                                         @foreach ($zerocurah as $tra)
                                             <label for="validationMessage" class="form-label">Quantity Tonase</label>
                                             <div class="input-group">
                                                 <input name="qty_tonase" id="qty_curah" type="number" value="0" step="any" min="0" class="form-control qty_curah" placeholder="QTY Tonase" required>
                                                 <span class="input-group-text" id="inputGroupPrepend">KG</span>
                                             </div>
-                                            <span class="shadow-none badge badge-danger mt-2">Sisa: {{ $tra->qty }}</span>
+                                            <span class="shadow-none badge badge-danger mt-2">Sisa: {{ number_format($tra->qty , 0, ',', '.') }}</span>
                                             <input name="qty_curah_total" id="qty_curah_total" value="{{ $tra->qty }}" type="hidden" step="any" min="0">
                                             <input name="qty_sisa_curah" id="qty_sisa_curah" value="0" type="hidden" step="any" min="0">
                                             <div class="validationMessage"></div>
                                         @endforeach
-                                    @endif                     
+                                    @endif         
                                 @elseif($details==0 && $trackzero->count() == 0)
                                     @foreach ($zerocurah as $tra)
                                         <label for="validationMessage" class="form-label">Quantity Tonase</label>
@@ -687,29 +693,22 @@
                                             <input name="qty_tonase" id="qty_curah" type="number" value="0" step="any" min="0" class="form-control qty_curah" placeholder="QTY Tonase" required>
                                             <span class="input-group-text" id="inputGroupPrepend">KG</span>
                                         </div>
-                                        <span class="shadow-none badge badge-danger mt-2">Sisa: {{ $tra->qty }}</span>
+                                        <span class="shadow-none badge badge-danger mt-2">Sisa: {{ number_format($tra->qty , 0, ',', '.') }}</span>
                                         <input name="qty_curah_total" id="qty_curah_total" value="{{ $tra->qty }}" type="hidden" step="any" min="0">
                                         <input name="qty_sisa_curah" id="qty_sisa_curah" value="0" type="hidden" step="any" min="0">
                                         <div class="validationMessage"></div>
                                     @endforeach
                                 @elseif($details==0 && $trackzero->count() > 0)
-                                @foreach ($getcurahqty as $tra)
-                                    <label for="validationMessage" class="form-label">Quantity Tonase </label>
-                                    <div class="input-group">
-                                        <input name="qty_tonase" id="qty_curah" type="number" step="any" min="0" class="form-control qty_curah" placeholder="QTY Tonase" required>
-                                        <span class="input-group-text" id="inputGroupPrepend">KG</span>
-                                    </div>
-                                    <span class="shadow-none badge badge-danger mt-2">Sisa: {{ $tra->qty_tonase_sisa }}</span><div class="validationMessage"></div>
-                                    <input name="qty_curah_total" id="qty_curah_total" value="{{ $tra->qty_tonase_sisa }}" type="hidden" step="any" min="0">
-                                    <input type="hidden" name="qty" id="qty_sisa_curah" step="any" min="0">
-                                @endforeach                                
-                                {{-- @elseif($sisacurah>0)
-                                    @foreach($getcurahqty as $sc)
-                                        @if($sisacurah->where('id_track',$sc->id_track))    
-                                        <input type="text" name="" id="" value="{{ $sc->id_track }}">
-                                        <input type="text" name="" id="" value="{{ $sc->qty_tonase_sisa }}">
-                                        @endif
-                                    @endforeach --}}
+                                    @foreach ($getcurahqty as $tra)
+                                        <label for="validationMessage" class="form-label">Quantity Tonase </label>
+                                        <div class="input-group">
+                                            <input name="qty_tonase" id="qty_curah" type="number" step="any" min="0" class="form-control qty_curah" placeholder="QTY Tonase" required>
+                                            <span class="input-group-text" id="inputGroupPrepend">KG</span>
+                                        </div>
+                                        <span class="shadow-none badge badge-danger mt-2">Sisa: {{ number_format($tra->qty_tonase_sisa , 0, ',', '.') }}</span><div class="validationMessage"></div>
+                                        <input name="qty_curah_total" id="qty_curah_total" value="{{ $tra->qty_tonase_sisa }}" type="hidden" step="any" min="0">
+                                        <input type="hidden" name="qty" id="qty_sisa_curah" step="any" min="0">
+                                    @endforeach                         
                                 @endif
                             </div>
                             <div class="col-lg-3 col-md-6 col-sm-12">
@@ -728,14 +727,20 @@
                                 <div class="mb-3">
                                     <input name="file_tbg" accept=".jpg, .png, .pdf" class="form-control file-upload-input" style="height: 48px; padding: 0.75rem 1.25rem;" type="file" id="formFile">
                                 </div>
-                            </div>                            
-                            <div class="col-md-6">
+                            </div>              
+                            <div class="col-md-4">
+                                <label for="validationCustom04" class="form-label">Harga HPP Kapal</label>
+                                <div class="input-group has-validation">
+                                    <input name="hpp_kpl" type="number" value="" class="form-control" id="validationCustom01" placeholder="Masukkan HPP Kapal" required>
+                                </div>
+                            </div>                                          
+                            <div class="col-md-4">
                                 <label for="validationCustom04" class="form-label">No Surat Jalan</label>
                                 <div class="input-group has-validation">
                                     <input name="no_sj" type="text" value="" class="form-control" id="validationCustom01" placeholder="Masukkan Nomor Container" required>
                                 </div>
                             </div>                            
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <label for="validationCustom03" class="form-label">Upload File Surat Jalan</label>
                                 <div class="mb-3">
                                     <input name="file" accept=".jpg, .png, .pdf" class="form-control file-upload-input" style="height: 48px; padding: 0.75rem 1.25rem;" type="file" id="formFile">
@@ -763,6 +768,15 @@
                         <button disabled class="btn btn-success mb-4" type="submit">Simpan Tracking Ini</button>
                     @endif
                 </form>
+                <form class="row g-3 needs-validation" action="{{ route('tracking.batal') }}"  method="POST">
+                    @method('PUT')
+                    @csrf
+                    @if (count($track->where('status', 1)) >= 1 && count($dtrack->where('status', 1 ))==0)
+                        <input type="hidden" value="{{ $tra->total_all_sisa }}" name="qty_sisa">
+                        <input type="hidden" value="{{ $tra->id_track }}" name="id_track_btl">
+                        <button class="btn btn-danger mb-4" type="submit">Batal</button>
+                    @endif
+                </form>                
             @endforeach
         </div>                                 
         {{-- <div id="basic" class="col-lg-12 col-sm-12 col-12 layout-spacing">

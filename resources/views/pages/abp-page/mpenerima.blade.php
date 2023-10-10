@@ -187,10 +187,10 @@
                         <form class="row g-3 needs-validation" action="{{ route('pt_penerima.store') }}"  method="POST" enctype="multipart/form-data" novalidate>
                             @csrf
                             <div class="col-md-12">
-                                <label for="validationDefault03" class="form-label">Nama PT Pelayaran</label>                            
-                                <input name="nama" id="t_nama_pt" type="text" class="form-control" placeholder="Masukkan nama PT Pelayaran" required>
+                                <label for="validationDefault03" class="form-label">Nama PT Penerima</label>                            
+                                <input name="nama" id="t_nama_pt" type="text" class="form-control" placeholder="Masukkan nama PT Penerima" required>
                                 <div class="invalid-feedback">
-                                    Form nama tidak boleh kosong
+                                    Form nama PT Penerima tidak boleh kosong
                                 </div>
                             </div>
                             <div class="col-12">
