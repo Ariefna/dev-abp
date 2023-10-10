@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Surat Penunjukan Kerja {{$DetailTracking->kapal->cPort->nama}}</title>
+    <title>Surat Penunjukan Kerja {{$DetailDooring->detailTracking->docTracking->po->detailPhs->penerima->ptPenerima->nama_penerima}}</title>
     <style>
         #bg-image {
             background-image: url('logo-abp.jpg');
@@ -35,12 +35,33 @@
             padding-top: 10px;
         }
 
+        table#rincian-tabel {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table#rincian-tabel,
+        table#rincian-tabel th,
+        table#rincian-tabel td {
+            border: 1px solid black;
+        }
+        table#rincian-tabel td {
+            text-align: center;
+            padding-left: 8px;
+            padding-right: 8px;
+        }
+        table#rincian-tabel th {
+            font-size: 15px;
+            padding-left: 8px;
+            padding-right: 8px;
+        }
+
     </style>
 </head>
 <body>
     <div id="bg-image">
         <div id="content">
-            <p style="text-align: right">Surabaya, {{$taggal_spk}}</p>
+            <p style="text-align: right">Surabaya, {{$tgl_spk}}</p>
 
             <table>
                 <tr>
@@ -50,9 +71,7 @@
                 <tr>
                     <td>Hal</td>
                     <td>
-                        : Pemuatan & Pengiriman Barang
-                        Dari Port {{$DetailTracking->docTracking->portOfLoading->nama_pol}}
-                        ke Port {{$DetailTracking->docTracking->portOfDestination->nama_pod}}
+                        : <b>Pembongkaran & Pengiriman Barang Dari Port {{$DetailDooring->detailTracking->docTracking->portOfDestination->nama_pod}} ke Estate</b>
                     </td>
                 </tr>
             </table>
@@ -60,55 +79,65 @@
             <p style="width: 50%">
                 Kepada Yth.
                 <br>
-                {{$DetailTracking->kapal->cPort->nama}}
+                <b>{{$DetailDooring->detailTracking->docTracking->po->detailPhs->penerima->ptPenerima->nama_penerima}}</b>
                 <br>
-                {{$DetailTracking->kapal->cPort->alamat}}
+                {{$DetailDooring->detailTracking->docTracking->po->detailPhs->penerima->alamat}}
             </p>
 
             <p style="text-align: center; padding-top: 10px"><b>SURAT PENUNJUKAN KERJA / KONTRAK KERJA</b></p>
 
             <p style="text-indent: 30px; text-align: justify;">
-                Sehubungan dengan rencana pemuatan & pengiriman pupuk,
-                maka dengan ini kami menunjuk {{$DetailTracking->kapal->cPort->nama}}
-                untuk melakukan pemuatan & pengiriman pupuk menggunakan kapal 
-                dari port {{$DetailTracking->docTracking->portOfLoading->nama_pol}} 
-                ke pelabuhan {{$DetailTracking->docTracking->portOfDestination->nama_pod}},
-                tonase dibagi 2 nama kapal sesuai data di bawah ini dengan uraian sebagai berikut:
+                Dengan ini kami menunjuk 
+                <b>{{$DetailDooring->detailTracking->docTracking->po->detailPhs->penerima->ptPenerima->nama_penerima}}</b>
+                untuk melakukan pembongkaran & pengiriman
+                pupuk ke estate sesuai data di bawah ini dengan uraian sebagai berikut:
             </p>
 
             <table id="detail">
                 <tr>
-                    <td style="width: 150px">Jenis Barang</td>
-                    <td>:</td>
-                    <td> {{$DetailTracking->docTracking->po->barang->nama_barang}}</td>
-                </tr>
-                <tr>
-                    <td>Harga</td>
-                    <td>:</td>
-                    <td> 
-                        @if ($DetailTracking->no_container == null)
-                            Rp. {{number_format($DetailTracking->harga_hpp, 0, ',', '.')}},-KG
-                            <br>
-                        @else
-                            Rp. {{number_format($DetailTracking->harga_hpp, 0, ',', '.')}},-KG
-                        @endif
-                    </td>
-                </tr>
-                <tr>
-                    <td>Nama Kapal & Tonase</td>
+                    <td style="width: 100px">Rincian Barang</td>
                     <td>:</td>
                     <td>
-                        @foreach ($groupedData as $detailTracking)
-                            @if ($detailTracking)
-                            {{$detailTracking['kapal']}} {{$DetailTracking->voyage}} {{number_format($detailTracking['qty_tonase'] , 0, ',', '.')}} KG
-                            @endif
-                        @endforeach
+                        <table id="rincian-tabel">
+                            <tr>
+                                <th style="background-color: yellow">KEBUN</th>
+                                <th style="background-color: yellow">PO KEBUN</th>
+                                <th style="background-color: yellow">NO.PO</th>
+                                <th style="background-color: yellow">TONASE PO</th>
+                                <th style="background-color: yellow">COMODITY</th>
+                            </tr>
+                            @foreach ($DocDooring->detailDooring as $item)
+                            <tr>
+                                <td>{{$item->estate}}</td>
+                                <td>{{$item->detailTracking->docTracking->po->po_kebun}}</td>
+                                <td>{{$item->detailTracking->docTracking->po->po_muat}}</td>
+                                <td style="text-align: right !important">{{number_format($item->qty_tonase, 0, ',', '.')}}</td>
+                                <td>{{$item->detailTracking->docTracking->po->barang->nama_barang}}</td>
+                            </tr>
+                            @endforeach
+                            <tr>
+                                <th colspan="3" style="text-align: right"><b>TOTAL QTY</b></th>
+                                <th style="text-align: right; padding-"><b>{{$DocDooring->detailDooring->sum('qty_tonase')}}</b></th>
+                                <th></th>
+                            </tr>
+                        </table>
                     </td>
                 </tr>
                 <tr>
-                    <td>Total Qty</td>
+                    <td>Pembayaran</td>
                     <td>:</td>
-                    <td>{{number_format($totalSum , 0, ',', '.')}} KG</td>
+                    <td> 
+                        50% saat proses dooring
+                        <br>
+                        50% saat BAP di terima di Surabaya 
+                    </td>
+                </tr>
+                <tr>
+                    <td>Nama Kapal</td>
+                    <td>:</td>
+                    <td>
+                        {{$DetailDooring->detailTracking->kapal->kode_kapal}} {{$DetailDooring->detailTracking->kapal->nama_kapal}} TD: {{strtoupper($tgl_td)}}
+                    </td>
                 </tr>
                 <tr>
                     <td>Lain - Lain</td>
@@ -136,7 +165,7 @@
                 </tr>
                 <tr>
                     <th>PT ADHIPRAMANA BAHARI PERKASA</th>
-                    <th>{{$DetailTracking->kapal->cPort->nama}}</th>
+                    <th>{{$DetailDooring->detailTracking->docTracking->po->detailPhs->penerima->ptPenerima->nama_penerima}}</th>
                 </tr>
 
                 <tr>

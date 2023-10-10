@@ -132,31 +132,25 @@
         <table style="border-collapse:collapse;margin-left:87.1125pt" cellspacing="0">
             <tr style="height:15pt">
                 <td style="width:88pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                    <p class="s2" style="padding-left: 27pt;text-indent: 0pt;line-height: 13pt;text-align: left;">ESTATE</p>
+                    <p class="s2" style="text-indent: 0pt;line-height: 13pt;text-align: center;">ESTATE</p>
                 </td>
-                <td style="width:144pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt" colspan="2">
-                    <p class="s2" style="padding-left: 34pt;text-indent: 0pt;line-height: 13pt;text-align: left;">OA KAPAL KAYU</p>
+                <td style="width:144pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p class="s2" style="text-indent: 0pt;line-height: 13pt;text-align: center;">OA KAPAL KAYU</p>
                 </td>
-                <td style="width:144pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt" colspan="2">
-                    <p class="s2" style="padding-left: 36pt;text-indent: 0pt;line-height: 13pt;text-align: left;">OA CONTAINER</p>
+                <td style="width:144pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p class="s2" style="text-indent: 0pt;line-height: 13pt;text-align: center;">OA CONTAINER</p>
                 </td>
             </tr>
             @foreach ($data2 as $key => $item)
             <tr style="height:15pt">
                 <td style="width:88pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                    <p style="text-indent: 0pt;text-align: left;">{{ $item['estate'] }}<br /></p>
+                    <p style="text-indent: 0pt;text-align: center;">{{ $item['estate'] }}<br /></p>
                 </td>
-                <td style="width:100pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt" bgcolor="#FFFFFF">
-                    <p class="s3" style="padding-left: 18pt;text-indent: 0pt;line-height: 12pt;text-align: left;">Rp {{ $item['oa_kpl_kayu'] }}</p>
+                <td style="width:100pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;" bgcolor="#FFFFFF">
+                    <p class="s3" style="text-indent: 0pt;line-height: 12pt;text-align: center;">Rp {{ $item['oa_kpl_kayu'] }} ,-/KG</p>
                 </td>
-                <td style="width:80pt;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt" bgcolor="#FFFFFF">
-                    <p class="s2" style="padding-right: 20pt;text-indent: 0pt;line-height: 12pt;text-align: right;"> ,-/KG</p>
-                </td>
-                <td style="width:64pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt" bgcolor="#FFFFFF">
-                    <p class="s3" style="padding-left: 18pt;text-indent: 0pt;line-height: 12pt;text-align: left;">Rp {{ $item['oa_container'] }}</p>
-                </td>
-                <td style="width:80pt;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt" bgcolor="#FFFFFF">
-                    <p class="s2" style="padding-right: 20pt;text-indent: 0pt;line-height: 12pt;text-align: right;"> ,-/KG</p>
+                <td style="width:100pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;" bgcolor="#FFFFFF">
+                    <p class="s3" style="text-indent: 0pt;line-height: 12pt;text-align: center;">Rp {{ $item['oa_container'] }} ,-/KG</p>
                 </td>
             </tr>
             @endforeach

@@ -43,56 +43,13 @@
     <div class="page-meta">
         <nav class="breadcrumb-style-one" aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item">Monitoring</li>
-                <li class="breadcrumb-item active" aria-current="page">Dooring</li>
+                <li class="breadcrumb-item">Report History</li>
+                <li class="breadcrumb-item active" aria-current="page">Monitoring Dooring</li>
             </ol>
         </nav>
     </div>
     <!-- /BREADCRUMB -->        
     <div class="row layout-top-spacing">
-        <div id="basic" class="col-lg-12 col-sm-12 col-12 layout-spacing">
-            <div class="statbox widget box box-shadow">
-                <div class="widget-header">                                
-                    <div class="row">
-                        <div class="col-xl-12 col-md-12 col-sm-12 col-12">
-                            <h4>Update Tabel Monitoring</h4>
-                        </div>
-                    </div>
-                </div>
-                <div class="widget-content widget-content-area" style="padding: 1.5%;">
-                    {{-- @foreach ($limitedCollection as $getpo) --}}
-                    <form class="row g-3 needs-validation" action="{{ route('mon-dooring.update') }}" method="POST" enctype="multipart/form-data" novalidate>
-                        @csrf
-                        @method('PUT')
-                        <div class="col-md-4">
-                            <label for="validationCustom01" class="form-label">No PO </label>
-                            <select class="form-select" name="cb_po" id="cb_po" required>
-                                <option selected disabled value="">Pilih...</option>
-                                @foreach ($tbl_po->unique('no_po') as $getpo)
-                                    <option value="{{ $getpo->id_dooring }}">{{ $getpo->no_po }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="validationCustom03" class="form-label">Upload File BAP</label>
-                            <div class="mb-3">
-                                <input name="file" accept=".jpg, .png, .pdf" class="form-control file-upload-input" style="height: 48px; padding: 0.75rem 1.25rem;" type="file" id="formFile">
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="validationCustom03" class="form-label">Upload File Rekap Kebun</label>
-                            <div class="mb-3">
-                                <input name="file2" accept=".jpg, .png, .pdf" class="form-control file-upload-input" style="height: 48px; padding: 0.75rem 1.25rem;" type="file" id="formFile">
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary">Simpan</button>
-                        </div>
-                    </form>        
-                    {{-- @endforeach             --}}
-                </div>
-            </div>
-        </div>
         <div id="basic" class="col-lg-12 col-sm-12 col-12 layout-spacing">
             <div class="statbox widget box box-shadow">
                 <div class="widget-header">                                
@@ -125,7 +82,6 @@
                                             <th>No CONT</th>
                                             <th>Nopol</th>
                                             <th>Qty Timbang Kebun</th>
-                                            <th>Susut</th>
                                             <th>Nama Kapal</th>
                                             <th>TD</th>
                                             <th class="text-center">Status</th>
@@ -135,95 +91,31 @@
                                     <tbody>
                                         @if($monitoringDooring->count()==0)
                                         @else
-                                        @php
-                                            $totalTimbang = 0;
-                                            $susut = 0;
-                                        @endphp
-
                                         @foreach ($monitoringDooring[0]->detailDooring as $md)
-                                            @php
-                                                $totalTimbang += $md->qty_timbang;
-                                            @endphp
-                                        @endforeach                                        
-
-                                        @foreach ($monitoringDooring[0]->detailDooring as $md)
-                                            @if (!isset($totalQty))
-                                                @php
-                                                    $totalQty = $md->docDooring->docTracking->po->total_qty;
-                                                @endphp
-                                            @endif
-                                            
-                                            @php
-                                                $susut = $totalTimbang - $totalQty;
-
-                                                $noContainer = '';
-                                                $idKapal = $md->id_kapal;
-                                                $countDetailTrackingMultiple = count($md->docDooring->docTracking->detailTrackingMultiple);
-
-                                                $namaKapal = '';
-                                            @endphp
-
-                                            @if ($countDetailTrackingMultiple > 0)
-                                                @for ($i=0; $i<$countDetailTrackingMultiple; $i++)
-                                                    @if ($md->docDooring->docTracking->detailTrackingMultiple[$i]->id_kapal == $idKapal)
-                                                        @php
-                                                            $namaKapal = $md->docDooring->docTracking->detailTrackingMultiple[$i]->kapal->nama_kapal;
-                                                        @endphp
-
-                                                        @if ($md->tipe == 'Container')
-                                                            @php
-                                                            $noContainer = $md->docDooring->docTracking->detailTrackingMultiple[$i]->no_container;
-                                                            @endphp
-                                                        @endif
-                                                    @endif
-                                                @endfor
-                                            @endif
                                         <tr>
                                             <td>{{ $md->docDooring->docTracking->po->detailPhs->penawaran->customer->nama_customer ?? '' }}</td>
                                             <td>{{ $md->docDooring->docTracking->no_po ?? '' }}</td>
                                             <td>{{ $md->docDooring->docTracking->portOfLoading->nama_pol ?? '' }} - {{ $md->docDooring->docTracking->portOfDestination->nama_pod ?? '' }}</td>
                                             <td>{{ $md->docDooring->docTracking->po->po_kebun ?? '' }}</td>
                                             <td>{{ $md->docDooring->docTracking->po->detailPhs->penerima->ptPenerima->nama_penerima ?? '' }}</td>
-                                            <td>{{ $md->estate }}</td>
+                                            <td>{{ $md->docDooring->docTracking->po->detailPhs->penerima->estate ?? '' }}</td>
                                             <td>{{ $md->docDooring->docTracking->po->barang->nama_barang ?? '' }}</td>
-                                            <td>{{ number_format($md->qty_tonase , 0, ',', ',') ?? '' }}</td>
+                                            <td>{{ $md->qty_tonase ?? '' }}</td>
                                             <td>KG</td>
-                                            <td>{{ number_format($md->jml_sak , 0, ',', ',') }}</td>
-                                            <td>{{ $md->tgl_muat ? date('d-M-Y', strtotime($md->tgl_muat)) : '' }}</td>
-                                            <td>{{ $md->tgl_tiba ? date('d-M-Y', strtotime($md->tgl_tiba)) : '' }}</td>
+                                            <td>{{ $md->jml_sak }}</td>
+                                            <td>{{ $md->tgl_muat }}</td>
+                                            <td>{{ $md->tgl_tiba }}</td>
                                             <td>{{ $md->no_tiket }}</td>
-                                            <td>{{ $noContainer }}</td>
+                                            <td>{{ $md->no_container }}</td>
                                             <td>{{ $md->nopol }}</td>
-                                            <td>{{ number_format($md->qty_timbang , 0, ',', ',') }}</td>                                            
-                                            <td>{{ number_format($susut , 0, ',', ',') }}</td>
-                                            <td>{{ $namaKapal }}</td>
-                                            <td>{{ $md->docDooring->docTracking->detailTracking->td ? date('d-M-Y', strtotime($md->docDooring->docTracking->detailTracking->td)) : '' }}</td>
+                                            <td>{{ $md->qty_timbang }}</td>                                            
+                                            <td>{{ $md->docDooring->docTracking->detailTracking->kapal->nama_kapal }}</td>
+                                            <td>{{ $md->docDooring->docTracking->detailTracking->td }}</td>
                                             <td class="text-center">{!! $md->status == 1 ? '<span class="shadow-none badge badge-success">Proses Muat</span>' : ($md->status == 2 ? '<span class="shadow-none badge badge-warning">Selesai Muat</span>' : '') !!}</td>
                                             <td>
-                                            {!! $md->docDooring->sb_file_name != null
-                                                ?
-                                                    '<a href="'.route('downloadfile', ['path' => $md->docDooring->sb_file_name]).'" 
-                                                        class="bs-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Download BAP Dooring" data-original-title="Print">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-download">
-                                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></a>'     
-                                                : ''
-                                            !!}
-                                            {!! $md->docDooring->sr_file_name != null
-                                                ?
-                                                    '<a href="'.route('downloadfile', ['path' => $md->docDooring->sr_file_name]).'" 
-                                                        class="bs-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Download Rekap Kebun" data-original-title="Print"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-download"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                                                    </svg></a>'     
-                                                : ''
-                                            !!}
-                                            </td>
-                                            {{-- <td>
                                                 <a href="{{route('monitoring.dooring.spk', $md->id_detail_door)}}" class="btn btn-outline-primary mb-1">SPK Dooring</a>
-                                            </td> --}}
+                                            </td>
                                         </tr>
-
-                                        @php
-                                            $totalQty = $md->docDooring->docTracking->po->total_qty;
-                                        @endphp
                                         @endforeach
                                         @endif
                                     </tbody>
@@ -452,18 +344,10 @@
                         }
                     },
                     {
-                        text: 'Susut',
-                        className: 'btn btn-secondary toggle-vis mb-1',
-                        action: function(e, dt, node, config ) {
-                            var column = dt.column( 16 );
-                            column.visible( ! column.visible() );
-                        }
-                    },                    
-                    {
                         text: 'Nama Kapal',
                         className: 'btn btn-secondary toggle-vis mb-1',
                         action: function(e, dt, node, config ) {
-                            var column = dt.column( 17 );
+                            var column = dt.column( 16 );
                             column.visible( ! column.visible() );
                         }
                     },
@@ -471,7 +355,7 @@
                         text: 'TD',
                         className: 'btn btn-secondary toggle-vis mb-1',
                         action: function(e, dt, node, config ) {
-                            var column = dt.column( 18 );
+                            var column = dt.column( 17 );
                             column.visible( ! column.visible() );
                         }
                     },
@@ -479,7 +363,7 @@
                         text: 'Status',
                         className: 'btn btn-secondary toggle-vis mb-1',
                         action: function(e, dt, node, config ) {
-                            var column = dt.column( 19 );
+                            var column = dt.column( 18 );
                             column.visible( ! column.visible() );
                         }
                     },

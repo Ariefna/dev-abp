@@ -122,10 +122,10 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($tbl_po as $trab)
+                                @foreach($tbl_po->where('qty_sisa','!=',0) as $trab)
                                 <tr>
                                     <td><a href="{{ route('analytics.addsisatrack', ['no_po' => $trab->no_po]) }}"><div class="td-content"><span class="">{{ $trab->no_po }}</span></div></a></td>
-                                    <td><a href="{{ route('analytics.addsisatrack', ['no_po' => $trab->no_po]) }}"><div class="td-content"><span class="">{{ $trab->qty_sisa }}</span></div></a></td>
+                                    <td><a href="{{ route('analytics.addsisatrack', ['no_po' => $trab->no_po]) }}"><div class="td-content"><span class="">{{ number_format($trab->qty_sisa, 0, ',', '.') }}</span></div></a></td>
                                     <td><div class="td-content"><span class="badge badge-danger">Sisa Muat</span></div></td>
                                 </tr>
                                 @endforeach
@@ -161,10 +161,10 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($tbl_dor as $trab)
+                                @foreach($tbl_dor->where('qty_sisa','!=',0) as $trab)
                                 <tr>
                                     <td><a href="{{ route('analytics.addsisadoor', ['id_dooring' => $trab->id_dooring]) }}"><div class="td-content"><span class="">{{ $trab->no_po }}</span></div></a></td>
-                                    <td><a href="{{ route('analytics.addsisadoor', ['id_dooring' => $trab->id_dooring]) }}"><div class="td-content"><span class="">{{ $trab->qty_sisa }}</span></div></a></td>
+                                    <td><a href="{{ route('analytics.addsisadoor', ['id_dooring' => $trab->id_dooring]) }}"><div class="td-content"><span class="">{{ number_format($trab->qty_sisa, 0, ',', '.') }}</span></div></a></td>
                                     <td><div class="td-content"><span class="badge badge-danger">Sisa Dooring</span></div></td>
                                 </tr>
                                 @endforeach

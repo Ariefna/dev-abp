@@ -39,7 +39,7 @@
         </tr>
         <tr>
             <td>DARI PARTY</td>
-            <td>: PO : {{$DetailTracking->docTracking->no_po}} {{$DetailTracking->docTracking->po->total_qty}} KG</td>
+            <td>: PO : {{$DetailTracking->docTracking->no_po}} - {{number_format($DetailTracking->docTracking->po->total_qty , 0, ',', '.')}} KG</td>
         </tr>
 
         {{-- space --}}
@@ -49,7 +49,7 @@
 
         <tr>
             <td>TD VESSEL</td>
-            <td>: {{ date('d F Y', strtotime($DetailTracking->tgl_muat)) }}</td>
+            <td>: {{ date('d F Y', strtotime($DetailTracking->td)) ?? '' }}</td>
         </tr>
         <tr>
             <td>VESSEL</td>
@@ -57,7 +57,7 @@
         </tr>
         <tr>
             <td>DIMUAT</td>
-            <td>: PO : {{$DetailTracking->docTracking->no_po}} {{$tbl_po->sum('qty_tonase')}} KG</td>
+            <td>: PO : {{$DetailTracking->docTracking->no_po}} - {{number_format($tbl_po->sum('qty_tonase') , 0, ',', '.')}} KG</td>
         </tr>
         <tr>
             <td>PO KEBUN</td>
@@ -94,9 +94,9 @@
             @else
                 <td>-</td>
             @endif
-            <td>{{$item->jml_sak}}</td>
-            <td>{{$item->qty_tonase}}</td>
-            <td>{{$item->qty_timbang}}</td>
+            <td>{{number_format($item->jml_sak , 0, ',', '.')}}</td>
+            <td>{{number_format($item->qty_tonase , 0, ',', '.')}}</td>
+            <td>{{number_format($item->qty_timbang , 0, ',', '.')}}</td>
             <td>{{$item->estate}}</td>
             <td>{{$item->no_pl}}</td>
         </tr>

@@ -161,30 +161,15 @@ class DocTrackingController extends Controller
                 ->orderBy('detail_tracking.id_detail_track', 'desc')
                 ->get();    
         $lastcont = DetailTracking::join('detail_tracking_sisa','detail_tracking_sisa.id_track','=','detail_tracking.id_track')
-                    ->where(function ($query) {
-                        $query->where('detail_tracking.status', 1)
-                            ->whereNotNull('detail_tracking.no_container');
-                    })
-                    ->orWhere(function ($query) {
-                        $query->where('detail_tracking_sisa.tipe', 'Container');
-                    })
-                    ->latest('detail_tracking.created_at')
+                    ->where('detail_tracking.status', 1)
+                    ->whereNotNull('detail_tracking.no_container')
+                    ->where('detail_tracking_sisa.tipe', 'Container')
                     ->first();
         $lastcurah = DetailTracking::join('detail_tracking_sisa', 'detail_tracking_sisa.id_track', '=', 'detail_tracking.id_track')
-                    ->where(function ($query) {
-                        $query->where('detail_tracking.status', 1)
-                            ->whereNull('detail_tracking.no_container');
-                    })
-                    ->orWhere(function ($query) {
-                        $query->where('detail_tracking_sisa.tipe', 'Curah');
-                    })
-                    ->latest('detail_tracking.created_at')
+                    ->where('detail_tracking.status', 1)
+                    ->whereNull('detail_tracking.no_container')
+                    ->where('detail_tracking_sisa.tipe', 'Curah')
                     ->first();
-        $sisacurah = DetailTrackingSisa::where('tipe','Curah')
-                    // ->select('qty_tonase_sisa','id_track')
-                    ->latest()->first();
-                    // ->get();
-                    // dd($sisacurah);
         $zerocurah = DocTracking::select('*')
                     ->join('purchase_orders', 'purchase_orders.po_muat', '=', 'doc_tracking.no_po')
                     ->where('doc_tracking.status',1)
@@ -193,31 +178,12 @@ class DocTrackingController extends Controller
                     ->join('purchase_orders', 'purchase_orders.po_muat', '=', 'doc_tracking.no_po')
                     ->where('doc_tracking.status',1)
                     ->get();                    
-        // $tbl_po = Tracking::select('purchase_orders.po_muat', 'purchase_orders.po_kebun', 
-        //         'purchase_orders.total_qty', 'port_of_loading.nama_pol', 'port_of_destination.nama_pod',
-        //         'trackings.status', 'kapals.kode_kapal','kapals.nama_kapal','pt_penerima.nama_penerima',
-        //         'gudang_muats.nama_gudang', 'barangs.nama_barang','purchase_orders.no_pl', 'trackings.tgl_muat',
-        //         'purchase_orders.po_kebun','trackings.qty_muat', 'trackings.qty_timbang','trackings.jml_bag',
-        //         'trackings.nopol','trackings.no_container','trackings.voyage','trackings.td','trackings.td_jkt',
-        //         'trackings.eta','customers.nama_customer')
-        //         ->join('gudang_muats', 'gudang_muats.id_gudang', '=', 'trackings.id_gudang')
-        //         ->join('purchase_orders', 'purchase_orders.po_muat', '=', 'trackings.no_po')
-        //         ->join('port_of_loading', 'port_of_loading.id', '=', 'trackings.id_pol')
-        //         ->join('port_of_destination', 'port_of_destination.id', '=', 'trackings.id_pod')
-        //         ->join('kapals', 'kapals.id', '=', 'trackings.id_kapal')
-        //         ->join('detail_p_h_s', 'purchase_orders.id_detail_ph', '=', 'detail_p_h_s.id_detail_ph')
-        //         ->join('penawaran_hargas', 'penawaran_hargas.id_penawaran', '=', 'detail_p_h_s.id_penawaran')
-        //         ->join('customers', 'customers.id', '=', 'penawaran_hargas.id_customer')
-        //         ->join('penerimas', 'detail_p_h_s.id_penerima', '=', 'penerimas.id_penerima')
-        //         ->join('pt_penerima', 'pt_penerima.id_pt_penerima', '=', 'penerimas.id_pt_penerima')
-        //         ->join('barangs', 'purchase_orders.id', '=', 'barangs.id')
-        //         ->where('trackings.status', '=', 1)
-        //         ->get();
+        $cek = DocTracking::where('status',1)->get();
         $title = 'Adhipramana Bahari Perkasa';
         $breadcrumb = 'This Breadcrumb';
         return view('pages.abp-page.tra', compact('title', 'breadcrumb','po','details','getcurahqty','getcontqty',
         'track','trackzero','dtrack','lastcont','lastcurah','zerocurah',
-        'zerocont','gudang','pol','pod','kapal','tracknull','sisacurah'));
+        'zerocont','gudang','pol','pod','kapal','tracknull','cek'));
     }
     
 
@@ -281,6 +247,7 @@ class DocTrackingController extends Controller
             'td_jkt'     => '',
             'ta'     => '',
             'no_sj'     => $request->no_sj,
+            'harga_hpp' => $request->hpp_kpl,
             'sj_file_name'     => $fileName1,
             'sj_file_path'     => 'uploads/tracking' . $fileName1,
             'st_file_name'     => $fileName2,
@@ -340,6 +307,7 @@ class DocTrackingController extends Controller
             'td_jkt'     => '',
             'ta'     => '',
             'no_sj'     => $request->no_sj,
+            'harga_hpp' => $request->hpp_kpl,
             'sj_file_name'     => $fileName1,
             'sj_file_path'     => 'uploads/tracking' . $fileName1,
             'st_file_name'     => $fileName2,
@@ -394,5 +362,23 @@ class DocTrackingController extends Controller
         //     'idtracksisa'=>$idtracking ?? null,
         // ]);
         
+    }    
+    public function batal(Request $request) {
+        if ($request->isMethod('put')) { // Check for PUT request
+            $qty_sisa = $request->input('qty_sisa');
+            $id = $request->input('id_track_btl');
+    
+            if ($qty_sisa > 0) {
+                DocTracking::where('id_track', $id)->update([
+                    'status' => '2'
+                ]);
+            } else if ($qty_sisa == 0) {
+                DocTracking::where('id_track', $id)->update([
+                    'status' => '3'
+                ]);
+            }
+        }
+    
+        return redirect()->back();
     }    
 }

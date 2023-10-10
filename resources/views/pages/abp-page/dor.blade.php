@@ -52,7 +52,8 @@
     </div>
     <!-- /BREADCRUMB -->        
     <div class="row layout-top-spacing">
-        @if (count($track->where('status', 1)) >= 1)
+        {{-- @if ($cek->where('status', 1)->count() > 0) --}}
+        @if ($cek->where('status', 1)->count() > 0)
         <div id="alertIcon" class="col-lg-12 mb-2">
             <div class="widget-content widget-content-area">
                 <div class="alert alert-warning alert-dismissible fade show" role="alert">
@@ -113,13 +114,13 @@
                         <div class="col-md-6">
                             <label for="validationCustom03" class="form-label">Upload File Surat BAP</label>
                             <div class="mb-3">
-                                <input name="file_bap" accept=".jpg, .png, .pdf" class="form-control file-upload-input" style="height: 48px; padding: 0.75rem 1.25rem;" type="file" id="formFile" required>
+                                <input name="file_bap" accept=".jpg, .png, .pdf" class="form-control file-upload-input" style="height: 48px; padding: 0.75rem 1.25rem;" type="file" id="formFile">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <label for="validationCustom03" class="form-label">Upload File Rekap Kebun</label>
                             <div class="mb-3">
-                                <input name="file_rekap" accept=".jpg, .png, .pdf" class="form-control file-upload-input" style="height: 48px; padding: 0.75rem 1.25rem;" type="file" id="formFile" required>
+                                <input name="file_rekap" accept=".jpg, .png, .pdf" class="form-control file-upload-input" style="height: 48px; padding: 0.75rem 1.25rem;" type="file" id="formFile">
                             </div>
                         </div>
 
@@ -161,7 +162,7 @@
                                     </thead>
                                     <tbody>
                                         {{-- @if($) --}}
-                                        @if($details==0)
+                                        @if($doorzero1->count()==0)
                                             @foreach ($doornull as $tra)
                                             <tr>
                                                 <td>{{ $tra->no_po }}</td>
@@ -169,14 +170,14 @@
                                                 @if ($tra->qty_curah_track==null)
                                                     <td>0</td>
                                                 @else
-                                                    <td>{{ $tra->qty_curah_track }}</td>
+                                                    <td>{{ number_format($tra->qty_curah_track , 0, ',', '.') }}</td>
                                                 @endif
                                                 @if ($tra->qty_curah_cont==null)
                                                     <td>0</td>
                                                 @else
-                                                    <td>{{ $tra->qty_curah_cont }}</td>
+                                                    <td>{{ number_format($tra->qty_curah_cont , 0, ',', '.') }}</td>
                                                 @endif                                                
-                                                <td>{{ $tra->total_tonase_track }}</td>
+                                                <td>{{ number_format($tra->total_tonase_track , 0, ',', '.') }}</td>
                                                 <td>0</td>
                                                 <td class="text-center"><span class="shadow-none badge badge-danger">{{ $tra->status == 1 ? 'Pending' : '' }}</span></td>
                                                 <td class="text-center">
@@ -189,34 +190,113 @@
                                                 </td>
                                             </tr>
                                             @endforeach
-                                        @else
-                                            @foreach ($track as $trac)
-                                            <tr>
-                                                <td>{{ $trac->no_po }}</td>
-                                                <td>{{ $trac->nama_pol }} - {{ $trac->nama_pod }}</td>
-                                                <td>{{ $track->where('tipe', 'Curah')->isEmpty() ? $track->first()->muat_curah_track : $track->first()->qty_tonase_sisa }}</td>
-                                                <td>{{ $track->where('tipe', 'Container')->isEmpty() ? $track->first()->muat_container_track : $track->first()->qty_tonase_sisa }}</td>
-                                                <td>{{ $trac->total_tonase_track }}</td>
-                                                <td>{{ $trac->total_tonase_dooring }}</td>
-                                                <td class="text-center"><span class="shadow-none badge badge-danger">{{ $trac->status == 1 ? 'Pending' : '' }}</span></td>
-                                                <td class="text-center">
-                                                    @if($trac->qty != 0)
-                                                        @if(count($doorzero) > 0)
-                                                            <a href="#detailcur" class="btn btn-outline-primary bs-tooltip me-2" data-bs-toggle="modal" data-placement="top" title="Add Curah">Curah</a>
-                                                        @else                                            
-                                                            <button class="btn btn-outline-primary bs-tooltip me-2" data-placement="top" title="Add Curah" disabled>Curah</button>
-                                                        @endif                                            
-                                                    @endif                                            
-                                                    @if($trac->qty2 != 0)
-                                                        @if(count($doorzero) > 0)
-                                                            <a href="#detailcont" class="btn btn-outline-primary bs-tooltip me-2" data-bs-toggle="modal" data-placement="top" title="Add Container">Container</a>
-                                                            @else
-                                                            <button type="button" class="btn btn-outline-primary bs-tooltip me-2" data-toggle="tooltip" data-placement="top" title="Add Container" disabled>Container</button>
-                                                        @endif
-                                                    @endif
-                                                </td>
-                                            </tr>
-                                            @endforeach
+                                        @elseif($doorzero->count()>0)
+                                            @if ($details==0 && $doorzero->count()==0)
+                                                
+                                            @elseif($details && $doorzero->count())
+                                                @foreach ($track as $trac)
+                                                    <tr>
+                                                        <td>{{ $trac->no_po }}</td>
+                                                        <td>{{ $trac->nama_pol }} - {{ $trac->nama_pod }}</td>
+                                                        {{-- <td>{{ $track->where('tipe', 'Curah')->isEmpty() 
+                                                        ? number_format($track->first()->muat_curah_track , 0, ',', '.') 
+                                                        : number_format($track->first()->qty_tonase_sisa , 0, ',', '.') }}</td> --}}
+                                                        {{-- <td>{{ $track->where('tipe', 'Container')->isEmpty() 
+                                                        ? number_format($track->first()->muat_container_track , 0, ',', '.')
+                                                        : number_format($track->first()->qty_tonase_sisa , 0, ',', '.') }}</td> --}}
+                                                        <td>{{ number_format($trac->muat_curah_track - $trac->door_curah, 0, ',', '.') }}</td>
+                                                        <td>{{ number_format($trac->muat_container_track - $trac->door_container, 0, ',', '.') }}</td>
+                                                        {{-- <td>{{ number_format($trac->total_tonase_track , 0, ',', '.') }}</td> --}}
+                                                        <td>
+                                                            {{ 
+                                                            $total_track = 
+                                                                number_format(
+                                                                    (
+                                                                        $trac->muat_curah_track - $trac->door_curah
+                                                                    ) +
+                                                                    (
+                                                                        $trac->muat_container_track - $trac->door_container
+                                                                    ),
+                                                                    0, 
+                                                                    ',', 
+                                                                    '.'  
+                                                                )
+                                                            }}
+                                                        </td>
+                                                        <td>{{ number_format($trac->total_tonase_dooring , 0, ',', '.') }}</td>
+                                                        <td class="text-center"><span class="shadow-none badge badge-danger">{{ $trac->status == 1 ? 'Pending' : '' }}</span></td>
+                                                        <td class="text-center">
+                                                            @if($trac->qty != 0)
+                                                                @if(count($doorzero) > 0)
+                                                                    <a href="#detailcur" class="btn btn-outline-primary bs-tooltip me-2" data-bs-toggle="modal" data-placement="top" title="Add Curah">Curah</a>
+                                                                @else                                            
+                                                                    <button class="btn btn-outline-primary bs-tooltip me-2" data-placement="top" title="Add Curah" disabled>Curah</button>
+                                                                @endif                                            
+                                                            @endif                                            
+                                                            @if($trac->qty2 != 0)
+                                                                @if(count($doorzero) > 0)
+                                                                    <a href="#detailcont" class="btn btn-outline-primary bs-tooltip me-2" data-bs-toggle="modal" data-placement="top" title="Add Container">Container</a>
+                                                                    @else
+                                                                    <button type="button" class="btn btn-outline-primary bs-tooltip me-2" data-toggle="tooltip" data-placement="top" title="Add Container" disabled>Container</button>
+                                                                @endif
+                                                            @endif
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            @elseif($details==0 && $doorzero->count() > 0)
+                                                @foreach ($track as $trac)
+                                                    @php
+                                                        $total_track = 0;
+                                                    @endphp
+                                                    <tr>
+                                                        <td>{{ $trac->no_po }}</td>
+                                                        <td>{{ $trac->nama_pol }} - {{ $trac->nama_pod }}</td>
+                                                        {{-- <td>{{ $track->where('tipe', 'Curah')->isEmpty() 
+                                                        ? number_format($track->first()->muat_curah_track , 0, ',', '.') 
+                                                        : number_format($track->first()->qty_tonase_sisa , 0, ',', '.') }}</td>
+                                                        <td>{{ $track->where('tipe', 'Container')->isEmpty() 
+                                                        ? number_format($track->first()->muat_container_track , 0, ',', '.')
+                                                        : number_format($track->first()->qty_tonase_sisa , 0, ',', '.') }}</td> --}}
+                                                        <td>{{ number_format($trac->muat_curah_track - $trac->door_curah, 0, ',', '.') }}</td>
+                                                        <td>{{ number_format($trac->muat_container_track - $trac->door_container, 0, ',', '.') }}</td>
+                                                        <td>
+                                                            {{ 
+                                                            $total_track = 
+                                                                number_format(
+                                                                    (
+                                                                        $trac->muat_curah_track - $trac->door_curah
+                                                                    ) +
+                                                                    (
+                                                                        $trac->muat_container_track - $trac->door_container
+                                                                    ),
+                                                                    0, 
+                                                                    ',', 
+                                                                    '.'  
+                                                                )
+                                                            }}
+                                                        </td>
+                                                        {{-- <td>{{ number_format($trac->total_tonase_track , 0, ',', '.') }}</td> --}}
+                                                        <td>{{ number_format($trac->total_tonase_dooring , 0, ',', '.') }}</td>
+                                                        <td class="text-center"><span class="shadow-none badge badge-danger">{{ $trac->status == 1 ? 'Pending' : '' }}</span></td>
+                                                        <td class="text-center">
+                                                            @if($trac->qty != 0)
+                                                                @if(count($doorzero) > 0)
+                                                                    <a href="#detailcur" class="btn btn-outline-primary bs-tooltip me-2" data-bs-toggle="modal" data-placement="top" title="Add Curah">Curah</a>
+                                                                @else                                            
+                                                                    <button class="btn btn-outline-primary bs-tooltip me-2" data-placement="top" title="Add Curah" disabled>Curah</button>
+                                                                @endif                                            
+                                                            @endif                                            
+                                                            @if($trac->qty2 != 0)
+                                                                @if(count($doorzero) > 0)
+                                                                    <a href="#detailcont" class="btn btn-outline-primary bs-tooltip me-2" data-bs-toggle="modal" data-placement="top" title="Add Container">Container</a>
+                                                                    @else
+                                                                    <button type="button" class="btn btn-outline-primary bs-tooltip me-2" data-toggle="tooltip" data-placement="top" title="Add Container" disabled>Container</button>
+                                                                @endif
+                                                            @endif
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            @endif
                                         @endif
                                     </tbody>
                                 </table>
@@ -267,16 +347,16 @@
                                             <td>{{ $dd->nopol }}</td>
                                             <td>{{ $dd->detailTracking->no_container ?? '-' }}</td>
                                             <td>{{ $dd->detailTracking->no_segel ?? '-' }}</td>
-                                            <td>{{ $dd->qty_tonase }}</td>
-                                            <td>{{ $dd->jml_sak }}</td>
-                                            <td>{{ $dd->qty_timbang }}</td>
+                                            <td>{{ number_format($dd->qty_tonase , 0, ',', '.') }}</td>
+                                            <td>{{ number_format($dd->jml_sak , 0, ',', '.') }}</td>
+                                            <td>{{ number_format($dd->qty_timbang , 0, ',', '.') }}</td>
                                             <td>{{ $dd->no_tiket }}</td>
                                             <td>{{ $dd->no_sj }}</td>
                                             {{-- <td>{{ $dd->detailTracking->docTracking->po->detailPhs->penerima->estate ?? '-' }}</td> --}}
                                             <td>{{ $dd->estate }}</td>
                                             <td class="text-center"><span class="shadow-none badge badge-danger">{{ $dd->status == 1 ? 'Pending' : '' }}</span></td>
                                             <td class="text-center">
-                                                <a href="" class="bs-tooltip" data-bs-toggle="modal" data-bs-placement="top" title="Delete" data-original-title="Delete"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash p-1 br-8 mb-1"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></a>
+                                                <a href="#delete-{{ $dd->id_detail_door }}" class="bs-tooltip" data-bs-toggle="modal" data-bs-placement="top" title="Delete" data-original-title="Delete"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash p-1 br-8 mb-1"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></a>
                                             </td>
                                         </tr>
                                         @endforeach
@@ -325,6 +405,7 @@
                                             <th>Nama Kapal</th>
                                             <th>TD</th>
                                             <th class="text-center">Status</th>
+                                            {{-- <th class="text-center">Action</th> --}}
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -381,19 +462,22 @@
                                             <td>{{ $md->docDooring->docTracking->po->detailPhs->penerima->ptPenerima->nama_penerima ?? '' }}</td>
                                             <td>{{ $md->estate }}</td>
                                             <td>{{ $md->docDooring->docTracking->po->barang->nama_barang ?? '' }}</td>
-                                            <td>{{ $md->qty_tonase ?? '' }}</td>
+                                            <td>{{ number_format($md->qty_tonase , 0, ',', '.') ?? '' }}</td>
                                             <td>KG</td>
-                                            <td>{{ $md->jml_sak }}</td>
+                                            <td>{{ number_format($md->jml_sak , 0, ',', '.') }}</td>
                                             <td>{{ $md->tgl_muat }}</td>
                                             <td>{{ $md->tgl_tiba }}</td>
                                             <td>{{ $md->no_tiket }}</td>
                                             <td>{{ $noContainer }}</td>
                                             <td>{{ $md->nopol }}</td>
-                                            <td>{{ $md->qty_timbang }}</td>                                            
-                                            <td>{{ $susut }}</td>
+                                            <td>{{ number_format($md->qty_timbang , 0, ',', '.') }}</td>                                            
+                                            <td>{{ number_format($susut , 0, ',', '.') }}</td>
                                             <td>{{ $namaKapal }}</td>
                                             <td>{{ $md->docDooring->docTracking->detailTracking->td }}</td>
                                             <td class="text-center">{!! $md->status == 1 ? '<span class="shadow-none badge badge-success">Proses Muat</span>' : ($md->status == 2 ? '<span class="shadow-none badge badge-warning">Selesai Muat</span>' : '') !!}</td>
+                                            {{-- <td>
+                                                <a href="{{route('monitoring.dooring.spk', $md->id_detail_door)}}" class="btn btn-outline-primary mb-1">SPK Dooring</a>
+                                            </td> --}}
                                         </tr>
 
                                         @php
@@ -409,7 +493,7 @@
                 </div>
             </div>
         </div>
-        @foreach ($doorzero as $tra)
+        
         <div class="modal fade bd-example-modal-xl" id="detailcur" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-xl" role="document">
                 <div class="modal-content">
@@ -418,7 +502,7 @@
                         <form name="modal-tracking-ada" class="row g-3 needs-validation" action="{{ route('dooring.savecurah') }}"  method="POST" enctype="multipart/form-data" novalidate>
                             @csrf
                             @foreach ($doorzero as $tra)
-                                <input name="id_door" value="{{ $tra->id_dooring }}" type="text" class="form-control" id="validationCustom01" required>
+                                <input name="id_door" value="{{ $tra->id_dooring }}" type="hidden" class="form-control" id="validationCustom01" required>
                             @endforeach
                             <div class="col-md-6">
                                 <label for="validationCustom03" class="form-label">Date Berangkat</label>
@@ -429,23 +513,26 @@
                                 <input name="tgl_tiba" id="tgl_tiba" value="2022-09-04" class="form-control flatpickr flatpickr-input" type="date" placeholder="Select Date..">
                             </div>
                             <div class="col-md-6">
-                                @if($lastcurah)
-                                    <label for="validationCustom03" class="form-label">Kapal</label>
-                                    <select class="form-select" name="kpl_id" id="cb_kpl" required>
-                                        <option selected disabled value="">Pilih...</option>                                
-                                        @foreach ($kapal->where('id_track', $tra->id_track)->whereNull('no_container') as $kp)
-                                            <option {{ $lastcurah->id_dooring == $tra->id_dooring ? 'selected' : '' }} value="{{ $kp->id_kapal }}">{{ $kp->nama_kapal }}</option>
-                                        @endforeach
-                                    </select>                                
-                                @elseif($lastcurah==0)
-                                    <label for="validationCustom03" class="form-label">Kapal</label>
-                                    <select class="form-select" name="kpl_id" id="cb_kpl" required>
-                                        <option selected disabled value="">Pilih...</option>                                
-                                        @foreach ($kapal->where('id_track', $tra->id_track)->whereNull('no_container') as $kp)
-                                            <option value="{{ $kp->id_kapal }}">{{ $kp->nama_kapal }}</option>
-                                        @endforeach
-                                    </select>                                
-                                @endif
+                                @foreach ($doorzero as $tra)
+                                    @if($lastcurah)
+                                        <label for="validationCustom03" class="form-label">Kapal</label>
+                                        <select class="form-select" name="kpl_id" id="cb_kpl" required>
+                                            <option selected disabled value="">Pilih...</option>                                
+                                                @foreach ($kapal->where('id_track',$tra->id_track)->whereNull('no_container') as $kp)
+                                                    <option {{ $lastcurah->id_dooring == $tra->id_dooring ? 'selected' : '' }} value="{{ $kp->id_kapal.'-'.$kp->id_detail_track }}">{{ $kp->nama_kapal }}</option>
+                                                @endforeach
+                                        </select>                                
+                                    @elseif($lastcurah==0)
+                                        <label for="validationCustom03" class="form-label">Kapal</label>
+                                        <select class="form-select" name="kpl_id" id="cb_kpl" required>
+                                            <option selected disabled value="">Pilih...</option>                                
+                                            @foreach ($kapal->where('id_track',$tra->id_track)->whereNull('no_container') as $kp)
+                                                <option value="{{ $kp->id_kapal.'-'.$kp->id_detail_track }}">{{ $kp->nama_kapal }}</option>
+                                            @endforeach
+                                        </select>                                
+                                        {{-- <input type="text" name="" id="" value="{{ $tra->id_dooring }}"> --}}
+                                    @endif
+                                @endforeach
                             </div>                        
                             <div class="col-lg-6 col-md-6 col-sm-12">                       
                                 <label for="validationCustom03" class="form-label">Estate</label>
@@ -456,31 +543,37 @@
                                 <input name="nopol" type="text" class="form-control" id="validationCustom01" placeholder="Nopol">
                             </div>
                             <div class="col-md-3">
-                                @if($lastcurah)
-                                    @foreach($track->where('id_dooring',$tra->id_dooring) as $zc)
-                                        <label for="validationCustom01" class="form-label">QTY Tonase Dooring</label>
-                                        <div class="input-group">
-                                            <input type="number" name="qty_tonase" id="qty_curah" class="form-control qty_curah" placeholder="QTY Tonase">
-                                            <span class="input-group-text" id="inputGroupPrepend">KG</span>
-                                        </div>
-                                        <span class="shadow-none badge badge-danger mt-2">Sisa: {{ $zc->qty_tonase_sisa }}</span>
-                                        <input name="qty_curah_total" id="qty_curah_total" value="{{ $zc->qty_tonase_sisa }}" type="text" step="any" min="0">
-                                        <input name="qty" id="qty_sisa_curah" value="0" type="text" step="any" min="0">
-                                        <div class="validationMessage"></div>
-                                    @endforeach                                    
-                                @elseif($lastcurah==0)
-                                    @foreach($zerocurah->where('id_track',$tra->id_track) as $zc)
-                                    <label for="validationCustom01" class="form-label">QTY Tonase Dooring</label>
-                                    <div class="input-group">
-                                        <input type="number" name="qty_tonase" id="qty_curah" class="form-control qty_curah" placeholder="QTY Tonase">
-                                        <span class="input-group-text" id="inputGroupPrepend">KG</span>
-                                    </div>
-                                    <span class="shadow-none badge badge-danger mt-2">Sisa: {{ $zc->qty_curah_tracking }}</span>
-                                    <input name="qty_curah_total" id="qty_curah_total" value="{{ $zc->qty_curah_tracking }}" type="text" step="any" min="0">
-                                    <input name="qty_sisa_curah" id="qty_sisa_curah" value="0" type="text" step="any" min="0">
-                                    <div class="validationMessage"></div>
+                                @foreach($doorzero as $tra)
+                                    @php
+                                        $match = $doorsisa->where('id_dooring', $tra->id_dooring)->count() > 0;
+                                    @endphp
+                                    
+                                    @if($lastcurah || $match)
+                                        @foreach($getcurahqty as $zc)
+                                            <label for="validationCustom01" class="form-label">QTY Tonase Dooring</label>
+                                            <div class="input-group">
+                                                <input type="number" name="qty_tonase" id="qty_curah" class="form-control qty_curah" placeholder="QTY Tonase">
+                                                <span class="input-group-text" id="inputGroupPrepend">KG</span>
+                                            </div>
+                                            <span class="shadow-none badge badge-danger mt-2">Sisa: {{ number_format($zc->qty_tonase_sisa , 0, ',', '.') }}</span>
+                                            <input name="qty_curah_total" id="qty_curah_total" value="{{ $zc->qty_tonase_sisa }}" type="text" step="any" min="0">
+                                            <input name="qty" id="qty_sisa_curah" value="0" type="text" step="any" min="0">
+                                            <div class="validationMessage"></div>
+                                        @endforeach                                    
+                                    @elseif($lastcurah==0 || $match->count()==0)
+                                        @foreach($zerocurah as $zc)
+                                            <label for="validationCustom01" class="form-label">QTY Tonase Dooring</label>
+                                            <div class="input-group">
+                                                <input type="number" name="qty_tonase" id="qty_curah" class="form-control qty_curah" placeholder="QTY Tonase">
+                                                <span class="input-group-text" id="inputGroupPrepend">KG</span>
+                                            </div>
+                                            <span class="shadow-none badge badge-danger mt-2">Sisa: {{ number_format($zc->qty_curah_tracking , 0, ',', '.') }}</span>
+                                            <input name="qty_curah_total" id="qty_curah_total" value="{{ $zc->qty_curah_tracking }}" type="text" step="any" min="0">
+                                            <input name="qty_sisa_curah" id="qty_sisa_curah" value="0" type="text" step="any" min="0">
+                                            <div class="validationMessage"></div>
+                                        @endforeach
+                                    @endif
                                 @endforeach
-                                @endif
                             </div>           
                             <div class="col-md-3">
                                 <label for="validationCustom01" class="form-label">SAK</label>
@@ -527,6 +620,7 @@
             </div>
         </div>
         {{-- container --}}
+        {{-- @foreach ($doorzero as $tra) --}}
         <div class="modal fade bd-example-modal-xl" id="detailcont" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-xl" role="document">
                 <div class="modal-content">
@@ -535,8 +629,11 @@
                         <form name="modal-tracking-ada" class="row g-3 needs-validation" action="{{ route('dooring.savecontainer') }}"  method="POST" enctype="multipart/form-data" novalidate>
                             @csrf
                             @foreach ($doorzero as $tra)
-                                <!-- <input name="id_track" value="{{ $tra->id_track }}" type="hidden" class="form-control" id="validationCustom01" required> -->
-                                <input name="id_door" value="{{ $tra->id_dooring }}" type="hidden" class="form-control" id="validationCustom01" required>
+                                <input name="id_track" value="{{ $tra->id_track }}" type="text" class="form-control" id="validationCustom01" required>
+                                <input name="id_door" value="{{ $tra->id_dooring }}" type="text" class="form-control" id="validationCustom01" required>
+                                @if($lastcontainer)
+                                <input name="id_detail" value="{{ $lastcontainer->id_detail_track }}" type="text" class="form-control" id="id_detail" required>
+                                @endif
                             @endforeach
                             <div class="col-md-6">
                                 <label for="validationCustom03" class="form-label">Date Berangkat</label>
@@ -547,35 +644,53 @@
                                 <input name="tgl_tiba" id="tgl_tcont" value="2022-09-04" class="form-control flatpickr flatpickr-input" type="date" placeholder="Select Date..">
                             </div>
                             <div class="col-md-3">
-                                @if($lastcontainer)
-                                    <label for="validationCustom03" class="form-label">Kapal</label>
-                                    <select class="form-select" name="kpl_id" id="cb_kplcont" required>
-                                    <option selected disabled value="">Pilih...</option>                                
-                                        @foreach ($kapal->where('id_track', $tra->id_track)->whereNotNull('no_container') as $kp)
-                                            <option {{ $lastcontainer->id_dooring == $tra->id_dooring ? 'selected' : '' }} value="{{ $kp->id_track }}">{{ $kp->nama_kapal }}</option>
-                                        @endforeach
-                                    </select>
-                                    <input type="text" name="id_kpl" id="id_kpl">
-                                @elseif($lastcontainer==0)
-                                    <label for="validationCustom03" class="form-label">Kapal</label>
-                                    <select class="form-select" name="kpl_id" id="cb_kplcont" required>
-                                        <option selected disabled value="">Pilih...</option>                                
-                                        @foreach ($kapal->where('id_track', $tra->id_track)->whereNotNull('no_container') as $kp)
-                                            <option value="{{ $kp->id_track }}">{{ $kp->nama_kapal }}</option>
-                                        @endforeach
-                                    </select>
-                                    <input type="text" name="id_kpl" id="id_kpl">
-                                @endif
+                                @foreach ($doorzero as $tra)
+                                    @if($lastcontainer)
+                                        <label for="validationCustom03" class="form-label">Kapal</label>
+                                        <select class="form-select" name="id_kpl" id="cb_kplcont" required>
+                                            <option selected disabled value="">Pilih...</option>                                
+                                            @foreach ($kapal->where('id_track',$tra->id_track)->whereNotNull('no_container') as $kp)
+                                                {{-- <option {{ $lastcontainer->id_dooring == $tra->id_dooring ? 'selected' : '' }} value="{{ $kp->id_track }}">{{ $kp->nama_kapal }}</option> --}}
+                                                <option {{ $lastcontainer->id_dooring == $tra->id_dooring ? 'selected' : '' }} value="{{ $kp->id_track.'-'.$kp->voyage }}">{{ $kp->nama_kapal.' '.$kp->voyage }}</option>
+                                            @endforeach
+                                        </select>
+                                        <input type="hidden" name="id_kpl" id="id_kpl">
+                                    @elseif($lastcontainer==0)
+                                        <label for="validationCustom03" class="form-label">Kapal</label>
+                                        <select class="form-select" name="kpl_id" id="cb_kplcont" required>
+                                            <option selected disabled value="">Pilih...</option>
+                                            @foreach ($kapal->where('id_track',$tra->id_track)->whereNotNull('no_container') as $kp)
+                                                <option value="{{ $kp->id_track.'-'.$kp->voyage }}">{{ $kp->nama_kapal.' '.$kp->voyage }}</option>
+                                            @endforeach
+                                        </select>
+                                        <input type="text" name="id_kpl" id="id_kpl">
+                                    @endif
+                                @endforeach
                             </div>                        
                             <div class="col-md-3">
                                 <label for="validationCustom03" class="form-label">No Cont</label>
-                                <select class="form-select" name="kpl_id" id="cb_cont" required>
-                                    <option selected disabled value="">Pilih...</option>                                
+                                <select class="form-select" name="id_dtl" id="cb_cont" required>
+                                    <option selected disabled value="">Pilih...</option>        
+                                    {{-- @foreach ($doorzero as $tra)
+                                        @if($lastcontainer)
+                                            @foreach ($getcontainer as $kp)
+                                                <option {{ $lastcontainer->id_detail_track == $kp->id_detail_track ? 'selected' : '' }} value="{{ $kp->id_detail_track }}">{{ $kp->no_container }}</option>
+                                            @endforeach
+                                        @elseif($lastcontainer==0)
+                                            <input type="text" name="id_dtl" id="id_dtl">
+                                        @endif                  
+                                    @endforeach --}}
                                 </select>
                             </div>
                             <div class="col-md-3">
                                 <label for="validationCustom04" class="form-label">No Segel</label>
-                                <input disabled name="no_segel" id="no_segel" class="form-control" type="text" placeholder="No Segel">
+                                @if($lastcontainer)
+                                    @foreach($nosegel->where('id_detail_track',$lastcontainer->id_detail_track) as $tra)
+                                        <input disabled name="no_segel" id="no_segel" value="{{ $lastcontainer->id_detail_track == $tra->id_detail_track ? $tra->no_segel : ''  }}" class="form-control" type="text" placeholder="No Segel">
+                                    @endforeach
+                                @elseif($lastcontainer==0)
+                                        <input disabled name="no_segel" id="no_segel" class="form-control" type="text" placeholder="No Segel">
+                                @endif
                             </div>
                             <div class="col-lg-3 col-md-6 col-sm-12">                       
                                 <label for="validationCustom03" class="form-label">Estate</label>
@@ -586,40 +701,43 @@
                                 <input name="nopol" type="text" class="form-control" id="validationCustom01" placeholder="Nopol">
                             </div>
                             <div class="col-md-3">
-                                @if($lastcontainer)
-                                    @foreach($track->where('id_dooring',$tra->id_dooring) as $zc)
+                                @php
+                                    $match = $doorsisa->where('id_dooring', $tra->id_dooring)->where('tipe','Container')->count() > 0;
+                                @endphp
+                                @if($lastcontainer || $match)
+                                        @foreach($getcontqty as $zc)
                                             <label for="validationCustom01" class="form-label">QTY Tonase Dooring</label>
                                             <div class="input-group">
                                                 <input type="number" name="qty_tonase" id="qty_container" class="form-control qty_container" placeholder="QTY Tonase">
                                                 <span class="input-group-text" id="inputGroupPrepend">KG</span>
                                             </div>
-                                            <span class="shadow-none badge badge-danger mt-2">Sisa: {{ $zc->qty_tonase_sisa }}</span>
-                                            <input name="qty_container_total" id="qty_container_total" value="{{ $zc->qty_tonase_sisa }}" type="hidden" step="any" min="0">
-                                            <input name="qty" id="qty_sisa_container" value="0" type="hidden" step="any" min="0">
+                                            <span class="shadow-none badge badge-danger mt-2">Sisa: {{ number_format($lastcontainer->qty_tonase_sisa, 0, ',', '.') }}</span>
+                                            <input name="qty_container_total" id="qty_container_total" value="{{ $zc->qty_tonase_sisa }}" type="text" step="any" min="0">
+                                            <input name="qty" id="qty_sisa_container" value="0" type="text" step="any" min="0">
                                             <div class="validationMessage"></div>
                                         @endforeach
-                                @elseif($lastcontainer==0)
-                                    @foreach($zeroContainer->where('id_track',$tra->id_track) as $zc)
+                                @elseif($lastcontainer==0 || $match->count()==0)
+                                    @foreach($zeroContainer as $zc)
                                         <label for="validationCustom01" class="form-label">QTY Tonase Dooring</label>
                                         <div class="input-group">
                                             <input type="number" name="qty_tonase" id="qty_container" class="form-control qty_container" placeholder="QTY Tonase">
                                             <span class="input-group-text" id="inputGroupPrepend">KG</span>
                                         </div>
-                                        <span class="shadow-none badge badge-danger mt-2">Sisa: {{ $zc->qty_container_tracking }}</span>
-                                        <input name="qty_container_total" id="qty_container_total" value="{{ $zc->qty_container_tracking }}" type="hidden" step="any" min="0">
-                                        <input name="qty_sisa_container" id="qty_sisa_container" value="0" type="hidden" step="any" min="0">
+                                        <span class="shadow-none badge badge-danger mt-2">Sisa: {{ number_format($zc->qty_container_tracking, 0, ',', '.') }}</span>
+                                        <input name="qty_container_total" id="qty_container_total" value="{{ $zc->qty_container_tracking }}" type="text" step="any" min="0">
+                                        <input name="qty_sisa_container" id="qty_sisa_container" value="0" type="text" step="any" min="0">
                                         <div class="validationMessage"></div>
                                     @endforeach
                                 @endif
                             </div>           
                             <div class="col-md-3">
                                 <label for="validationCustom01" class="form-label">SAK</label>
-                                <input name="simb" type="text" class="form-control" id="brg" placeholder="Sak">
+                                <input name="simb" type="number" class="form-control" id="brg" placeholder="Sak">
                             </div>
                             <div class="col-md-3">
                                 <label for="validationCustom01" class="form-label">QTY Timbang Dooring</label>
                                 <div class="input-group">
-                                    <input type="text" name="qty_timbang" class="form-control" placeholder="QTY Timbang">
+                                    <input type="number" name="qty_timbang" class="form-control" placeholder="QTY Timbang">
                                     <span class="input-group-text" id="inputGroupPrepend">KG</span>
                                 </div>
                             </div>                            
@@ -656,14 +774,35 @@
                 </div>
             </div>
         </div>
+        @if($docDooring->count()==0)
+        @else
+        @foreach ($docDooring[0]->detailDooring as $dd)
+        <div class="modal fade bd-example-modal-l" id="delete-{{ $dd->id_detail_door }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-l modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-body text-center">
+                        <h5>Apakah anda yakin ingin hapus data ini?</h5>
+                        <form class="row g-3 needs-validation" action="{{ route('dooring.deletedata', ['id_dooring'=>$dd->id_dooring,'id_detail_door' => $dd->id_detail_door, 'tonase'=>$dd->qty_tonase]) }}"  method="POST">
+                            @method('PUT')
+                            @csrf
+                            <div class="modal-footer justify-content-center">
+                                <button type="submit" class="btn btn-primary">Iya hapus data ini!</button>
+                                <button type="button" class="btn btn btn-light-dark" data-bs-dismiss="modal"><i class="flaticon-cancel-12"></i>Batal</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
         @endforeach
+        @endif
         <div class="d-grid gap-2 col-6 mx-auto">
             @foreach ($track as $tra)
                 <form class="row g-3 needs-validation" action="{{ route('dooring.destroy', ['dooring' => $tra->id_dooring]) }}"  method="POST" enctype="multipart/form-data" novalidate>
                     @method('DELETE')
                     @csrf
                     @if (count($track->where('status', 1)) >= 1 && count($docDooring->where('status', 1 )) >= 1)
-                        <input type="text" value="{{ $tra->total_all_sisa }}" name="qty_sisa_simpan">
+                        <input type="hidden" value="{{ $tra->total_all_sisa }}" name="qty_sisa_simpan">
                         <button class="btn btn-success mb-4" type="submit">Simpan Dooring Ini</button>
                     @else
                         <button disabled class="btn btn-success mb-4" type="submit">Simpan Dooring Ini</button>
@@ -708,6 +847,7 @@
         </script>
         <script type='text/javascript'>
             $(document).ready(function() {
+                var valueidt = [];
                 $('#cb_po').change(function() {
                         var selectedId = $(this).val();
                         // $('#sel_emp').find('option').not(':first').remove();
@@ -751,10 +891,15 @@
                 });
                 $('#cb_kplcont').change(function(){
                         var selectedId = $(this).val();
+                        var id_dt = $('#id_detail').val();
+                        var parts = selectedId.split('-');
+                        var id_track = parts[0];
+                        var voyage =  escape(parts[1]);
                         if (selectedId !== '') {
                             $.ajax({
-                                url: "{{ route('getKapalDooring', ['id' => ':id']) }}"
-                                    .replace(':id', selectedId),
+                                url: "{{ route('getKapalDooring', ['id' => ':id','voyage'=>':voyage']) }}"
+                                    .replace(':id', id_track)
+                                    .replace(':voyage',voyage),
                                 type: 'GET',
                                 dataType: 'json',
                                 success: function(response) {
@@ -767,12 +912,15 @@
                                         for (var i=0; i<response.length; i++) {
                                             var optVal = response[i].id_detail_track;
                                             var kapal_id = response[i].id_kapal;
-                                            var option = "<option value='"+ optVal +"' required>"+response[i].no_container+"</option>";
+                                            // var option = "<option value='"+ optVal +"' required>"+response[i].no_container+"</option>";
+                                            var option = $("<option>")
+                                                .val(optVal)
+                                                .text(response[i].no_container);
+                                                valueidt.push(optVal);
                                             $('#cb_cont').append(option);
                                             $('#id_kpl').val(kapal_id);
-                                            console.log(optVal);
-                                            console.log(kapal_id);
                                         }
+                                        console.log(valueidt);
                                     }else{
                                         console.log("no data");
                                     }
@@ -797,9 +945,12 @@
                                 success: function(response) {
                                     var data = response[0];
                                     $("#no_segel").empty();
+                                    $('#id_dtl').empty();
                                     if (response.length > 0) {
                                         for (var i=0; i<response.length; i++) {
+                                            var optVal = response[i].id_detail_track;
                                             $('#no_segel').val(response[i].no_segel);
+                                            $('#id_dtl').val(optVal);
                                         }
                                     }else{
                                         console.log("no data");
@@ -812,6 +963,49 @@
                         } else {
                             $("#no_segel").empty();
                         }
+                });
+                $('#detailcont').on('show.bs.modal', function (e) {
+                    var id_dt = $('#id_detail').val();
+                    if (id_dt !== '' && $('#cb_kplcont').val() !== null) {
+                        var selectedId = $('#cb_kplcont').val();
+                        var parts = selectedId.split('-');
+                        var id_track = parts[0];
+                        var voyage =  escape(parts[1]);
+                        $.ajax({
+                            url: "{{ route('getKapalDooring', ['id' => ':id','voyage'=>':voyage']) }}"
+                                .replace(':id', id_track)
+                                .replace(':voyage',voyage),
+                            type: 'GET',
+                            dataType: 'json',
+                            success: function(response) {
+                                var data = response[0];
+                                $("#cb_cont").empty();
+                                $('#id_kpl').empty();
+                                if (response.length > 0) {
+                                    var defaultOption = "<option value='0' disabled selected required>Pilih...</option>";
+                                    $('#cb_cont').append(defaultOption);
+                                    for (var i=0; i<response.length; i++) {
+                                        var optVal = response[i].id_detail_track;
+                                        var kapal_id = response[i].id_kapal;
+                                        var option = $("<option>")
+                                            .val(optVal)
+                                            .text(response[i].no_container);
+                                            valueidt.push(optVal);
+                                        if (optVal == id_dt) {
+                                            option.attr('selected', 'selected');
+                                        }
+                                        $('#cb_cont').append(option);
+                                        $('#id_kpl').val(kapal_id);
+                                    }
+                                }else{
+                                    console.log("no data");
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                console.log("AJAX Error: " + error);
+                            }
+                        });
+                    }
                 });
                 $('.qty_curah').on('input', function(){
                     var inputVal = parseFloat($(this).val()); // Get the value of the input field as a number

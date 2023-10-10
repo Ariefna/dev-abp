@@ -5,12 +5,15 @@ namespace App\Exports;
 use Illuminate\Contracts\View\View;
 use Maatwebsite\Excel\Concerns\FromView;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Concerns\WithColumnWidths;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Events\AfterSheet;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 
-class InvoiceDpExport implements FromView, WithStyles, WithColumnWidths, WithEvents
+class InvoiceDpExport implements FromView, WithStyles, WithColumnWidths, WithEvents, ShouldAutoSize
 {
     protected $data;
 
@@ -27,6 +30,7 @@ class InvoiceDpExport implements FromView, WithStyles, WithColumnWidths, WithEve
             'data' => $this->data,
         ]);
     }
+
     public function columnWidths(): array
     {
         return [
@@ -39,84 +43,211 @@ class InvoiceDpExport implements FromView, WithStyles, WithColumnWidths, WithEve
 
         return [
             AfterSheet::class => function (AfterSheet $event) {
-                $rowHeights = [
-                    1 => 30,
-                    2 => 40,
-                    3 => 20,
-                    14 => 20,
-                    22 => 70,
-                ];
-                $data = $this->data;
+                $sheet = $event->sheet;
+                $keywords = ['FREIGHT PO', 'Harga Cont', 'Subtotal', 'DP', 'PPN'];
+                $rowCount = 0; // Initialize the row count
+                $descriptionFound = false;
+                $amountFound = false;
 
-                $delegate = $event->sheet->getDelegate();
+                foreach ($sheet->getRowIterator() as $row) {
+                    $cellIterator = $row->getCellIterator();
 
-                foreach ($rowHeights as $rowIndex => $height) {
-                    if ($rowIndex >= 14) {
-                        $rowIndex += count($data['kapal']);
+                    foreach ($cellIterator as $cell) {
+                        $cellValue = $cell->getValue();
+
+                        // Check for 'Description' and 'Amount' headers
+                        if ($cellValue === 'Description' || $cellValue === 'Amount') {
+                            if ($cellValue === 'Description') {
+                                $descriptionFound = true;
+                            }
+                            if ($cellValue === 'Amount') {
+                                $amountFound = true;
+                            }
+
+                            // Get the row index where 'Description' or 'Amount' is found
+                            $descriptionRow = $row->getRowIndex();
+
+                            // Apply border style to the entire row
+                            $sheet->getStyle("A$descriptionRow:C$descriptionRow")->applyFromArray([
+                                'borders' => [
+                                    'outline' => [
+                                        'borderStyle' => Border::BORDER_THICK,
+                                        'color' => ['rgb' => '000000'],
+                                    ],
+                                    'right' => [
+                                        'borderStyle' => Border::BORDER_THICK,
+                                        'color' => ['rgb' => '000000'],
+                                    ],
+                                ],
+                                'alignment' => [
+                                    'vertical' => Alignment::VERTICAL_CENTER,
+                                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                                ],
+                            ]);
+                            $sheet->getStyle("D$descriptionRow:G$descriptionRow")->applyFromArray([
+                                'borders' => [
+                                    'outline' => [
+                                        'borderStyle' => Border::BORDER_THICK,
+                                        'color' => ['rgb' => '000000'],
+                                    ],
+                                    'right' => [
+                                        'borderStyle' => Border::BORDER_THICK,
+                                        'color' => ['rgb' => '000000'],
+                                    ],
+                                ],
+                                'alignment' => [
+                                    'vertical' => Alignment::VERTICAL_CENTER,
+                                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                                ],
+                            ]);
+                        }
+
+                        // Check if the cell value contains any of the specified keywords
+                        foreach ($keywords as $keyword) {
+                            if (stripos($cellValue, $keyword) !== false) {
+                                // Increment the row count when a keyword is found
+                                $rowCount++;
+
+                                // Apply border styles to the entire row (left and right borders)
+                                $rowIndex = $row->getRowIndex();
+                                $sheet->getStyle("A$rowIndex:C$rowIndex")->applyFromArray([
+                                    'borders' => [
+                                        'right' => [
+                                            'borderStyle' => Border::BORDER_THICK,
+                                            'color' => ['rgb' => '000000'],
+                                        ],
+                                        'left' => [
+                                            'borderStyle' => Border::BORDER_THICK,
+                                            'color' => ['rgb' => '000000'],
+                                        ],
+                                    ],
+                                    'alignment' => [
+                                        'vertical' => Alignment::VERTICAL_CENTER,
+                                        'horizontal' => Alignment::HORIZONTAL_LEFT,
+                                    ],
+                                ]);
+                                $sheet->getStyle("D$rowIndex:G$rowIndex")->applyFromArray([
+                                    'borders' => [
+                                        'right' => [
+                                            'borderStyle' => Border::BORDER_THICK,
+                                            'color' => ['rgb' => '000000'],
+                                        ],
+                                        'left' => [
+                                            'borderStyle' => Border::BORDER_THICK,
+                                            'color' => ['rgb' => '000000'],
+                                        ],
+                                    ],
+                                    'alignment' => [
+                                        'vertical' => Alignment::VERTICAL_CENTER,
+                                        'horizontal' => Alignment::HORIZONTAL_LEFT,
+                                    ],
+                                ]);
+
+                                // Remove bottom border
+                                $sheet->getStyle("A$rowIndex:G$rowIndex")->getBorders()
+                                    ->getBottom()->setBorderStyle(Border::BORDER_NONE);
+
+                                break; // No need to check other cells in the same row once a keyword is found
+                            }
+                        }
+
+                        // Check for the specific value 'Total Invoice'
+                        if (stripos($cellValue, 'Total Invoice') !== false) {
+                            // Apply border styles to the entire row (left, right, and bottom borders)
+                            $rowIndex = $row->getRowIndex();
+                            $sheet->getStyle("A$rowIndex:C$rowIndex")->applyFromArray([
+                                'borders' => [
+                                    'right' => [
+                                        'borderStyle' => Border::BORDER_THICK,
+                                        'color' => ['rgb' => '000000'],
+                                    ],
+                                    'left' => [
+                                        'borderStyle' => Border::BORDER_THICK,
+                                        'color' => ['rgb' => '000000'],
+                                    ],
+                                    'bottom' => [
+                                        'borderStyle' => Border::BORDER_THICK,
+                                        'color' => ['rgb' => '000000'],
+                                    ],
+                                ],
+                                'alignment' => [
+                                    'vertical' => Alignment::VERTICAL_CENTER,
+                                    'horizontal' => Alignment::HORIZONTAL_LEFT,
+                                ],
+                            ]);
+                            $sheet->getStyle("D$rowIndex:G$rowIndex")->applyFromArray([
+                                'borders' => [
+                                    'right' => [
+                                        'borderStyle' => Border::BORDER_THICK,
+                                        'color' => ['rgb' => '000000'],
+                                    ],
+                                    'left' => [
+                                        'borderStyle' => Border::BORDER_THICK,
+                                        'color' => ['rgb' => '000000'],
+                                    ],
+                                    'bottom' => [
+                                        'borderStyle' => Border::BORDER_THICK,
+                                        'color' => ['rgb' => '000000'],
+                                    ],
+                                ],
+                                'alignment' => [
+                                    'vertical' => Alignment::VERTICAL_CENTER,
+                                    'horizontal' => Alignment::HORIZONTAL_LEFT,
+                                ],
+                            ]);
+
+                            // Remove top border
+                            $sheet->getStyle("A$rowIndex:G$rowIndex")->getBorders()
+                                ->getTop()->setBorderStyle(Border::BORDER_NONE);
+                        }
+                        if (stripos($cellValue, 'Note') !== false) {
+                            // Apply border styles to the entire row (left, right, and bottom borders)
+                            $rowIndex = $row->getRowIndex();
+
+                            // Remove top border
+                            $sheet->getStyle("A$rowIndex:G$rowIndex")->getBorders()
+                                ->getTop()->setBorderStyle(Border::BORDER_NONE);
+
+                                $sheet->getRowDimension($rowIndex)->setRowHeight(80);
+
+                                // Apply top alignment
+                                $alignment = $sheet->getStyle("A$rowIndex:G$rowIndex")->getAlignment();
+                                $alignment->setVertical(Alignment::VERTICAL_TOP);
+                        }                        
                     }
-                    $delegate->getRowDimension($rowIndex)->setRowHeight($height);
                 }
+                $event->sheet->getDelegate()->getRowDimension(2)->setRowHeight(45);
+
+                // Display the count using dd
+                // dd("Count of rows containing specified keywords: $rowCount");
+
+                // Modify other styling or logic here as needed
             },
         ];
     }
-
+    
     public function styles(Worksheet $sheet)
     {
-        $data = $this->data;
-        $stylingRules = [
-            'A4:C6',
-            'F26:G26',
-            'A26:C26',
-            'A3:C6',
-            'A7:G17',
-            'D3:G6',
-            'A3:C3',
-            'D3:G3',
-            'D18:G24',
-            'A18:C24',
-            'D18:G18',
-            'A18:C18',
-        ];
-
-        $countKapal = count($data['kapal']);
-
-        foreach ($stylingRules as &$rule) {
-            // Pisahkan range kolom dan baris
-            list($start, $end) = explode(':', $rule);
-
-            // Ambil nomor baris awal
-            $startRow = (int) filter_var($start, FILTER_SANITIZE_NUMBER_INT);
-
-            // Jika nomor baris awal lebih besar atau sama dengan 14, tambahkan count($data['kapal']) ke range tersebut
-            if ($startRow >= 14) {
-                $endRow = (int) filter_var($end, FILTER_SANITIZE_NUMBER_INT);
-                $newStartRow = $startRow + $countKapal;
-                $newEndRow = $endRow + $countKapal;
-
-                // Update aturan styling dengan range yang diperbarui
-                $rule = "A{$newStartRow}:C{$newEndRow}";
-            }
-        }
         return [
-            $stylingRules[0] => [
+            'A4:C6' => [
                 'alignment' => [
                     'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_TOP, // Align text to the top
                     'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT, // Align text to the left
                 ],
             ],
-            $stylingRules[1] => [
+            'F26:G26' => [
                 'alignment' => [
                     'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_TOP, // Align text to the top
                     'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT, // Align text to the left
                 ],
             ],
-            $stylingRules[2] => [
+            'A26:C26' => [
                 'alignment' => [
                     'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_TOP, // Align text to the top
                     'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT, // Align text to the left
                 ],
             ],
-            $stylingRules[3] => [
+            'A3:C6' => [
                 'borders' => [
                     'outline' => [
                         'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK,
@@ -124,7 +255,7 @@ class InvoiceDpExport implements FromView, WithStyles, WithColumnWidths, WithEve
                     ],
                 ],
             ],
-            $stylingRules[4] => [
+            'A7:G17' => [
                 'borders' => [
                     'outline' => [
                         'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK,
@@ -132,7 +263,7 @@ class InvoiceDpExport implements FromView, WithStyles, WithColumnWidths, WithEve
                     ],
                 ],
             ],
-            $stylingRules[5] => [
+            'D3:G6' => [
                 'borders' => [
                     'outline' => [
                         'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK,
@@ -140,7 +271,7 @@ class InvoiceDpExport implements FromView, WithStyles, WithColumnWidths, WithEve
                     ],
                 ],
             ],
-            $stylingRules[6] => [
+            'A3:C3' => [
                 'borders' => [
                     'outline' => [
                         'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK,
@@ -148,11 +279,11 @@ class InvoiceDpExport implements FromView, WithStyles, WithColumnWidths, WithEve
                     ],
                 ],
                 'alignment' => [
-                    'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
-                    'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                    'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER, 
+                    'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER, 
                 ],
             ],
-            $stylingRules[7] => [
+            'D3:G3' => [
                 'borders' => [
                     'outline' => [
                         'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK,
@@ -160,107 +291,11 @@ class InvoiceDpExport implements FromView, WithStyles, WithColumnWidths, WithEve
                     ],
                 ],
                 'alignment' => [
-                    'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
-                    'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
-                ],
-            ],
-            $stylingRules[8] => [
-                'borders' => [
-                    'outline' => [
-                        'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK,
-                        'color' => ['rgb' => '000000'],
-                    ],
-                ],
-            ],
-            $stylingRules[9] => [
-                'borders' => [
-                    'outline' => [
-                        'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK,
-                        'color' => ['rgb' => '000000'],
-                    ],
-                ],
-            ],
-            $stylingRules[10] => [
-                'borders' => [
-                    'outline' => [
-                        'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK,
-                        'color' => ['rgb' => '000000'],
-                    ],
-                ],
-                'alignment' => [
-                    'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
-                    'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
-                ],
-            ],
-            $stylingRules[11] => [
-                'borders' => [
-                    'outline' => [
-                        'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK,
-                        'color' => ['rgb' => '000000'],
-                    ],
-                ],
-                'alignment' => [
-                    'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
-                    'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                    'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER, 
+                    'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER, 
                 ],
             ],
         ];
-        // $stylingRules = [
-        //     'A3:C3',
-        //     'D3:G3',
-        //     'A4:C6',
-        //     'A7:G13',
-        //     'D3:G6',
-        //     'A14:C14',
-        //     'D14:G14',
-        //     'A14:C20',
-        //     'D14:G20',
-        //     'A22:C22',
-        //     'F22:G22',
-        // ];
-
-        // $stylingRules = [
-        //     'A3:C3',
-        //     'D3:G3',
-        //     'A4:C6',
-        //     'A7:G17',
-        //     'D3:G6',
-        //     'A18:C18',
-        //     'D18:G18',
-        //     'A18:C24',
-        //     'D18:G24',
-        //     'A26:C26',
-        //     'F26:G26',
-        // ];
-
-        // $borderStyle = [
-        //     'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK,
-        //     'color' => ['rgb' => '000000'],
-        // ];
-
-        // $centeredRanges = [0, 1, 5, 6];
-        // $outlinedRanges = [0, 1, 5, 6];
-
-        // foreach ($stylingRules as $index => $range) {
-        //     $style = [
-        //         'alignment' => [
-        //             'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_TOP,
-        //             'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT,
-        //         ],
-        //     ];
-
-        //     if (in_array($index, $centeredRanges)) {
-        //         $style['alignment'] = [
-        //             'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
-        //             'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
-        //         ];
-        //     }
-
-        //     if (in_array($index, $outlinedRanges)) {
-        //         $style['borders']['outline'] = $borderStyle;
-        //     }
-
-        //     $sheet->getStyle($range)->applyFromArray($style);
-        // }
     }
+
 }

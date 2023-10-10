@@ -199,7 +199,7 @@
                     in_array('monitoring-mon-dooring', Session::get('admin_menus')) ||
                     Session::get('role') == 'superadmin')
                 <li class="menu {{ Request::is('*/monitoring/*') ? 'active' : '' }}">
-                    <a href="#document" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle">
+                    <a href="#monitoring" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle">
                         <div class="">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -237,8 +237,8 @@
             @if (in_array('finance-invoice-dp', Session::get('admin_menus')) ||
                     in_array('finance-invoice-pelunasan', Session::get('admin_menus')) ||
                     Session::get('role') == 'superadmin')
-                <li class="menu {{ Request::is('*/element/*') ? 'active' : '' }}">
-                    <a href="#elements" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle">
+                <li class="menu {{ Request::is('*/finance/*') ? 'active' : '' }}">
+                    <a href="#finance" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle">
                         <div class="">
                             <img src="{{ Vite::asset('resources/images/rupiah.png') }}" alt="rupiah"
                                 width="24" height="24">
@@ -252,7 +252,7 @@
                             </svg>
                         </div>
                     </a>
-                    <ul class="dropdown-menu submenu list-unstyled" id="elements"
+                    <ul class="dropdown-menu submenu list-unstyled" id="finance"
                         data-bs-parent="#accordionExample">
                         <li class="{{ Request::routeIs('invoice-dp.index') ? 'active' : '' }}">
                             <a href="{{ getRouterValue() }}/finance/invoice-dp"> Invoice DP </a>
@@ -260,9 +260,9 @@
                         <li class="{{ Request::routeIs('invoice-pelunasan.index') ? 'active' : '' }}">
                             <a href="{{ getRouterValue() }}/finance/invoice-pelunasan"> Invoice Pelunasan </a>
                         </li>
-                        <li class="{{ Request::routeIs('alerts') ? 'active' : '' }}">
+                        {{-- <li class="{{ Request::routeIs('alerts') ? 'active' : '' }}">
                             <a href="{{ getRouterValue() }}*alerts"> Laporan Keuangan </a>
-                        </li>
+                        </li> --}}
                     </ul>
                 </li>
             @endif
@@ -270,7 +270,7 @@
                     in_array('monitoring-mon-dooring', Session::get('admin_menus')) ||
                     Session::get('role') == 'superadmin')
                 <li class="menu {{ Request::is('*/report/*') ? 'active' : '' }}">
-                    <a href="#document" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle">
+                    <a href="#report" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle">
                         <div class="">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -292,13 +292,13 @@
                     <ul class="dropdown-menu submenu list-unstyled" id="report"
                         data-bs-parent="#accordionExample">
                         @if (in_array('monitoring-mon-tracking', Session::get('admin_menus')) || Session::get('role') == 'superadmin')
-                            <li class="{{ Request::routeIs('penawaran-harga.index') ? 'active' : '' }}">
+                            <li class="{{ Request::routeIs('mon-tracking-h.index') ? 'active' : '' }}">
                                 <a href="{{ getRouterValue() }}/report/mon-tracking"> Monitoring Tracking </a>
                             </li>
                         @endif
 
                         @if (in_array('monitoring-mon-dooring', Session::get('admin_menus')) || Session::get('role') == 'superadmin')
-                            <li class="{{ Request::routeIs('purchase-order.index') ? 'active' : '' }}">
+                            <li class="{{ Request::routeIs('mon-dooring-h.index') ? 'active' : '' }}">
                                 <a href="{{ getRouterValue() }}/report/mon-dooring"> Monitoring Doring </a>
                             </li>
                         @endif
@@ -355,7 +355,7 @@
             @if (in_array('userrole-menu-user', Session::get('admin_menus')) ||
                     in_array('userrole-create-user', Session::get('admin_menus')) ||
                     Session::get('role') == 'superadmin')
-                <li class="menu {{ Request::routeIs('table') ? 'active' : '' }} {{ Request::is('*/userrole/*') ? 'active' : '' }}">
+                <li class="menu {{ Request::is('*/userrole/*') ? 'active' : '' }}">
                     <a href="#userrole" data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle">
                         <div>
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -376,7 +376,7 @@
                             </svg>
                         </div>
                     </a>
-                    <ul class="dropdown-menu submenu list-unstyled" id="tables"
+                    <ul class="dropdown-menu submenu list-unstyled" id="userrole"
                         data-bs-parent="#accordionExample">
                         @if (in_array('userrole-menu-user', Session::get('admin_menus')) || Session::get('role') == 'superadmin')
                             <li class="{{ Request::routeIs('menuuser.index') ? 'active' : '' }}">
