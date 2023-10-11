@@ -76,7 +76,11 @@
                 <td class="tg-0pky" style="border-left: none; border-top: none; border-right: none;" colspan="2">TERMS</td>
                 <td class="tg-fymr" style="border-left: none; border-top: none; text-align: right;font-weight: bold;" colspan="2">{{ $data['terms'] ?? '-'}}</td>
               </tr>
+              @php
+    $pelayaranList = []; // Buat array sementara untuk melacak nilai $kapal['pelayaran']
+@endphp
               @foreach ($data['kapal'] as $key => $kapal)
+              @if (!in_array($kapal['pelayaran'], $pelayaranList))
               <tr>
                 {{-- @if ($key == 0) --}}
                 <td class="tg-0pky" style="border-right: none; border-bottom: none; border-top:none;">
@@ -106,6 +110,10 @@
                 </td>
                 <td class="tg-0pky" style="border-bottom: none; border-left:none; border-top:none;">{{ $kapal['pelayaran'] }}</td>
               </tr>
+              @endif
+    @php
+        $pelayaranList[] = $kapal['pelayaran']; // Tambahkan nilai ke dalam array sementara
+    @endphp
               @endforeach
               <tr>
                 <td class="tg-0pky" style="border-right: none; border-bottom: none; border-top: none;">Tujuan</td>
