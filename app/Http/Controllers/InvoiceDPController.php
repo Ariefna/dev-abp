@@ -351,23 +351,40 @@ class InvoiceDPController extends Controller
                     $name = $invoiceDp->docTracking->detailTrackingMultiple[$i]->kapal->kode_kapal . ' ' . $invoiceDp->docTracking->detailTrackingMultiple[$i]->kapal->nama_kapal . ' ' . $invoiceDp->docTracking->detailTrackingMultiple[$i]->voyage;
                     $pelayaran = $invoiceDp->docTracking->detailTrackingMultiple[$i]->kapal->cPort->nama;
                     $tgl = $invoiceDp->docTracking->detailTrackingMultiple[$i]->tgl_muat;
-                    $invoice_no = $invoiceDp->invoice_no;
-            
-                    // Create a key based on $name and $pelayaran
-                    $key = $name . ' ' . $pelayaran. '' .$tgl;
-            
-                    // Add the data to the grouped array using the key
-                    if (!isset($groupedData[$key])) {
-                        $groupedData[$key] = [
+                    $invoice_no = $invoiceDp->invoice_no;                      
+                        $groupedData[$i] = [
                             'name' => $name,
                             'pelayaran' => $pelayaran,
                             'muat_date' => $tgl,
                             'invoice_no' => $invoice_no
                             // Add other data fields as needed
                         ];
+                }
+                $groupedDataResult = [];
+
+                foreach ($groupedData as $item) {
+                    $found = false;
+                    foreach ($groupedDataResult as &$group) {
+                        if ($group['pelayaran'] == $item['pelayaran'] && $group['name'] == $item['name']) {
+                            // Jika 'name' dan 'pelayaran' sama, tambahkan data ke array yang ada
+                            $group['muat_date'][] = $item['muat_date'];
+                            $group['invoice_no'][] = $item['invoice_no'];
+                            $found = true;
+                            break;
+                        }
+                    }
+                
+                    if (!$found) {
+                        // Jika tidak ada kelompok yang cocok, tambahkan data baru ke hasil akhir
+                            $groupedDataResult[] = [
+                                'name' => $item['name'],
+                                'pelayaran' => $item['pelayaran'],
+                                'muat_date' => [$item['muat_date']],
+                                'invoice_no' => [$item['invoice_no']],
+                            ];
                     }
                 }
-                // return response()->json($groupedData);
+                $groupedData = $groupedDataResult;
                 
                 // Convert the grouped data into a simple array
                 $data['kapal'] = array_values($groupedData);
@@ -460,10 +477,39 @@ class InvoiceDPController extends Controller
             }
 
             $data['description'] = [];
-            foreach ($pushData as $key => $value) {
-                $value['name'] = 'FREIGHT PO '.$value['no_po'].' ('.number_format($value['total_tonase'], 0, ',', '.').' KG'.' X '.'Rp. '.number_format($value['harga_brg'], 0, ',', '.').')';
+
+            $totalTonasePerNoPO = [];
+          
+            foreach ($pushData as $key => $item) {
+                $no_po = $item["no_po"];
+                $total_tonase = intval($item["total_tonase"]);
+
+                if (array_key_exists($no_po, $totalTonasePerNoPO)) {
+                    $totalTonasePerNoPO[$no_po]['total_tonase'] += $total_tonase;
+                $totalTonasePerNoPO[$no_po]['total_dp'] += $item["total_dp"];
+                } else {
+                    $totalTonasePerNoPO[$no_po]['total_tonase'] = $total_tonase;
+                $totalTonasePerNoPO[$no_po]['total_dp'] = $item["total_dp"];
+                }
+                $totalTonasePerNoPO[$no_po]['harga_brg'] = $item["harga_brg"];
+                $totalTonasePerNoPO[$no_po]['no_po'] = $item["no_po"];
+                $totalTonasePerNoPO[$no_po]['date'] = $item["date"];
+                $totalTonasePerNoPO[$no_po]['tipe'] = $item["tipe"];
+                $totalTonasePerNoPO[$no_po]['prosentase_ppn'] = $item["prosentase_ppn"];
+                $totalTonasePerNoPO[$no_po]['total_ppn'] = $item["total_ppn"];
+
+                
+            }
+
+            foreach ($totalTonasePerNoPO as $no_po => $value) {
+                // echo "no_po: $no_po, total_tonase: $total_tonase\n";
+                $value['name'] = 'FREIGHT PO '.$no_po.' ('.number_format($value['total_tonase'], 0, ',', '.').' KG'.' X '.'Rp. '.number_format($value['harga_brg'], 0, ',', '.').')';
+                $value['total_tonase'] = (string)$value['total_tonase'];
                 array_push($data['description'], $value);
             }
+
+
+           
 
             $data['bank'] = Bank::where('status', 1)->first();
         }
@@ -473,6 +519,7 @@ class InvoiceDPController extends Controller
 
         $filename = 'invoice-dp-report-' . date('YmdHis') . '-' . rand(0, 1000) . ".xlsx";
         // dd($data);
+        // die();
         return Excel::download(new InvoiceDpExport($data), $filename);
         
         // $pdf = PDF::loadview('pages.abp-page.print.invoice_dp', compact(
