@@ -701,34 +701,36 @@
                                 <input name="nopol" type="text" class="form-control" id="validationCustom01" placeholder="Nopol">
                             </div>
                             <div class="col-md-3">
-                                @php
-                                    $match = $doorsisa->where('id_dooring', $tra->id_dooring)->where('tipe','Container')->count() > 0;
-                                @endphp
-                                @if($lastcontainer || $match)
-                                        @foreach($getcontqty as $zc)
+                                @foreach ($doorzero as $tra)
+                                    @php
+                                        $match = $doorsisa->where('id_dooring', $tra->id_dooring)->where('tipe','Container')->count() > 0;
+                                    @endphp
+                                    @if($lastcontainer || $match)
+                                            @foreach($getcontqty as $zc)
+                                                <label for="validationCustom01" class="form-label">QTY Tonase Dooring</label>
+                                                <div class="input-group">
+                                                    <input type="number" name="qty_tonase" id="qty_container" class="form-control qty_container" placeholder="QTY Tonase">
+                                                    <span class="input-group-text" id="inputGroupPrepend">KG</span>
+                                                </div>
+                                                <span class="shadow-none badge badge-danger mt-2">Sisa: {{ number_format($lastcontainer->qty_tonase_sisa, 0, ',', '.') }}</span>
+                                                <input name="qty_container_total" id="qty_container_total" value="{{ $zc->qty_tonase_sisa }}" type="text" step="any" min="0">
+                                                <input name="qty" id="qty_sisa_container" value="0" type="text" step="any" min="0">
+                                                <div class="validationMessage"></div>
+                                            @endforeach
+                                    @elseif($lastcontainer==0 || $match->count()==0)
+                                        @foreach($zeroContainer as $zc)
                                             <label for="validationCustom01" class="form-label">QTY Tonase Dooring</label>
                                             <div class="input-group">
                                                 <input type="number" name="qty_tonase" id="qty_container" class="form-control qty_container" placeholder="QTY Tonase">
                                                 <span class="input-group-text" id="inputGroupPrepend">KG</span>
                                             </div>
-                                            <span class="shadow-none badge badge-danger mt-2">Sisa: {{ number_format($lastcontainer->qty_tonase_sisa, 0, ',', '.') }}</span>
-                                            <input name="qty_container_total" id="qty_container_total" value="{{ $zc->qty_tonase_sisa }}" type="text" step="any" min="0">
-                                            <input name="qty" id="qty_sisa_container" value="0" type="text" step="any" min="0">
+                                            <span class="shadow-none badge badge-danger mt-2">Sisa: {{ number_format($zc->qty_container_tracking, 0, ',', '.') }}</span>
+                                            <input name="qty_container_total" id="qty_container_total" value="{{ $zc->qty_container_tracking }}" type="text" step="any" min="0">
+                                            <input name="qty_sisa_container" id="qty_sisa_container" value="0" type="text" step="any" min="0">
                                             <div class="validationMessage"></div>
                                         @endforeach
-                                @elseif($lastcontainer==0 || $match->count()==0)
-                                    @foreach($zeroContainer as $zc)
-                                        <label for="validationCustom01" class="form-label">QTY Tonase Dooring</label>
-                                        <div class="input-group">
-                                            <input type="number" name="qty_tonase" id="qty_container" class="form-control qty_container" placeholder="QTY Tonase">
-                                            <span class="input-group-text" id="inputGroupPrepend">KG</span>
-                                        </div>
-                                        <span class="shadow-none badge badge-danger mt-2">Sisa: {{ number_format($zc->qty_container_tracking, 0, ',', '.') }}</span>
-                                        <input name="qty_container_total" id="qty_container_total" value="{{ $zc->qty_container_tracking }}" type="text" step="any" min="0">
-                                        <input name="qty_sisa_container" id="qty_sisa_container" value="0" type="text" step="any" min="0">
-                                        <div class="validationMessage"></div>
-                                    @endforeach
-                                @endif
+                                    @endif
+                                @endforeach
                             </div>           
                             <div class="col-md-3">
                                 <label for="validationCustom01" class="form-label">SAK</label>
