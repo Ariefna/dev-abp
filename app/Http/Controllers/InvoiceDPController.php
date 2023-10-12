@@ -479,26 +479,23 @@ class InvoiceDPController extends Controller
             $data['description'] = [];
 
             $totalTonasePerNoPO = [];
-          
             foreach ($pushData as $key => $item) {
-                $no_po = $item["no_po"];
+                $key = $item["no_po"].$item["tipe"];
                 $total_tonase = intval($item["total_tonase"]);
 
-                if (array_key_exists($no_po, $totalTonasePerNoPO)) {
-                    $totalTonasePerNoPO[$no_po]['total_tonase'] += $total_tonase;
-                $totalTonasePerNoPO[$no_po]['total_dp'] += $item["total_dp"];
+                if (array_key_exists($key, $totalTonasePerNoPO)) {
+                    $totalTonasePerNoPO[$key]['total_tonase'] += $total_tonase;
+                $totalTonasePerNoPO[$key]['total_dp'] += $item["total_dp"];
                 } else {
-                    $totalTonasePerNoPO[$no_po]['total_tonase'] = $total_tonase;
-                $totalTonasePerNoPO[$no_po]['total_dp'] = $item["total_dp"];
+                    $totalTonasePerNoPO[$key]['total_tonase'] = $total_tonase;
+                $totalTonasePerNoPO[$key]['total_dp'] = $item["total_dp"];
                 }
-                $totalTonasePerNoPO[$no_po]['harga_brg'] = $item["harga_brg"];
-                $totalTonasePerNoPO[$no_po]['no_po'] = $item["no_po"];
-                $totalTonasePerNoPO[$no_po]['date'] = $item["date"];
-                $totalTonasePerNoPO[$no_po]['tipe'] = $item["tipe"];
-                $totalTonasePerNoPO[$no_po]['prosentase_ppn'] = $item["prosentase_ppn"];
-                $totalTonasePerNoPO[$no_po]['total_ppn'] = $item["total_ppn"];
-
-                
+                $totalTonasePerNoPO[$key]['harga_brg'] = $item["harga_brg"];
+                $totalTonasePerNoPO[$key]['no_po'] = $item["no_po"];
+                $totalTonasePerNoPO[$key]['date'] = $item["date"];
+                $totalTonasePerNoPO[$key]['tipe'] = $item["tipe"];
+                $totalTonasePerNoPO[$key]['prosentase_ppn'] = $item["prosentase_ppn"];
+                $totalTonasePerNoPO[$key]['total_ppn'] = $item["total_ppn"];
             }
 
             foreach ($totalTonasePerNoPO as $no_po => $value) {
