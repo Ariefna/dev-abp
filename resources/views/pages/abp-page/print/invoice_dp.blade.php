@@ -193,14 +193,14 @@
               <tr>
                 <td class="tg-0pky" style="border-bottom: none; border-top: none; border-right: none;text-align:left;" colspan="3"></td>
                 <td class="tg-0pky" style="border-bottom: none; border-top: none; border-right: none;text-align:left;" colspan="2">PPN 1,1%</td>
-                <td class="tg-0pky" style="border-bottom: none; border-top: none; border-left:none;text-align:left;" colspan="2">Rp. {{ number_format($desc['prosentase_ppn'] * $subtotal / 100, 0, ',', '.') }}</td>
+                <td class="tg-0pky" style="border-bottom: none; border-top: none; border-left:none;text-align:left;" colspan="2">Rp. {{ (number_format(isset($desc['prosentase_ppn']) ? ($desc['prosentase_ppn'] * $subtotal / 100 + $dp_50) : 0, 0, ',', '.')) }}</td>
                 {{-- <td class="tg-0pky" style="border-bottom: none; border-top: none; border-left:none;" colspan="2">Rp. {{ number_format($desc['total_ppn']) }}</td> --}}
               </tr>
               <tr>
                 <td class="tg-0pky" style="border-bottom: none; border-top: none; border-right: none;text-align:left;" colspan="3"></td>
                 <td class="tg-0pky" style="border-bottom: none; border-top: none; border-right: none;text-align:left;" colspan="2">Total Invoice</td>
                 <td class="tg-0pky" style="border-bottom: none; border-top: none; border-left:none;text-align:left;" colspan="2">
-                    <b>Rp. {{ number_format($desc['prosentase_ppn'] * $subtotal / 100 + $dp_50, 0, ',', '.') }}</b>
+                    <b>Rp. {{ (number_format(isset($desc['prosentase_ppn']) ? ($desc['prosentase_ppn'] * $subtotal / 100 + $dp_50) : 0, 0, ',', '.')) }}</b>
                 </td>
               </tr>
               <tr>
