@@ -70,6 +70,7 @@ class InvoiceDPController extends Controller
                 ->join('invoice_dp','invoice_dp.id_track','=','doc_tracking.id_track')
                 ->whereNull('detail_tracking.no_container')
                 ->whereIn('doc_tracking.status', [2, 3])
+                ->whereIn('detail_tracking.status', [2, 3])
                 ->groupBy('doc_tracking.no_po','detail_tracking.tgl_muat')
                 ->get();
         // dd ($getval);
@@ -82,6 +83,7 @@ class InvoiceDPController extends Controller
                 ->join('invoice_dp','invoice_dp.id_track','=','doc_tracking.id_track')
                 ->whereNotNull('detail_tracking.no_container')
                 ->whereIn('doc_tracking.status', [2, 3])
+                ->whereIn('detail_tracking.status', [2, 3])
                 ->groupBy('doc_tracking.no_po','detail_tracking.tgl_muat')
                 ->get();
         $title = 'Adhipramana Bahari Perkasa';
@@ -101,6 +103,7 @@ class InvoiceDPController extends Controller
                 ->join('invoice_dp','invoice_dp.id_track','=','doc_tracking.id_track')
                 ->where('invoice_dp.id_track',$id_track)
                 ->whereIn('doc_tracking.status', [2, 3])
+                ->whereIn('detail_tracking.status', [2, 3])
                 ->groupBy('detail_tracking.tgl_muat');
         $getdata = $query->get();
         return response()->json($getdata);
@@ -116,6 +119,7 @@ class InvoiceDPController extends Controller
                 ->join('invoice_dp','invoice_dp.id_track','=','doc_tracking.id_track')
                 ->whereNull('detail_tracking.no_container')
                 ->whereIn('doc_tracking.status', [2, 3])
+                ->whereIn('detail_tracking.status', [2, 3])
                 ->whereRaw('CONCAT(doc_tracking.no_po, "(", DATE_FORMAT(detail_tracking.tgl_muat, "%e-%M-%Y"), ")") = ?', [$id_track])
                 ->groupBy('doc_tracking.id_track', 'doc_tracking.no_po', 'formatted_tgl_muat');
         $getdata = $query->get();
@@ -132,6 +136,7 @@ class InvoiceDPController extends Controller
                 ->join('invoice_dp','invoice_dp.id_track','=','doc_tracking.id_track')
                 ->whereNotNull('detail_tracking.no_container')
                 ->whereIn('doc_tracking.status', [2, 3])
+                ->whereIn('detail_tracking.status', [2, 3])
                 ->whereRaw('CONCAT(doc_tracking.no_po, "(", DATE_FORMAT(detail_tracking.tgl_muat, "%e-%M-%Y"), ")") = ?', [$id_track])
                 ->groupBy('doc_tracking.id_track', 'doc_tracking.no_po', 'formatted_tgl_muat');
         $getdata = $query->get();
