@@ -124,7 +124,7 @@ class InvoiceDPController extends Controller
 
     public function getDetailPOCont($id_track) {
         $query = DocTracking::select('*','invoice_dp.id_track', 'doc_tracking.no_po')
-                ->selectRaw('SUM(detail_tracking.qty_tonase) as total_muat')
+                ->selectRaw('detail_tracking.qty_tonase as total_muat')
                 ->selectRaw("DATE_FORMAT(detail_tracking.tgl_muat, '%e-%M-%Y') as formatted_tgl_muat")
                 ->join('detail_tracking', 'doc_tracking.id_track', '=', 'detail_tracking.id_track')
                 ->join('purchase_orders','purchase_orders.po_muat','=','doc_tracking.no_po')
