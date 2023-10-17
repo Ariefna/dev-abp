@@ -34,7 +34,7 @@ class InvoiceDpExport implements FromView, WithStyles, WithColumnWidths, WithEve
     public function columnWidths(): array
     {
         return [
-            'C' => 30,
+            'C' => 40,
             'G' => 40,
         ];
     }
@@ -142,6 +142,13 @@ class InvoiceDpExport implements FromView, WithStyles, WithColumnWidths, WithEve
                                         'horizontal' => Alignment::HORIZONTAL_LEFT,
                                     ],
                                 ]);
+                                $sheet->getStyle("F$rowIndex:G$rowIndex")->getNumberFormat()->setFormatCode('_("Rp."* #,##0_);_("Rp."* \(#,##0\);_("Rp."* ""-""??_);_(@_)');
+                                $sheet->getStyle("F$rowIndex:G$rowIndex")->applyFromArray([
+                                    'alignment' => [
+                                        'vertical' => Alignment::VERTICAL_CENTER,
+                                        'horizontal' => Alignment::HORIZONTAL_RIGHT,
+                                    ],
+                                ]);
 
                                 // Remove bottom border
                                 $sheet->getStyle("A$rowIndex:G$rowIndex")->getBorders()
@@ -199,6 +206,7 @@ class InvoiceDpExport implements FromView, WithStyles, WithColumnWidths, WithEve
                             // Remove top border
                             $sheet->getStyle("A$rowIndex:G$rowIndex")->getBorders()
                                 ->getTop()->setBorderStyle(Border::BORDER_NONE);
+                                $sheet->getStyle("F$rowIndex:G$rowIndex")->getNumberFormat()->setFormatCode('_("Rp."* #,##0_);_("Rp."* \(#,##0\);_("Rp."* ""-""??_);_(@_)');
                         }
                         if (stripos($cellValue, 'Note') !== false) {
                             // Apply border styles to the entire row (left, right, and bottom borders)

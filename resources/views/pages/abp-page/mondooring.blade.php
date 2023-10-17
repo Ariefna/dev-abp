@@ -135,96 +135,101 @@
                                     <tbody>
                                         @if($monitoringDooring->count()==0)
                                         @else
-                                        @php
-                                            $totalTimbang = 0;
-                                            $susut = 0;
-                                        @endphp
-
-                                        @foreach ($monitoringDooring[0]->detailDooring as $md)
-                                            @php
-                                                $totalTimbang += $md->qty_timbang;
-                                            @endphp
-                                        @endforeach                                        
-
-                                        @foreach ($monitoringDooring[0]->detailDooring as $md)
-                                            @if (!isset($totalQty))
+                                            @foreach ($monitoringDooring as $item)
                                                 @php
-                                                    $totalQty = $md->docDooring->docTracking->po->total_qty;
+                                                    $totalTimbang = 0;
+                                                    $susut = 0;
                                                 @endphp
-                                            @endif
-                                            
-                                            @php
-                                                $susut = $totalTimbang - $totalQty;
 
-                                                $noContainer = '';
-                                                $idKapal = $md->id_kapal;
-                                                $countDetailTrackingMultiple = count($md->docDooring->docTracking->detailTrackingMultiple);
+                                                @foreach ($item->detailDooring as $md)
+                                                    @php
+                                                        $totalTimbang += $md->qty_timbang;
+                                                    @endphp
+                                                @endforeach
 
-                                                $namaKapal = '';
-                                            @endphp
-
-                                            @if ($countDetailTrackingMultiple > 0)
-                                                @for ($i=0; $i<$countDetailTrackingMultiple; $i++)
-                                                    @if ($md->docDooring->docTracking->detailTrackingMultiple[$i]->id_kapal == $idKapal)
+                                                @foreach ($item->detailDooring as $md)
+                                                    @if (!isset($totalQty))
                                                         @php
-                                                            $namaKapal = $md->docDooring->docTracking->detailTrackingMultiple[$i]->kapal->nama_kapal;
+                                                            $totalQty = $md->docDooring->docTracking->po->total_qty;
                                                         @endphp
-
-                                                        @if ($md->tipe == 'Container')
-                                                            @php
-                                                            $noContainer = $md->docDooring->docTracking->detailTrackingMultiple[$i]->no_container;
-                                                            @endphp
-                                                        @endif
                                                     @endif
-                                                @endfor
-                                            @endif
-                                        <tr>
-                                            <td>{{ $md->docDooring->docTracking->po->detailPhs->penawaran->customer->nama_customer ?? '' }}</td>
-                                            <td>{{ $md->docDooring->docTracking->no_po ?? '' }}</td>
-                                            <td>{{ $md->docDooring->docTracking->portOfLoading->nama_pol ?? '' }} - {{ $md->docDooring->docTracking->portOfDestination->nama_pod ?? '' }}</td>
-                                            <td>{{ $md->docDooring->docTracking->po->po_kebun ?? '' }}</td>
-                                            <td>{{ $md->docDooring->docTracking->po->detailPhs->penerima->ptPenerima->nama_penerima ?? '' }}</td>
-                                            <td>{{ $md->estate }}</td>
-                                            <td>{{ $md->docDooring->docTracking->po->barang->nama_barang ?? '' }}</td>
-                                            <td>{{ number_format($md->qty_tonase , 0, ',', ',') ?? '' }}</td>
-                                            <td>KG</td>
-                                            <td>{{ number_format($md->jml_sak , 0, ',', ',') }}</td>
-                                            <td>{{ $md->tgl_muat ? date('d-M-Y', strtotime($md->tgl_muat)) : '' }}</td>
-                                            <td>{{ $md->tgl_tiba ? date('d-M-Y', strtotime($md->tgl_tiba)) : '' }}</td>
-                                            <td>{{ $md->no_tiket }}</td>
-                                            <td>{{ $noContainer }}</td>
-                                            <td>{{ $md->nopol }}</td>
-                                            <td>{{ number_format($md->qty_timbang , 0, ',', ',') }}</td>                                            
-                                            <td>{{ number_format($susut , 0, ',', ',') }}</td>
-                                            <td>{{ $namaKapal }}</td>
-                                            <td>{{ $md->docDooring->docTracking->detailTracking->td ? date('d-M-Y', strtotime($md->docDooring->docTracking->detailTracking->td)) : '' }}</td>
-                                            <td class="text-center">{!! $md->status == 1 ? '<span class="shadow-none badge badge-success">Proses Muat</span>' : ($md->status == 2 ? '<span class="shadow-none badge badge-warning">Selesai Muat</span>' : '') !!}</td>
-                                            <td>
-                                            {!! $md->docDooring->sb_file_name != null
-                                                ?
-                                                    '<a href="'.route('downloadfile', ['path' => $md->docDooring->sb_file_name]).'" 
-                                                        class="bs-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Download BAP Dooring" data-original-title="Print">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-download">
-                                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></a>'     
-                                                : ''
-                                            !!}
-                                            {!! $md->docDooring->sr_file_name != null
-                                                ?
-                                                    '<a href="'.route('downloadfile', ['path' => $md->docDooring->sr_file_name]).'" 
-                                                        class="bs-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Download Rekap Kebun" data-original-title="Print"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-download"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                                                    </svg></a>'     
-                                                : ''
-                                            !!}
-                                            </td>
-                                            {{-- <td>
-                                                <a href="{{route('monitoring.dooring.spk', $md->id_detail_door)}}" class="btn btn-outline-primary mb-1">SPK Dooring</a>
-                                            </td> --}}
-                                        </tr>
+                                                    
+                                                    @php
+                                                        $susut = $totalTimbang - $totalQty;
 
-                                        @php
-                                            $totalQty = $md->docDooring->docTracking->po->total_qty;
-                                        @endphp
-                                        @endforeach
+                                                        $noContainer = '';
+                                                        $idKapal = $md->id_kapal;
+                                                        $countDetailTrackingMultiple = count($md->docDooring->docTracking->detailTrackingMultiple);
+
+                                                        $namaKapal = '';
+                                                    @endphp
+
+                                                    @if ($countDetailTrackingMultiple > 0)
+                                                        @for ($i=0; $i<$countDetailTrackingMultiple; $i++)
+                                                            @if ($md->docDooring->docTracking->detailTrackingMultiple[$i]->id_kapal == $idKapal)
+                                                                @php
+                                                                    $namaKapal = $md->docDooring->docTracking->detailTrackingMultiple[$i]->kapal->nama_kapal;
+                                                                @endphp
+
+                                                                @if ($md->tipe == 'Container')
+                                                                    @php
+                                                                    $noContainer = $md->docDooring->docTracking->detailTrackingMultiple[$i]->no_container;
+                                                                    @endphp
+                                                                @endif
+                                                            @endif
+                                                        @endfor
+                                                    @endif
+                                                    <tr>
+                                                        <td>{{ $md->docDooring->docTracking->po->detailPhs->penawaran->customer->nama_customer ?? '' }}</td>
+                                                        <td>{{ $md->docDooring->docTracking->no_po ?? '' }}</td>
+                                                        <td>{{ $md->docDooring->docTracking->portOfLoading->nama_pol ?? '' }} - {{ $md->docDooring->docTracking->portOfDestination->nama_pod ?? '' }}</td>
+                                                        <td>{{ $md->docDooring->docTracking->po->po_kebun ?? '' }}</td>
+                                                        <td>{{ $md->docDooring->docTracking->po->detailPhs->penerima->ptPenerima->nama_penerima ?? '' }}</td>
+                                                        <td>{{ $md->estate }}</td>
+                                                        <td>{{ $md->docDooring->docTracking->po->barang->nama_barang ?? '' }}</td>
+                                                        <td>{{ number_format($md->qty_tonase , 0, ',', ',') ?? '' }}</td>
+                                                        <td>KG</td>
+                                                        <td>{{ number_format($md->jml_sak , 0, ',', ',') }}</td>
+                                                        <td>{{ $md->tgl_muat ? date('d-M-Y', strtotime($md->tgl_muat)) : '' }}</td>
+                                                        <td>{{ $md->tgl_tiba ? date('d-M-Y', strtotime($md->tgl_tiba)) : '' }}</td>
+                                                        <td>{{ $md->no_tiket }}</td>
+                                                        <td>{{ $noContainer }}</td>
+                                                        <td>{{ $md->nopol }}</td>
+                                                        <td>{{ number_format($md->qty_timbang , 0, ',', ',') }}</td>                                            
+                                                        <td>{{ number_format($susut , 0, ',', ',') }}</td>
+                                                        <td>{{ $namaKapal }}</td>
+                                                        <td>{{ $md->docDooring->docTracking->detailTracking->td ? date('d-M-Y', strtotime($md->docDooring->docTracking->detailTracking->td)) : '' }}</td>
+                                                        <td class="text-center">
+                                                            {!! $md->status == 1 ? '<span class="shadow-none badge badge-success">Proses Muat</span>' :
+                                                               ($md->status == 2 ? '<span class="shadow-none badge badge-warning">Selesai Muat</span>' :
+                                                               ($md->status == 3 ? '<span class="shadow-none badge badge-warning">Selesai Muat</span>' : 
+                                                               'Default Content')) 
+                                                            !!}
+                                                        </td>                                                          
+                                                        <td>
+                                                        {!! $md->docDooring->sb_file_name != null
+                                                            ?
+                                                                '<a href="'.route('downloadfile', ['path' => $md->docDooring->sb_file_name]).'" 
+                                                                    class="bs-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Download BAP Dooring" data-original-title="Print">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-download">
+                                                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></a>'     
+                                                            : ''
+                                                        !!}
+                                                        {!! $md->docDooring->sr_file_name != null
+                                                            ?
+                                                                '<a href="'.route('downloadfile', ['path' => $md->docDooring->sr_file_name]).'" 
+                                                                    class="bs-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Download Rekap Kebun" data-original-title="Print"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-download"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                                                                </svg></a>'     
+                                                            : ''
+                                                        !!}
+                                                        </td>
+                                                    </tr>
+
+                                                    @php
+                                                        $totalQty = $md->docDooring->docTracking->po->total_qty;
+                                                    @endphp
+                                                @endforeach
+                                            @endforeach
                                         @endif
                                     </tbody>
                                 </table>
@@ -233,7 +238,7 @@
                     </div>
                 </div>
             </div>
-        </div>     
+        </div>
     </div>            
 
     <!--  BEGIN CUSTOM SCRIPTS FILE  -->

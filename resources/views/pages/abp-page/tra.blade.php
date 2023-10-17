@@ -314,7 +314,7 @@
                                             <th>Timbangan</th>
                                             <th>No Surat Jalan</th>
                                             <th class="text-center">Status</th>
-                                            {{-- <th class="text-center">Action</th> --}}
+                                            <th class="text-center">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -330,9 +330,9 @@
                                             <td>{{ number_format($tra->qty_timbang , 0, ',', '.') }}</td>
                                             <td>{{ $tra->no_sj }}</td>
                                             <td class="text-center"><span class="shadow-none badge badge-danger">{{ $tra->status == 1 ? 'Pending' : '' }}</span></td>
-                                            {{-- <td class="text-center">
-                                                <a href="" class="bs-tooltip" data-bs-toggle="modal" data-bs-placement="top" title="Delete" data-original-title="Delete"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash p-1 br-8 mb-1"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></a>
-                                            </td> --}}
+                                            <td class="text-center">
+                                                <a href="#delete-{{ $tra->id_detail_track }}" class="bs-tooltip" data-bs-toggle="modal" data-bs-placement="top" title="Delete" data-original-title="Delete"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash p-1 br-8 mb-1"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></a>
+                                            </td>
                                         </tr>
                                         @endforeach
                                     </tbody>
@@ -481,8 +481,11 @@
                                 </div>
                             @endif
                             <div class="col-md-3">
-                                @if ($details && $trackzero->count())
-                                    @if ($lastcont)
+                                @foreach($tracknull as $tra)
+                                    @php
+                                        $match = $tracksisa->where('id_track', $tra->id_track)->where('tipe','Container')->count() > 0;
+                                    @endphp
+                                    @if ($lastcont || $match)
                                         @foreach ($getcontqty as $tra)
                                             <label for="notAllowCont" class="form-label">Quantity Tonase</label>
                                             <div class="input-group">
@@ -493,7 +496,32 @@
                                             <input name="qty_cont_total" id="qty_cont_total" value="{{ $tra->qty_tonase_sisa }}" type="hidden" step="any" min="0">
                                             <input type="hidden" name="qty_cont_ada" id="qty_sisa_cont" value="0" step="any" min="0">
                                         @endforeach
-                                    @elseif($lastcont==0)
+                                    @elseif($lastcont==0 || $match->count()==0)
+                                        @foreach ($zerocont as $tra)
+                                            <label for="notAllowCont" class="form-label">Quantity Tonase</label>
+                                            <div class="input-group">
+                                                <input name="qty_tonase" step="any" min="0" id="qty_cont" type="number" class="form-control qty_cont" placeholder="QTY Tonase" required>
+                                                <span class="input-group-text" id="inputGroupPrepend">KG</span>
+                                            </div>          
+                                            <span class="shadow-none badge badge-danger mt-2">Sisa: {{ number_format($tra->qty2 , 0, ',', '.') }}</span><div class="notAllowCont"></div>
+                                            <input name="qty_cont_total" id="qty_cont_total" value="{{ $tra->qty2 }}" type="hidden" step="any" min="0">
+                                            <input name="qty_cont_emp" id="qty_sisa_cont" value="0" type="hidden" step="any" min="0">
+                                        @endforeach
+                                    @endif
+                                @endforeach
+                                {{-- @if ($details && $trackzero->count())
+                                    @if ($lastcont || $match)
+                                        @foreach ($getcontqty as $tra)
+                                            <label for="notAllowCont" class="form-label">Quantity Tonase</label>
+                                            <div class="input-group">
+                                                <input name="qty_tonase" step="any" min="0" id="qty_cont" type="number" class="form-control qty_cont" placeholder="QTY Tonase" required>
+                                                <span class="input-group-text" id="inputGroupPrepend">KG</span>
+                                            </div>          
+                                            <span class="shadow-none badge badge-danger mt-2">Sisa: {{ number_format($tra->qty_tonase_sisa , 0, ',', '.')}}</span><div class="notAllowCont"></div>
+                                            <input name="qty_cont_total" id="qty_cont_total" value="{{ $tra->qty_tonase_sisa }}" type="hidden" step="any" min="0">
+                                            <input type="hidden" name="qty_cont_ada" id="qty_sisa_cont" value="0" step="any" min="0">
+                                        @endforeach
+                                    @elseif($lastcont==0 || $match->count()==0)
                                         @foreach ($zerocont as $tra)
                                             <label for="notAllowCont" class="form-label">Quantity Tonase</label>
                                             <div class="input-group">
@@ -527,7 +555,7 @@
                                         <input name="qty_cont_total" id="qty_cont_total" value="{{ $tra->qty_tonase_sisa }}" type="hidden" step="any" min="0">
                                         <input type="hidden" name="qty_cont_ada" id="qty_sisa_cont" value="0" step="any" min="0">
                                     @endforeach
-                                @endif
+                                @endif --}}
                             </div>
                             <div class="col-md-3">
                                 <label for="validationCustom03" class="form-label">Jumlah Sak</label>
@@ -661,7 +689,36 @@
                                 <input name="nopol" type="text" class="form-control" id="validationCustom01" placeholder="Masukkan Nopol" required>
                             </div>                            
                             <div class="col-lg-3 col-md-6 col-sm-12">
-                                @if ($details && $trackzero->count())
+                                @foreach($tracknull as $tra)
+                                    @php
+                                        $match = $tracksisa->where('id_track', $tra->id_track)->where('tipe','Curah')->count() > 0;
+                                    @endphp
+                                    @if ($lastcurah || $match)
+                                        @foreach ($getcurahqty as $tra)
+                                            <label for="validationMessage" class="form-label">Quantity Tonase </label>
+                                            <div class="input-group">
+                                                <input name="qty_tonase" id="qty_curah" type="number" step="any" min="0" class="form-control qty_curah" placeholder="QTY Tonase" required>
+                                                <span class="input-group-text" id="inputGroupPrepend">KG</span>
+                                            </div>
+                                            <span class="shadow-none badge badge-danger mt-2">Sisa: {{ number_format($tra->qty_tonase_sisa , 0, ',', '.') }}</span><div class="validationMessage"></div>
+                                            <input name="qty_curah_total" id="qty_curah_total" value="{{ $tra->qty_tonase_sisa }}" type="hidden" step="any" min="0">
+                                            <input type="hidden" name="qty" id="qty_sisa_curah" step="any" min="0">
+                                        @endforeach
+                                    @elseif($lastcurah==0 || $match->count()==0)
+                                        @foreach ($zerocurah as $tra)
+                                            <label for="validationMessage" class="form-label">Quantity Tonase</label>
+                                            <div class="input-group">
+                                                <input name="qty_tonase" id="qty_curah" type="number" value="0" step="any" min="0" class="form-control qty_curah" placeholder="QTY Tonase" required>
+                                                <span class="input-group-text" id="inputGroupPrepend">KG</span>
+                                            </div>
+                                            <span class="shadow-none badge badge-danger mt-2">Sisa: {{ number_format($tra->qty , 0, ',', '.') }}</span>
+                                            <input name="qty_curah_total" id="qty_curah_total" value="{{ $tra->qty }}" type="hidden" step="any" min="0">
+                                            <input name="qty_sisa_curah" id="qty_sisa_curah" value="0" type="hidden" step="any" min="0">
+                                            <div class="validationMessage"></div>
+                                        @endforeach
+                                    @endif
+                                @endforeach
+                                {{-- @if ($details && $trackzero->count())
                                     @if ($lastcurah)
                                         @foreach ($getcurahqty as $tra)
                                             <label for="validationMessage" class="form-label">Quantity Tonase </label>
@@ -709,7 +766,7 @@
                                         <input name="qty_curah_total" id="qty_curah_total" value="{{ $tra->qty_tonase_sisa }}" type="hidden" step="any" min="0">
                                         <input type="hidden" name="qty" id="qty_sisa_curah" step="any" min="0">
                                     @endforeach                         
-                                @endif
+                                @endif --}}
                             </div>
                             <div class="col-lg-3 col-md-6 col-sm-12">
                                 <label for="validationCustom03" class="form-label">Jumlah Sak</label>
@@ -755,6 +812,25 @@
                 </div>
             </div>
         </div>
+        @foreach($dtrack as $dd)
+        <div class="modal fade bd-example-modal-l" id="delete-{{ $dd->id_detail_track }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-l modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-body text-center">
+                        <h5>Apakah anda yakin ingin hapus data ini?</h5>
+                        <form class="row g-3 needs-validation" action="{{ route('tracking.deletedata', ['id_track'=>$dd->id_track,'id_detail_track' => $dd->id_detail_track, 'tonase'=>$dd->qty_tonase]) }}"  method="POST">
+                            @method('PUT')
+                            @csrf
+                            <div class="modal-footer justify-content-center">
+                                <button type="submit" class="btn btn-primary">Iya hapus data ini!</button>
+                                <button type="button" class="btn btn btn-light-dark" data-bs-dismiss="modal"><i class="flaticon-cancel-12"></i>Batal</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endforeach        
         <div class="d-grid gap-2 col-6 mx-auto">
             @foreach ($track as $tra)
                 {{-- <input type="text" style="display: none;" name="id_ph" value="{{ $dt->id_penawaran }}"> --}}

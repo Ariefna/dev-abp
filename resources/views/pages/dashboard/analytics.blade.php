@@ -76,6 +76,9 @@
             </div>
         </div>  
 
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 layout-spacing">
+            <x-widgets._w-chart-three title="Grafik Pendapatan"/>
+        </div>
         {{-- <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 layout-spacing">
             <x-widgets._w-card-five title="Profit" balance="$41,741.42" percentage="+ 13.6%" button="View Report" link="javascript:void(0);"/>
         </div>
@@ -207,6 +210,7 @@
         {{-- Analytics --}}
         @vite(['resources/assets/js/widgets/_wSix.js'])
         @vite(['resources/assets/js/widgets/_wChartThree.js'])
+        @vite(['resources/assets/js/widgets/_wChartOne.js'])
         @vite(['resources/assets/js/widgets/_wHybridOne.js'])
         @vite(['resources/assets/js/widgets/_wActivityFive.js'])
     </x-slot>

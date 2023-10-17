@@ -155,6 +155,7 @@ foreach ($prefixRouters as $prefixRouter) {
                 Route::match(['get', 'post'], '/tracking/savecontainer', [\App\Http\Controllers\DocTrackingController::class, 'savecontainer'])->name('tracking.savecontainer');
                 Route::match(['get', 'post'], '/tracking/savecurah', [\App\Http\Controllers\DocTrackingController::class, 'savecurah'])->name('tracking.savecurah');
                 Route::match(['put'], '/tracking/cek/batal', [\App\Http\Controllers\DocTrackingController::class, 'batal'])->name('tracking.batal');
+                Route::put('/tracking/tr/deletedata/{id_track}/{id_detail_track}/{tonase}', [\App\Http\Controllers\DocTrackingController::class, 'deletedata'])->name('tracking.deletedata');
 
                 Route::get('/dooring', function () {
                     return view('pages.abp-page.dor', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);

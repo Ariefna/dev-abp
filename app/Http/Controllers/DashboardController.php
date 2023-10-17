@@ -9,6 +9,7 @@ use App\Models\InvoiceDP;
 use App\Models\InvoicePelunasan;
 use App\Http\Controllers\DB;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
@@ -74,8 +75,9 @@ class DashboardController extends Controller
                 ->orderBy('doc_tracking.no_po')
                 ->groupBy('detail_dooring_sisa.id_dooring')
                 ->get();                
-        $totaldp = InvoiceDp::where('status', 2)->sum('total_invoice');
-        $totalpel = InvoicePelunasan::where('status',2)->sum('total_invoice');
+        $currentYear = Carbon::now()->year; // Get the current year
+        $totaldp = InvoiceDp::where('status', 2)->whereYear('invoice_date', $currentYear)->sum('total_invoice');
+        $totalpel = InvoicePelunasan::where('status',2)->whereYear('invoice_date', $currentYear)->sum('total_invoice');
         $title = 'Adhipramana Bahari Perkasa';
         $breadcrumb = 'This Breadcrumb';
         return view('pages.dashboard.analytics', compact('title', 'breadcrumb',

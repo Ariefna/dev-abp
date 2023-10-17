@@ -6,6 +6,9 @@ use App\Models\DetailPH;
 use App\Models\PenawaranHarga;
 use App\Models\Barang;
 use App\Models\PurchaseOrder;
+use App\Models\DetailTrackingSisa;
+use App\Models\DetailTracking;
+use App\Models\DocTracking;
 use App\Http\Controllers\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -162,13 +165,37 @@ class POController extends Controller
     }
 
     public function update(Request $request, PurchaseOrder $purchase_order) {
-        PurchaseOrder::where('id_po', $purchase_order->id_po)
+        $po_muat = PurchaseOrder::where('id_po', $purchase_order->id_po)->value('po_muat');
+        $no_po = DocTracking::where('no_po', $purchase_order->po_muat)->value('no_po');
+        if ($po_muat == $no_po){
+            PurchaseOrder::where('id_po', $purchase_order->id_po)
             ->update([
                 'qty' => $request->qty_curah,
                 'qty2' => $request->qty_cont,
                 'total_qty'=>$request->qty_new,
                 'status' => '1'
             ]);
+            $id_track = DocTracking::where('no_po', $purchase_order->po_muat)->value('id_track');
+            DetailTrackingSisa::where('id_track', $id_track)
+            ->update([
+                'qty_total_tonase'=>$request->qty_new,
+            ]);
+            $qty_tonase_now = DetailTracking::where('id_track', $id_track)->whereIn('status',[2,3,4])
+                            ->sum('qty_tonase');
+            $sisa_tonase = $request->qty_new - $qty_tonase_now;
+            DetailTrackingSisa::where('id_track', $id_track)
+            ->update([
+                'qty_tonase_sisa'=>$sisa_tonase,
+            ]);
+        }else{
+            PurchaseOrder::where('id_po', $purchase_order->id_po)
+                ->update([
+                    'qty' => $request->qty_curah,
+                    'qty2' => $request->qty_cont,
+                    'total_qty'=>$request->qty_new,
+                    'status' => '1'
+                ]);
+        }
         return redirect()->back();
     }
 }

@@ -105,9 +105,11 @@ class DocTrackingController extends Controller
                     ->join('detail_tracking', 'detail_tracking.id_track', '=', 'doc_tracking.id_track')
                     ->join('detail_tracking_sisa','detail_tracking_sisa.id_track','=','doc_tracking.id_track')
                     ->where('doc_tracking.status', 1)
+                    ->whereIn('detail_tracking.status', [2,3])
                     ->groupBy('doc_tracking.id_track')
                     ->orderBy('doc_tracking.id_track', 'desc')
                     ->get();
+        // dd($trackzero);
         $tracknull = DocTracking::select('*', 'doc_tracking.status', 'doc_tracking.id_track')
                     ->join('port_of_loading', 'port_of_loading.id', '=', 'doc_tracking.id_pol')
                     ->join('port_of_destination', 'port_of_destination.id', '=', 'doc_tracking.id_pod')
@@ -179,11 +181,12 @@ class DocTrackingController extends Controller
                     ->where('doc_tracking.status',1)
                     ->get();                    
         $cek = DocTracking::where('status',1)->get();
+        $tracksisa = DetailTrackingSisa::select('id_track','tipe','qty_tonase_sisa')->get();
         $title = 'Adhipramana Bahari Perkasa';
         $breadcrumb = 'This Breadcrumb';
         return view('pages.abp-page.tra', compact('title', 'breadcrumb','po','details','getcurahqty','getcontqty',
         'track','trackzero','dtrack','lastcont','lastcurah','zerocurah',
-        'zerocont','gudang','pol','pod','kapal','tracknull','cek'));
+        'zerocont','gudang','pol','pod','kapal','tracknull','cek','tracksisa'));
     }
     
 
@@ -256,20 +259,45 @@ class DocTrackingController extends Controller
         ]);
         $c = $request->qty_cont_emp2;
         $b = $request->qty_cont_ada;            
-        if ($c !== $b) {
-            DetailTrackingSisa::where('id_track', $request->id_track)->
-            where('tipe','Container')->update([
-                'qty_tonase_sisa' => $request->qty_cont_ada,
-            ]);
-        } else if($c === $b){
-            DetailTrackingSisa::create([
-                'id_track'          => $request->id_track,
-                'qty_tonase_sisa'   => $request->qty_cont_emp,
-                'qty_total_tonase'  => $request->qty_cont_total,
-                'status'            => 1,
-                'tipe'              => 'Container'
-            ]);
+        $cekid = DetailTrackingSisa::where('id_track', $request->id_track)
+                ->where('tipe','Container')->value('id_track');
+        if ($cekid == $request->id_track){
+            if ($c !== $b) {
+                DetailTrackingSisa::where('id_track', $request->id_track)
+                ->where('tipe','Container')->update([
+                    'qty_tonase_sisa' => $request->qty_cont_ada,
+                ]);
+            } else if($c === $b){
+                DetailTrackingSisa::where('id_track', $request->id_track)
+                ->where('tipe','Container')->update([
+                    'qty_tonase_sisa' => $request->qty_cont_emp2,
+                ]);
+            }
+        }else if($cekid != $request->id_track){
+            if($c === $b){
+                DetailTrackingSisa::create([
+                    'id_track'          => $request->id_track,
+                    'qty_tonase_sisa'   => $request->qty_cont_emp,
+                    'qty_total_tonase'  => $request->qty_cont_total,
+                    'status'            => 1,
+                    'tipe'              => 'Container'
+                ]);
+            }
         }
+        // if ($c !== $b) {
+        //     DetailTrackingSisa::where('id_track', $request->id_track)->
+        //     where('tipe','Container')->update([
+        //         'qty_tonase_sisa' => $request->qty_cont_ada,
+        //     ]);
+        // } else if($c === $b){
+        //     DetailTrackingSisa::create([
+        //         'id_track'          => $request->id_track,
+        //         'qty_tonase_sisa'   => $request->qty_cont_emp,
+        //         'qty_total_tonase'  => $request->qty_cont_total,
+        //         'status'            => 1,
+        //         'tipe'              => 'Container'
+        //     ]);
+        // }
         return redirect()->back();
     }
     public function savecurah(Request $request) {
@@ -317,50 +345,71 @@ class DocTrackingController extends Controller
 
         $c = $request->qty_sisa_curah2;
         $b = $request->qty;            
-        if ($c !== $b) {
-            DetailTrackingSisa::where('id_track', $request->id_track)->
-            where('tipe','Curah')->update([
-                'qty_tonase_sisa' => $request->qty,
-            ]);
-        } else if($c === $b){
-            DetailTrackingSisa::create([
-                'id_track'          => $request->id_track,
-                'qty_tonase_sisa'   => $request->qty_sisa_curah,
-                'qty_total_tonase'  => $request->qty_curah_total,
-                'status'            => 1,
-                'tipe'              => 'Curah'
-            ]);
+        $cekid = DetailTrackingSisa::where('id_track', $request->id_track)
+                ->where('tipe','Curah')->value('id_track');
+        if ($cekid == $request->id_track){
+            if ($c !== $b) {
+                DetailTrackingSisa::where('id_track', $request->id_track)
+                ->where('tipe','Curah')->update([
+                    'qty_tonase_sisa' => $request->qty,
+                ]);
+            } else if($c === $b){
+                DetailTrackingSisa::where('id_track', $request->id_track)
+                ->where('tipe','Curah')->update([
+                    'qty_tonase_sisa' => $request->qty_sisa_curah,
+                ]);
+            }
+        }else if($cekid != $request->id_track){
+            if($c === $b){
+                DetailTrackingSisa::create([
+                    'id_track'          => $request->id_track,
+                    'qty_tonase_sisa'   => $request->qty_sisa_curah,
+                    'qty_total_tonase'  => $request->qty_curah_total,
+                    'status'            => 1,
+                    'tipe'              => 'Curah'
+                ]);
+            }
         }
+        // if ($c !== $b) {
+        //     DetailTrackingSisa::where('id_track', $request->id_track)->
+        //     where('tipe','Curah')->update([
+        //         'qty_tonase_sisa' => $request->qty,
+        //     ]);
+        // } else if($c === $b){
+        //     DetailTrackingSisa::create([
+        //         'id_track'          => $request->id_track,
+        //         'qty_tonase_sisa'   => $request->qty_sisa_curah,
+        //         'qty_total_tonase'  => $request->qty_curah_total,
+        //         'status'            => 1,
+        //         'tipe'              => 'Curah'
+        //     ]);
+        // }
         
         return redirect()->back();
     }           
     public function destroy(Request $request, $id) {
         // $idtracking = DetailTrackingSisa::select('qty_tonase_sisa')->where('id_track',$id)->get();
         $qty_sisa = $request->qty_sisa_simpan;
-        // echo $qty_sisa;
         if ($qty_sisa > 0) {
-            // echo 'ada';
             DocTracking::where('id_track', $id)->update([
                 'status' => '2'
             ]);
-            DetailTracking::where('id_track', $id)->update([
+            DetailTracking::where('id_track', $id)
+            ->whereNotIn('status', [0])
+            ->update([
                 'status' => '2'
             ]);
         }else if($qty_sisa == 0){
-            // echo 'tidak';
             DocTracking::where('id_track', $id)->update([
                 'status' => '3'
             ]);
-            DetailTracking::where('id_track', $id)->update([
+            DetailTracking::where('id_track', $id)
+            ->whereNotIn('status', [0])
+            ->update([
                 'status' => '3'
             ]);
         }
         return redirect()->back();
-        // $getdata = $idtracking->get();
-        // return response()->json($getdata);
-        // dd ([
-        //     'idtracksisa'=>$idtracking ?? null,
-        // ]);
         
     }    
     public function batal(Request $request) {
@@ -381,4 +430,32 @@ class DocTrackingController extends Controller
     
         return redirect()->back();
     }    
+    public function deletedata($id_track, $id_detail_track, $tonase) {
+        DetailTracking::where('id_detail_track', $id_detail_track)
+            ->update([
+                'status' => 0,
+            ]);
+        $tipe = DetailTracking::where('id_detail_track', $id_detail_track)->value('no_container');
+        
+        if ($tipe==null) {
+            $qty_tonase = DetailTrackingSisa::where('id_track', $id_track)->where('tipe','Curah')
+                ->value('qty_tonase_sisa');
+            $qtyt = intval($qty_tonase);
+            $qty = $tonase + $qtyt;
+            DetailTrackingSisa::where('id_track', $id_track)->where('tipe','Curah')
+                ->update([
+                    'qty_tonase_sisa' => $qty
+                ]);
+        }else if($tipe!=null){
+            $qty_tonase = DetailTrackingSisa::where('id_track', $id_track)->where('tipe','Container')
+                ->value('qty_tonase_sisa');
+            $qtyt = intval($qty_tonase);
+            $qty = $tonase + $qtyt;
+            DetailTrackingSisa::where('id_track', $id_track)->where('tipe','Container')
+                ->update([
+                    'qty_tonase_sisa' => $qty
+                ]);
+        }
+        return redirect()->back();
+    }
 }

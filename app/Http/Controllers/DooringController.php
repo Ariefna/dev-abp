@@ -40,8 +40,8 @@ class DooringController extends Controller
                 ->join('detail_tracking','detail_tracking.id_kapal','=','kapals.id')
                 ->where('kapals.status', 1)
                 ->whereIn('detail_tracking.status',[2,3])
-                ->groupBy('detail_tracking.voyage')
-                ->get();                   
+                ->groupBy('detail_tracking.voyage','detail_tracking.id_kapal')
+                ->get();
                 // dd($kapal);
         $po = DetailTracking::select('*')
                 ->join('doc_tracking','doc_tracking.id_track','=','detail_tracking.id_track')
@@ -141,7 +141,7 @@ class DooringController extends Controller
                         $query->selectRaw('SUM(qty_tonase)')
                             ->from('detail_tracking')
                             ->whereColumn('detail_tracking.id_track', 'doc_tracking.id_track')
-                            ->where('status',[2,3])
+                            ->whereIn('status',[2,3])
                             ->whereNull('no_container')
                             ->groupBy('detail_tracking.id_track');
                     }, 'qty_curah_track')
@@ -149,7 +149,7 @@ class DooringController extends Controller
                         $query->selectRaw('SUM(qty_tonase)')
                             ->from('detail_tracking')
                             ->whereColumn('detail_tracking.id_track', 'doc_tracking.id_track')
-                            ->where('status',[2,3])
+                            ->whereIn('status',[2,3])
                             ->whereNotNull('no_container')
                             ->groupBy('detail_tracking.id_track');
                     }, 'qty_curah_cont')
@@ -233,7 +233,7 @@ class DooringController extends Controller
                     ->groupBy('doc_dooring.id_dooring')
                     ->orderBy('doc_dooring.id_dooring', 'desc')
                     ->get();
-        $doorsisa = DetailDooringSisa::select('id_dooring')->get();
+        $doorsisa = DetailDooringSisa::select('id_dooring','tipe','qty_tonase_sisa')->get();
         $getcurahqty = DocDooring::select('doc_dooring.status', 'doc_dooring.id_track'
                     ,'detail_dooring_sisa.qty_tonase_sisa','detail_tracking.no_segel'
                     ,'detail_dooring.id_kapal')
@@ -278,7 +278,7 @@ class DooringController extends Controller
                 ->orderBy('doc_dooring.id_dooring', 'desc')
                 ->count();
         // dd($details);
-        $dtrack = DetailDooring::select('detail_dooring.tgl_muat', 'detail_dooring.tgl_tiba', 'detail_dooring.nopol',
+        $dtrack = DetailDooring::select('detail_dooring.id_detail_door','detail_dooring.tgl_muat', 'detail_dooring.tgl_tiba', 'detail_dooring.nopol',
                          'detail_dooring.id_dooring', 'detail_tracking.no_container', 'detail_tracking.no_segel',
                          'detail_dooring.qty_tonase', 'detail_dooring.jml_sak', 'detail_dooring.qty_timbang',
                          'detail_dooring.no_tiket', 'detail_dooring.no_sj', 'detail_dooring.estate', 'detail_dooring.status')
@@ -290,17 +290,14 @@ class DooringController extends Controller
         // $lastcontainer = DetailDooring::where('status', 1)->where('tipe','Container')->latest()->first();
         $lastcurah = DetailDooring::join('detail_dooring_sisa', 'detail_dooring_sisa.id_dooring', '=', 'detail_dooring.id_dooring')
                     ->where('detail_dooring.status', 1)
-                    ->where('detail_dooring_sisa.tipe', 'Curah')
+                    ->where('detail_dooring.tipe', 'Curah')
                     ->orderBy('detail_dooring.id_detail_door','desc')
                     ->first();
         $lastcontainer = DetailDooring::join('detail_dooring_sisa', 'detail_dooring_sisa.id_dooring', '=', 'detail_dooring.id_dooring')
-                    ->join('detail_tracking','detail_tracking.id_detail_track','=','detail_dooring.id_detail_track')
                     ->where('detail_dooring.status', 1)
-                    ->where('detail_dooring_sisa.tipe', 'Container')
                     ->where('detail_dooring.tipe', 'Container')
                     ->orderBy('detail_dooring.id_detail_door','desc')
                     ->first();
-                    // dd($lastcontainer);
         $zerocurah = DocDooring::select('*')
                     ->selectSub(function ($query) {
                         $query->selectRaw('SUM(qty_tonase)')
