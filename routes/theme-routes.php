@@ -224,6 +224,7 @@ foreach ($prefixRouters as $prefixRouter) {
                 Route::get('/invoice-dp/dp/getDetailPOCont/{id_track}', [\App\Http\Controllers\InvoiceDPController::class, 'getDetailPOCont'])->name('getDetailPOCont');
                 Route::get('/invoice-dp/gen/generate', [\App\Http\Controllers\InvoiceDPController::class, 'generate'])->name('generate');
                 Route::match(['get', 'post'], '/invoice-dp/approve/{id_invoice_dp}', [\App\Http\Controllers\InvoiceDPController::class, 'approve'])->name('invoice-dp.approve');
+                Route::match(['get', 'post'], '/invoice-dp/delete/{id_invoice_dp}', [\App\Http\Controllers\InvoiceDPController::class, 'delete'])->name('invoice-dp.delete');
                 Route::match(['get', 'post'], '/invoice-dp/savecurahidp', [\App\Http\Controllers\InvoiceDPController::class, 'savecurahidp'])->name('invoice-dp.savecurahidp');
                 Route::match(['get', 'post'], '/invoice-dp/savecontaineridp', [\App\Http\Controllers\InvoiceDPController::class, 'savecontaineridp'])->name('invoice-dp.savecontaineridp');
                 Route::match(['get', 'post'], '/invoice-dp/print/{id_invoice_dp}', [\App\Http\Controllers\InvoiceDPController::class, 'printInvoiceDp'])->name('invoice-dp.print');

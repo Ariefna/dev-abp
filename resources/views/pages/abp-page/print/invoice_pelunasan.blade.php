@@ -192,7 +192,7 @@
                 <td class="tg-0pky" style="border-bottom: none; border-top: none; border-right: none;" colspan="3"></td>
                 <td class="tg-0pky" style="border-bottom: none; border-top: none; border-right: none;" colspan="2">Total Invoice</td>
                 <td class="tg-0pky" style="border-bottom: none; border-top: none; border-left:none;" colspan="2">
-                    <b>Rp. {{ number_format($desc['prosentase_ppn'] * $subtotal / 100 + $dp_50, 0, ',', '.') }}</b>
+                    <b>Rp. {{ (number_format($desc['prosentase_ppn'] * $subtotal / 100 + $dp_50, 0, ',', '.') }}</b>
                 </td>
               </tr>
               <tr>

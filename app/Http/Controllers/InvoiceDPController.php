@@ -43,6 +43,8 @@ class InvoiceDPController extends Controller
                 ->get();
         $invdp = InvoiceDP::select('*','invoice_dp.status')
                 ->join('doc_tracking','doc_tracking.id_track','=','invoice_dp.id_track')
+                ->where('invoice_dp.status','=','1')
+                ->orWhere('invoice_dp.status','=','2')
                 ->get();
         $subtotal = DetailInvoiceDP::select('id_track')
                 ->selectRaw('SUM(total_harga) as sub')
@@ -175,6 +177,12 @@ class InvoiceDPController extends Controller
         return redirect()->back();
     }
 
+    public function delete(Request $request, $id_invoic_dp) {
+        InvoiceDP::where('id_invoice_dp', $id_invoic_dp)->update([
+            'status' => '0'
+        ]);
+        return redirect()->back();
+    }
     public function store(Request $request) {
         $currentYear = date('Y');
         $currentMonth = date('m');
@@ -205,19 +213,16 @@ class InvoiceDPController extends Controller
             if ($latestInvoice) {
                 $parts = preg_split('/[-\/]/', $latestInvoice->invoice_no);
                 $existingCounter = intval($parts[3]);
-                $existingStatus = intval($parts[4]);
-                if ($latestInvoice->status == 2) {
-                    $newCounter = $existingCounter + 1;
+                $existingStatus = intval($parts[4]); 
+                    $newCounter = $existingCounter;
                     $a = 1;
-                } elseif ($latestInvoice->status == 1) {
                     $newStatus = $existingStatus + 1;
-                    $a = 2;
-                }
             }
+
+            
             // dd ($a);
             $newInvoiceNumber = "ABP/{$currentYear}/{$currentMonth}/" .
-                str_pad($newCounter, 4, '0', STR_PAD_LEFT) . '-' . $newStatus;            
-            
+                str_pad($newCounter, 4, '0', STR_PAD_LEFT) . '-' . $newStatus;  
                 InvoiceDP::create([
                     'id_bank'     => $request->cb_bank,
                     'id_track'     => $request->cb_po,
@@ -422,7 +427,7 @@ class InvoiceDPController extends Controller
             $pushData = collect([]);
 
             // dd($invoiceDp->detailInvoiceDp);
-
+           
             foreach ($invoiceDp->detailInvoiceDp as $key => $detailInvoiceDp) {
                 if($pushData->count() == 0){
                     $pushData->push([
@@ -433,7 +438,7 @@ class InvoiceDPController extends Controller
                         'harga_brg' => $detailInvoiceDp->harga_brg,
                         'prosentase_ppn' => $detailInvoiceDp->prosentase_ppn,
                         'total_dp' => $detailInvoiceDp->total_dp,
-                        'total_ppn' => $detailInvoiceDp->total_ppn
+                        'total_ppn' => $detailInvoiceDp->total_ppn ?? 0
                     ]);
                 } else{
                     $exist = $pushData->where(
@@ -477,6 +482,8 @@ class InvoiceDPController extends Controller
             }
 
             $data['description'] = [];
+            // dd($pushData);
+            // die();
 
             $totalTonasePerNoPO = [];
             foreach ($pushData as $key => $item) {
@@ -494,7 +501,7 @@ class InvoiceDPController extends Controller
                 $totalTonasePerNoPO[$key]['no_po'] = $item["no_po"];
                 $totalTonasePerNoPO[$key]['date'] = $item["date"];
                 $totalTonasePerNoPO[$key]['tipe'] = $item["tipe"];
-                $totalTonasePerNoPO[$key]['prosentase_ppn'] = $item["prosentase_ppn"];
+                $totalTonasePerNoPO[$key]['prosentase_ppn'] = $item["prosentase_ppn"] ?? 0;
                 $totalTonasePerNoPO[$key]['total_ppn'] = $item["total_ppn"];
             }
 
