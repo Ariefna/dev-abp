@@ -235,7 +235,9 @@ foreach ($prefixRouters as $prefixRouter) {
                     return view('pages.abp-page.ipl', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
                 })->name('invoice-pelunasan.index');            
                 Route::resource('/invoice-pelunasan', \App\Http\Controllers\InvoiceLunasController::class);
-                // Route::match(['get', 'post'], '/invoice-pelunasan/store', [\App\Http\Controllers\InvoiceLunasController::class, 'store'])->name('invoice-pelunasan.store');
+                Route::match(['get'], '/invoice-pelunasan/cb-tipe-inv/{tipe_inv}', [\App\Http\Controllers\InvoiceLunasController::class, 'tipeinv'])->name('invoice-dp.tipeinv');
+                Route::match(['get'], '/invoice-pelunasan/cb-kapal/{cb_kapal}', [\App\Http\Controllers\InvoiceLunasController::class, 'cbkapal'])->name('invoice-dp.cbkapal');
+                Route::match(['get', 'post'], '/invoice-pelunasan/store', [\App\Http\Controllers\InvoiceLunasController::class, 'store'])->name('invoice-pelunasan.store');
                 // Route::post('/invoice-pelunasan/store', [\App\Http\Controllers\InvoiceLunasController::class, 'store'])->name('store');
             });
 

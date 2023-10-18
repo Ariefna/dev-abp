@@ -80,17 +80,14 @@
                             </div>
                         </div>                        
                         <div class="col-md-3">
-                            <label for="validationCustom01" class="form-label">No PO Muat</label>
-                            <select class="form-select" name="cb_po" id="cb_po" required>
-                                <option selected disabled value="">Pilih...</option>
-                                @foreach ($pomuat as $getpo)
-                                    <option value="{{ $getpo->id_track }}">{{ $getpo->no_po }}</option>
-                                @endforeach
-                            </select>
-                            <div class="invalid-feedback">
-                                No PO Muat tidak boleh kosong
-                            </div>
-                        </div>
+    <label for="validationCustom01" class="form-label">No PO Muat</label>
+    <select class="form-select" name="cb_po" id="cb_po" required>
+        <option selected disabled value="">Pilih...</option>
+    </select>
+    <div class="invalid-feedback">
+        No PO Muat tidak boleh kosong
+    </div>
+</div>
                         <div class="col-md-3">
                             <label for="validationCustom01" class="form-label">Invoice No</label>
                             <input name="invoice_no" type="text" class="form-control" id="invoice_no" placeholder="Autofill no invoice dp terakhir dari po + 1" readonly>
@@ -181,7 +178,7 @@
                                             <td>{{ $tdp->rinci_tipe }}</td>
                                             <td class="text-center"><span class="shadow-none badge badge-danger">Pending</span></td>
                                             <td class="text-center">
-                                                <a href="#modalIPLcur-{{ $tdp->id_track }}" class="bs-tooltip"  data-bs-toggle="modal" data-bs-placement="top" title="Tambah Detail" data-original-title="Tambah Detail"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus-circle"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg></a>
+                                                <a href="#modalIPLcur" data-id-track="{{$tdp->id_track }}" class="bs-tooltip"  data-bs-toggle="modal" data-bs-placement="top" title="Tambah Detail" data-original-title="Tambah Detail"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus-circle"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg></a>
                                                 <a href="javascript:void(0);" class="bs-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Detail" data-original-title="Print"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg></a>
                                                 <a href="javascript:void(0);" class="bs-tooltip" data-bs-toggle="modal" data-bs-placement="top" title="Delete" data-original-title="Delete"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></a>
                                                 <div class="p-1"></div>
@@ -199,24 +196,23 @@
                 </div>
             </div>
         </div>
-        @foreach ($invdp as $tdp)
-        <div class="modal fade bd-example-modal-xl" id="modalIPLcur-{{ $tdp->id_track }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+       
+        <div class="modal fade bd-example-modal-xl" id="modalIPLcur" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-xl" role="document">
                 <div class="modal-content">
-                    {{-- <div class="modal-body"> --}}
                         <div class="modal-header">
                             <h5 class="modal-title" id="exampleModalLabel">Tambah Detail Invoice Pelunasan</h5>
                         </div>
                         <div class="modal-body">
                             <form name="modal-tracking-ada" class="row g-3 needs-validation" action=""  method="POST" enctype="multipart/form-data" novalidate>
                                 @csrf
-                                <input type="hidden" name="id_track_i" id="id_track_i" value="{{ $tdp->id_track }}">
+                                <input type="hidden" name="id_track_i" id="id_track_i" value="">
                                 <div class="col-md-6">
                                     <label for="validationCustom04" class="form-label">Tipe Kapal</label>
                                     <select class="form-select" name="cb_kapal" id="cb_kapal" required>
                                         <option selected disabled value="">Pilih...</option>
-                                        <option value="">Curah</option>
-                                        <option value="">Container</option>
+                                        <option value="2">Curah</option>
+                                        <option value="1">Container</option>
                                     </select>
                                     <div class="invalid-feedback">
                                         Pilih Tipe Kapal
@@ -226,7 +222,7 @@
                                     <label for="validationCustom04" class="form-label">PO Muat</label>
                                     <select class="form-select" name="cb_bypo" id="cb_bypo" required>
                                         <option selected disabled value="">Pilih...</option>
-                                        <option value="">Contoh 232002101 (estate dari dooring)</option>
+                                        <!-- <option value="">Contoh 232002101 (estate dari dooring)</option> -->
                                     </select>
                                     <div class="invalid-feedback">
                                         Pilih PO Muat
@@ -286,14 +282,14 @@
                                     <label for="notAllowCont" class="form-label">Prosentase PPn</label>
                                     <div class="input-group">
                                         <span class="input-group-text" id="inputGroupPrepend">%</span>
-                                        <input name="qty_tonase" step="any" min="0" id="qty_cont" type="number" class="form-control qty_cont" required>
+                                        <input name="qty_tonase" step="any" min="0" value="0" id="qty_cont" type="number" class="form-control qty_cont" required>
                                     </div>     
                                 </div>
                                 <div class="col-md-4">
                                     <label for="notAllowCont" class="form-label">Total PPn</label>
                                     <div class="input-group">
                                         <span class="input-group-text" id="inputGroupPrepend">Rp</span>
-                                        <input name="qty_tonase" step="any" min="0" id="qty_cont" type="number" class="form-control qty_cont" required>
+                                        <input name="qty_tonase" step="any" min="0" value="0" id="qty_cont" type="number" class="form-control qty_cont" required>
                                     </div>     
                                 </div>
                                 <div class="modal-footer justify-content-center">
@@ -346,8 +342,9 @@
                     {{-- </div> --}}
                 </div>
             </div>
-        </div>        
-        @endforeach
+        </div>   
+
+
         {{-- <div id="basic" class="col-lg-12 col-sm-12 col-12 layout-spacing">
             <div class="statbox widget box box-shadow">
                 <div class="widget-header">                                
@@ -730,6 +727,72 @@
             // Initialize DataTables using the configuration
             $('#style-3, #style-4').DataTable(dataTableConfig);            
         </script>
+      <script>
+    $(document).ready(function() {
+        $('#modalIPLcur').on('show.bs.modal', function (event) {
+      var button = $(event.relatedTarget); // Button that triggered the modal
+      var idTrack = button.data('id-track'); // Get the data-id-track attribute from the button
+
+      // Set the value of the hidden input
+      $('#id_track_i').val(idTrack);
+    });
+    $('#cb_kapal').change(function () {
+        var selectedValue = $(this).val();
+        var idTrack = $('#id_track_i').val(); // Get the value from the hidden input field
+        if (selectedValue) {
+            // Send an Ajax request to get data for cb_bypo
+            $.ajax({
+                type: 'GET',
+                url: '/horizontal-dark-menu/finance/invoice-pelunasan/cb-kapal/'+selectedValue, // Replace with your actual endpoint URL
+                // data: { 'idtrack': idTrack },
+                success: function (response) {
+                    // Populate the cb_bypo select field with the received data
+                    console.log(response);
+                    // Populate the 'cb_po' dropdown with the response data
+                    var cbbypo = $('#cb_bypo');
+                    cbbypo.empty(); // Clear existing options
+
+                    // Add new options from the response
+                    cbbypo.append('<option selected disabled value="">Pilih...</option>');
+                    $.each(response, function(index, value) {
+                        cbbypo.append('<option value="' + value.id_track + '">' + value.no_po + '</option>');
+                    });
+                },
+                error: function () {
+                    console.log('Error fetching data');
+                }
+            });
+        } else {
+            // Clear the cb_bypo select field when nothing is selected in cb_kapal
+            $('#cb_bypo').html('<option selected disabled value="">Pilih...</option>');
+        }
+    });
+        $('#cb_tipe_inv').change(function() {
+            var selectedValue = $(this).val();
+
+            // Make an AJAX request
+            $.ajax({
+                type: 'GET',
+                url: '/horizontal-dark-menu/finance/invoice-pelunasan/cb-tipe-inv/'+selectedValue, // Replace with your actual endpoint URL
+                // data: { cb_tipe_inv: selectedValue },
+                success: function(response) {
+                    // Populate the 'cb_po' dropdown with the response data
+                    var cbPo = $('#cb_po');
+                    cbPo.empty(); // Clear existing options
+
+                    // Add new options from the response
+                    cbPo.append('<option selected disabled value="">Pilih...</option>');
+                    $.each(response, function(index, value) {
+                        cbPo.append('<option value="' + value.id_track + '">' + value.no_po + '</option>');
+                    });
+                },
+                error: function(error) {
+                    console.log('Error:', error);
+                }
+            });
+        });
+    });
+</script>
         
     </x-slot>
     <!--  END CUSTOM SCRIPTS FILE  -->
