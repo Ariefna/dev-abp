@@ -235,39 +235,54 @@
                                 <div class="col-md-4">
                                     <label for="notAllowCont" class="form-label">Total Tonase Dooring</label>
                                     <div class="input-group">
-                                        <input name="ttdb" step="any" min="0" id="ttdb" type="number" class="form-control qty_cont" required>
+                                        <input name="ttdb" step="any" min="0" id="ttdb" type="number" class="form-control qty_cont" required readonly>
                                         <span class="input-group-text" id="inputGroupPrepend">KG</span>
                                     </div>     
                                 </div>
                                 <div class="col-md-4">
                                     <label for="notAllowCont" class="form-label">Total Tonase Timbang Dooring</label>
                                     <div class="input-group">
-                                        <input name="hrg_freight" step="any" min="0" id="hrg_freight" type="number" class="form-control qty_cont" required>
+                                        <input name="hrg_freight" step="any" min="0" id="hrg_freight" type="number" class="form-control qty_cont" required readonly>
                                         <span class="input-group-text" id="inputGroupPrepend">KG</span>
                                     </div>     
                                 </div>                                
                                 <div class="col-md-4">
                                     <label for="notAllowCont" class="form-label">Total Tonase Real Dooring</label>
                                     <div class="input-group">
-                                        <input name="total_harga" min="0" id="total_harga" type="text" class="form-control" required>
+                                        <input name="total_harga" min="0" id="total_harga" type="text" class="form-control" required readonly>
                                         <span class="input-group-text" id="inputGroupPrepend">KG</span>
                                     </div>     
-                                </div>
-                                <div class="col-md-3">
+                                </div>                              
+                                <div class="col-md-4">
+                                    <label for="notAllowCont" class="form-label">Total Harga Dooring</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text" id="inputGroupPrepend">Rp</span>
+                                        <input name="total_harga" min="0" id="total_harga" type="text" class="form-control" required readonly>
+                                    </div>     
+                                </div>                            
+                                <div class="col-md-4">
+                                    <label for="notAllowCont" class="form-label">Total Harga Timbang Dooring</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text" id="inputGroupPrepend">Rp</span>
+                                        <input name="total_harga" min="0" id="total_harga" type="text" class="form-control" required readonly>
+                                    </div>     
+                                </div>                            
+                                <div class="col-md-4">
+                                    <label for="notAllowCont" class="form-label">Total Harga Real Dooring</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text" id="inputGroupPrepend">Rp</span>
+                                        <input name="total_harga" min="0" id="total_harga" type="text" class="form-control" required readonly>
+                                    </div>     
+                                </div>   
+                                
+                                <div class="col-md-4">
                                     <label for="notAllowCont" class="form-label">Harga Freight</label>
                                     <div class="input-group">
                                         <span class="input-group-text" id="inputGroupPrepend">Rp</span>
-                                        <input name="hrg_freight" step="any" min="0" id="hrg_freight" type="number" class="form-control qty_cont" required>
+                                        <input name="hrg_freight" step="any" min="0" id="hrg_freight" type="number" class="form-control qty_cont" required readonly>
                                     </div>     
-                                </div>                                
-                                <div class="col-md-3">
-                                    <label for="notAllowCont" class="form-label">Total Harga</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text" id="inputGroupPrepend">Rp</span>
-                                        <input name="total_harga" min="0" id="total_harga" type="text" class="form-control" required>
-                                    </div>     
-                                </div>                                
-                                <div class="col-md-2">
+                                </div>                               
+                                <div class="col-md-4">
                                     <label for="notAllowCont" class="form-label">Prosentase PPn</label>
                                     <div class="input-group">
                                         <span class="input-group-text" id="inputGroupPrepend">%</span>
