@@ -238,14 +238,14 @@
                                 <div class="col-md-4">
                                     <label for="notAllowCont" class="form-label">Total Tonase Timbang Dooring</label>
                                     <div class="input-group">
-                                        <input name="hrg_freight" step="any" min="0" id="hrg_freight" type="number" class="form-control qty_cont" required readonly>
+                                        <input name="tttd" step="any" min="0" id="tttd" type="number" class="form-control qty_cont" required readonly>
                                         <span class="input-group-text" id="inputGroupPrepend">KG</span>
                                     </div>     
                                 </div>                                
                                 <div class="col-md-4">
                                     <label for="notAllowCont" class="form-label">Total Tonase Real Dooring</label>
                                     <div class="input-group">
-                                        <input name="total_harga" min="0" id="total_harga" type="text" class="form-control" required readonly>
+                                        <input name="ttrd" min="0" id="ttrd" type="text" class="form-control" required readonly>
                                         <span class="input-group-text" id="inputGroupPrepend">KG</span>
                                     </div>     
                                 </div>                              
@@ -253,21 +253,21 @@
                                     <label for="notAllowCont" class="form-label">Total Harga Dooring</label>
                                     <div class="input-group">
                                         <span class="input-group-text" id="inputGroupPrepend">Rp</span>
-                                        <input name="total_harga" min="0" id="total_harga" type="text" class="form-control" required readonly>
+                                        <input name="TotalHargaDooring" min="0" id="TotalHargaDooring" type="text" class="form-control" required readonly>
                                     </div>     
                                 </div>                            
                                 <div class="col-md-4">
                                     <label for="notAllowCont" class="form-label">Total Harga Timbang Dooring</label>
                                     <div class="input-group">
                                         <span class="input-group-text" id="inputGroupPrepend">Rp</span>
-                                        <input name="total_harga" min="0" id="total_harga" type="text" class="form-control" required readonly>
+                                        <input name="TotalHargaTimbangDooring" min="0" id="TotalHargaTimbangDooring" type="text" class="form-control" required readonly>
                                     </div>     
                                 </div>                            
                                 <div class="col-md-4">
                                     <label for="notAllowCont" class="form-label">Total Harga Real Dooring</label>
                                     <div class="input-group">
                                         <span class="input-group-text" id="inputGroupPrepend">Rp</span>
-                                        <input name="total_harga" min="0" id="total_harga" type="text" class="form-control" required readonly>
+                                        <input name="TotalHargaRealDooring" min="0" id="TotalHargaRealDooring" type="text" class="form-control" required readonly>
                                     </div>     
                                 </div>   
                                 
@@ -282,7 +282,7 @@
                                     <label for="notAllowCont" class="form-label">Prosentase PPn</label>
                                     <div class="input-group">
                                         <span class="input-group-text" id="inputGroupPrepend">%</span>
-                                        <input name="qty_tonase" step="any" min="0" value="0" id="qty_cont" type="number" class="form-control qty_cont" required>
+                                        <input name="prosentaseppn" step="any" min="0" value="0" id="prosentaseppn" type="number" class="form-control qty_cont" required>
                                     </div>     
                                 </div>
                                 <div class="col-md-4">
@@ -736,6 +736,36 @@
       // Set the value of the hidden input
       $('#id_track_i').val(idTrack);
     });
+    $('#cb_bypo').change(function() {
+        var selectedValue = $(this).val();
+
+        // Make an AJAX request to fetch data based on the selected value
+        $.ajax({
+            url: '/horizontal-dark-menu/finance/invoice-pelunasan/calculate/'+selectedValue, // Replace with your actual route URL
+            type: 'GET',
+            // data: { selectedValue: selectedValue },
+            success: function(data) {
+                // Update the input fields with the received data
+                // $('#ttdb').val(data.ttdb);
+                // $('#hrg_freight').val(data.hrg_freight);
+                $('#ttdb').val(0);
+                $('#hrg_freight').val(0);
+                $('#tttd').val(0);
+                $('#ttrd').val(0);
+                $('#TotalHargaDooring').val(0);
+                $('#TotalHargaTimbangDooring').val(0);
+                $('#TotalHargaRealDooring').val(0);
+                
+                
+                
+                
+                // Add similar lines for other input fields
+            },
+            error: function() {
+                console.log('Error fetching data');
+            }
+        });
+    });
     $('#cb_kapal').change(function () {
         var selectedValue = $(this).val();
         var idTrack = $('#id_track_i').val(); // Get the value from the hidden input field
@@ -755,7 +785,7 @@
                     // Add new options from the response
                     cbbypo.append('<option selected disabled value="">Pilih...</option>');
                     $.each(response, function(index, value) {
-                        cbbypo.append('<option value="' + value.id_track + '">' + value.no_po + '</option>');
+                        cbbypo.append('<option value="' + value.id_dooring + '">' + value.no_po + '</option>');
                     });
                 },
                 error: function () {

@@ -79,24 +79,42 @@ class InvoiceLunasController extends Controller
     }
     
     // public function cbkapal($cb_kapal, Request $request)
+    
+    public function calculate($dooringId)
+    {
+        $details = DetailDooring::selectRaw('SUM(qty_tonase) as total_qty_tonase')
+        ->selectRaw('SUM(qty_timbang) as total_qty_timbang')
+        ->selectRaw('COALESCE(SUM(qty_timbang), 0) - COALESCE(SUM(qty_tonase), 0) as susut')
+        ->selectRaw('COALESCE(SUM(qty_tonase), 0) - COALESCE(SUM(qty_timbang), 0) - COALESCE(SUM(qty_tonase), 0) as qty_tonase_real')
+        ->where('id_dooring', $dooringId)
+        ->first(); // You can use "get()" if you expect multiple rows
+    
+    // Access the calculated values with default 0
+    $details->total_qty_tonase ?? 0;
+    $details->total_qty_timbang ?? 0;
+    $details->susut ?? 0;
+    $details->qty_tonase_real ?? 0;
+    return response()->json($details);
+
+    }
     public function cbkapal($cb_kapal)
     {
         if ($cb_kapal == 1) {
             $details = DetailDooring::join('doc_dooring as b', 'detail_dooring.id_dooring', '=', 'b.id_dooring')
     ->join('doc_tracking as c', 'c.id_track', '=', 'b.id_track')
-    ->select('c.no_po', 'c.id_track')
+    ->select('c.no_po', 'detail_dooring.id_dooring')
     ->where('detail_dooring.tipe', 'Container')
     ->where('detail_dooring.status', 3)
-    ->Groupby('c.no_po')
+    ->Groupby('c.no_po', 'detail_dooring.id_dooring')
     // ->where('b.id_track', $request->idtrack)
     ->get();
         }else {
             $details = DetailDooring::join('doc_dooring as b', 'detail_dooring.id_dooring', '=', 'b.id_dooring')
     ->join('doc_tracking as c', 'c.id_track', '=', 'b.id_track')
-    ->select('c.no_po', 'c.id_track')
+    ->select('c.no_po', 'detail_dooring.id_dooring')
     ->where('detail_dooring.tipe', 'Curah')
     ->where('detail_dooring.status', 3)
-    ->Groupby('c.no_po')
+    ->Groupby('c.no_po', 'detail_dooring.id_dooring')
     // ->where('b.id_track', $request->idtrack)
     ->get();
         }
