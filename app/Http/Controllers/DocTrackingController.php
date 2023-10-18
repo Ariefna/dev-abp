@@ -18,6 +18,7 @@ use App\Models\DetailTrackingSisa;
 use App\Http\Controllers\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Session;
 
 class DocTrackingController extends Controller
 {
@@ -79,6 +80,7 @@ class DocTrackingController extends Controller
                 ->join('detail_tracking', 'detail_tracking.id_track', '=', 'doc_tracking.id_track')
                 ->join('detail_tracking_sisa','detail_tracking_sisa.id_track','=','doc_tracking.id_track')
                 ->where('doc_tracking.status', 1)
+                ->where('created_by',Session::get('id'))
                 ->groupBy('doc_tracking.id_track')
                 ->orderBy('doc_tracking.id_track', 'desc')
                 ->get();
@@ -106,6 +108,7 @@ class DocTrackingController extends Controller
                     ->join('detail_tracking_sisa','detail_tracking_sisa.id_track','=','doc_tracking.id_track')
                     ->where('doc_tracking.status', 1)
                     ->whereIn('detail_tracking.status', [2,3])
+                    ->where('created_by',Session::get('id'))
                     ->groupBy('doc_tracking.id_track')
                     ->orderBy('doc_tracking.id_track', 'desc')
                     ->get();
@@ -115,6 +118,7 @@ class DocTrackingController extends Controller
                     ->join('port_of_destination', 'port_of_destination.id', '=', 'doc_tracking.id_pod')
                     ->join('purchase_orders', 'purchase_orders.po_muat', '=', 'doc_tracking.no_po')
                     ->where('doc_tracking.status', 1)
+                    ->where('created_by',Session::get('id'))
                     ->groupBy('doc_tracking.id_track')
                     ->orderBy('doc_tracking.id_track', 'desc')
                     ->get();
@@ -180,7 +184,7 @@ class DocTrackingController extends Controller
                     ->join('purchase_orders', 'purchase_orders.po_muat', '=', 'doc_tracking.no_po')
                     ->where('doc_tracking.status',1)
                     ->get();                    
-        $cek = DocTracking::where('status',1)->get();
+        $cek = DocTracking::where('status',1)->where('created_by',Session::get('id'))->get();
         $tracksisa = DetailTrackingSisa::select('id_track','tipe','qty_tonase_sisa')->get();
         $title = 'Adhipramana Bahari Perkasa';
         $breadcrumb = 'This Breadcrumb';

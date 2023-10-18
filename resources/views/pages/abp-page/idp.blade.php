@@ -177,8 +177,8 @@
                                             <td class="text-center">{!! $tdp->status == 2 ? '<span class="shadow-none badge badge-success">Approved</span>' : ($tdp->status == 1 ? '<span class="shadow-none badge badge-danger">Pending</span>' : '') !!}
                                             </td>
                                             <td class="text-center">
-                                                <a href="#modalIDPcur-{{ $tdp->id_track }}" class="btn btn-outline-primary bs-tooltip me-2" data-bs-toggle="modal" data-placement="top" title="Invoice Curah">Curah</a>
-                                                <a href="#modalIDPcont-{{ $tdp->id_track }}" class="btn btn-outline-primary bs-tooltip me-2" data-bs-toggle="modal" data-placement="top" title="Invoice Container">Container</a>
+                                                <a href="#modalIDPcur-{{ $tdp->id_invoice_dp }}" class="btn btn-outline-primary bs-tooltip me-2" data-bs-toggle="modal" data-placement="top" title="Invoice Curah">Curah</a>
+                                                <a href="#modalIDPcont-{{ $tdp->id_invoice_dp }}" class="btn btn-outline-primary bs-tooltip me-2" data-bs-toggle="modal" data-placement="top" title="Invoice Container">Container</a>
                                                 {!! $tdp->status == 1 ? '<a href="'. route('invoice-dp.approve', ['id_invoice_dp' => $tdp->id_invoice_dp]) .'" class="btn btn-outline-primary bs-tooltip me-2" id="approve-link" data-bs-toggle="tooltip" data-bs-placement="top" title="Approve" data-original-title="Approve">Approve</a>' : ($tdp->status == 2 ? '':'') !!}
                                                 {!! $tdp->status == 2 ? '<a href="'. route('invoice-dp.print',['id_invoice_dp'=>$tdp->id_invoice_dp]).'" class="btn btn-outline-primary bs-tooltip me-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Print" data-original-title="Print">Print</a>' : ($tdp->status == 1 ? '':'') !!}
                                                 <a href="{!!route('invoice-dp.print',['id_invoice_dp'=>$tdp->id_invoice_dp])!!}" class="btn btn-outline-primary bs-tooltip me-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Detail" data-original-title="Detail">Detail</a>
@@ -198,7 +198,7 @@
             </div>
         </div>
         @foreach ($invdp as $tdp)
-        <div class="modal fade bd-example-modal-xl" id="modalIDPcur-{{ $tdp->id_track }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal fade bd-example-modal-xl" id="modalIDPcur-{{ $tdp->id_invoice_dp }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-xl" role="document">
                 <div class="modal-content">
                         <div class="modal-header">
@@ -325,7 +325,7 @@
                 </div>
             </div>
         </div>
-        <div class="modal fade bd-example-modal-xl" id="modalIDPcont-{{ $tdp->id_track }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal fade bd-example-modal-xl" id="modalIDPcont-{{ $tdp->id_invoice_dp }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-xl" role="document">
                 <div class="modal-content">
                         <div class="modal-header">
@@ -552,7 +552,7 @@
                                     $('#tgl_muat').empty();
                                     if (response.length > 0) {
                                         for (var i=0; i<response.length; i++) {
-                                            $('input[name=ttdb]').val(response[i].total_muat);
+                                            $('input[name=ttdb]').val(parseFloat(response[i].total_muat).toFixed(0));
                                             $('input[name=hrg_freight]').val(formatter.format(response[i].oa_kpl_kayu).replace('Rp', ''));
                                             $('input[name=tgl_muat]').val(response[i].tgl_muat)
                                             var hrg_freight = response[i].oa_kpl_kayu;
@@ -594,7 +594,7 @@
                                     $('#tgl_muatcont').empty();
                                     if (response.length > 0) {
                                         for (var i=0; i<response.length; i++) {
-                                            $('input[name=ttdbcont]').val(response[i].total_muat);
+                                            $('input[name=ttdbcont]').val(parseFloat(response[i].total_muat).toFixed(0));
                                             $('input[name=hrg_freightcont]').val(formatter.format(response[i].oa_container).replace('Rp', ''));
                                             $('input[name=tgl_muatcont]').val(response[i].tgl_muat)
                                             var hrg_freight = response[i].oa_container;

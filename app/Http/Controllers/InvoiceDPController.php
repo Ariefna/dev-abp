@@ -46,6 +46,7 @@ class InvoiceDPController extends Controller
                 ->where('invoice_dp.status','=','1')
                 ->orWhere('invoice_dp.status','=','2')
                 ->get();
+                // dd($invdp);
         $subtotal = DetailInvoiceDP::select('id_track')
                 ->selectRaw('SUM(total_harga) as sub')
                 ->where('tipe', 'Curah')
@@ -110,8 +111,18 @@ class InvoiceDPController extends Controller
     }
 
     public function getDetailPO($id_track) {
+        $get = DocTracking::select('*','invoice_dp.id_track', 'doc_tracking.no_po')
+                ->join('detail_tracking', 'doc_tracking.id_track', '=', 'detail_tracking.id_track')
+                ->join('purchase_orders','purchase_orders.po_muat','=','doc_tracking.no_po')
+                ->join('detail_p_h_s', 'purchase_orders.id_detail_ph', '=', 'detail_p_h_s.id_detail_ph')
+                ->join('invoice_dp','invoice_dp.id_track','=','doc_tracking.id_track')
+                ->whereNull('detail_tracking.no_container')
+                ->whereIn('doc_tracking.status', [2, 3])
+                ->whereIn('detail_tracking.status', [2, 3])
+                ->whereRaw('CONCAT(doc_tracking.no_po, "(", DATE_FORMAT(detail_tracking.tgl_muat, "%e-%M-%Y"), ")") = ?', [$id_track])
+                ->count();
         $query = DocTracking::select('*','invoice_dp.id_track', 'doc_tracking.no_po')
-                ->selectRaw('SUM(detail_tracking.qty_tonase) as total_muat')
+                ->selectRaw('SUM(detail_tracking.qty_tonase) / '.$get.' as total_muat')
                 ->selectRaw("DATE_FORMAT(detail_tracking.tgl_muat, '%e-%M-%Y') as formatted_tgl_muat")
                 ->join('detail_tracking', 'doc_tracking.id_track', '=', 'detail_tracking.id_track')
                 ->join('purchase_orders','purchase_orders.po_muat','=','doc_tracking.no_po')
@@ -127,8 +138,18 @@ class InvoiceDPController extends Controller
     }
 
     public function getDetailPOCont($id_track) {
+        $get = DocTracking::select('*','invoice_dp.id_track', 'doc_tracking.no_po')
+                ->join('detail_tracking', 'doc_tracking.id_track', '=', 'detail_tracking.id_track')
+                ->join('purchase_orders','purchase_orders.po_muat','=','doc_tracking.no_po')
+                ->join('detail_p_h_s', 'purchase_orders.id_detail_ph', '=', 'detail_p_h_s.id_detail_ph')
+                ->join('invoice_dp','invoice_dp.id_track','=','doc_tracking.id_track')
+                ->whereNull('detail_tracking.no_container')
+                ->whereIn('doc_tracking.status', [2, 3])
+                ->whereIn('detail_tracking.status', [2, 3])
+                ->whereRaw('CONCAT(doc_tracking.no_po, "(", DATE_FORMAT(detail_tracking.tgl_muat, "%e-%M-%Y"), ")") = ?', [$id_track])
+                ->count();
         $query = DocTracking::select('*','invoice_dp.id_track', 'doc_tracking.no_po')
-                ->selectRaw('detail_tracking.qty_tonase as total_muat')
+                ->selectRaw('SUM(detail_tracking.qty_tonase) / '.$get.' as total_muat')
                 ->selectRaw("DATE_FORMAT(detail_tracking.tgl_muat, '%e-%M-%Y') as formatted_tgl_muat")
                 ->join('detail_tracking', 'doc_tracking.id_track', '=', 'detail_tracking.id_track')
                 ->join('purchase_orders','purchase_orders.po_muat','=','doc_tracking.no_po')
@@ -512,7 +533,7 @@ class InvoiceDPController extends Controller
 
             foreach ($totalTonasePerNoPO as $no_po => $value) {
                 // echo "no_po: $no_po, total_tonase: $total_tonase\n";
-                $value['name'] = 'FREIGHT PO '.$no_po.' ('.number_format($value['total_tonase'], 0, ',', '.').' KG'.' X '.'Rp. '.number_format($value['harga_brg'], 0, ',', '.').')';
+                $value['name'] = 'FREIGHT PO '.$value['no_po'].' ('.number_format($value['total_tonase'], 0, ',', '.').' KG'.' X '.'Rp. '.number_format($value['harga_brg'], 0, ',', '.').')';
                 $value['total_tonase'] = (string)$value['total_tonase'];
                 array_push($data['description'], $value);
             }

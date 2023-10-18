@@ -40,7 +40,7 @@ class AuthController extends Controller
                 ->pluck('nama_action')
                 ->toArray();
             Session::put('nama_action', $nama_action);
-
+            Session::put('id',$user->id);
             Session::put('nama', $user->name);
             if ($user->role == '0') {
                 Session::put('role', 'admin');

@@ -52,7 +52,6 @@
     </div>
     <!-- /BREADCRUMB -->        
     <div class="row layout-top-spacing">
-
         {{-- @if ($details == 0 && $trackzero->count() == 0 || $trackzero->count() > 0)  --}}
         @if ($cek->where('status', 1)->count() > 0)
         <div id="alertIcon" class="col-lg-12 mb-2">
