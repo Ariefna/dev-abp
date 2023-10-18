@@ -64,11 +64,22 @@
                 <div class="widget-content widget-content-area" style="padding: 1.5%;">
                     <form class="row g-3 needs-validation" action="{{ route('invoice-pelunasan.store') }}"  method="POST" enctype="multipart/form-data" novalidate>
                         @csrf
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <label for="validationCustom01" class="form-label">Invoice Date</label>
                             <input name="tgl_inv_dp" id="basicFlatpickr" value="2022-09-04" class="form-control flatpickr flatpickr-input active" type="text" placeholder="Select Date..">
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
+                            <label for="validationCustom01" class="form-label">Tipe Invoice</label>
+                            <select class="form-select" name="cb_tipe_inv" id="cb_tipe_inv" required>
+                                <option selected disabled value="">Pilih...</option>
+                                <option value="1">Invoice dengan DP</option>
+                                <option value="2">Invoice tanpa DP</option>
+                            </select>
+                            <div class="invalid-feedback">
+                                Pilih tipe invoice
+                            </div>
+                        </div>                        
+                        <div class="col-md-3">
                             <label for="validationCustom01" class="form-label">No PO Muat</label>
                             <select class="form-select" name="cb_po" id="cb_po" required>
                                 <option selected disabled value="">Pilih...</option>
@@ -79,8 +90,8 @@
                             <div class="invalid-feedback">
                                 No PO Muat tidak boleh kosong
                             </div>
-                        </div>                                        
-                        <div class="col-md-4">
+                        </div>
+                        <div class="col-md-3">
                             <label for="validationCustom01" class="form-label">Invoice No</label>
                             <input name="invoice_no" type="text" class="form-control" id="invoice_no" placeholder="Autofill no invoice dp terakhir dari po + 1" readonly>
                             <div class="invalid-feedback">
@@ -170,8 +181,13 @@
                                             <td>{{ $tdp->rinci_tipe }}</td>
                                             <td class="text-center"><span class="shadow-none badge badge-danger">Pending</span></td>
                                             <td class="text-center">
-                                                <a href="#modalInvPel-{{ $tdp->id_track }}" class="bs-tooltip"  data-bs-toggle="modal" data-bs-placement="top" title="Tambah Detail" data-original-title="Tambah Detail"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus-circle"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg></a>
-                                                <a href="javascript:void(0);" class="bs-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Print" data-original-title="Print"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-printer"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg></a>
+                                                <a href="#modalIPLcur-{{ $tdp->id_track }}" class="bs-tooltip"  data-bs-toggle="modal" data-bs-placement="top" title="Tambah Detail" data-original-title="Tambah Detail"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus-circle"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg></a>
+                                                <a href="javascript:void(0);" class="bs-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Detail" data-original-title="Print"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg></a>
+                                                <a href="javascript:void(0);" class="bs-tooltip" data-bs-toggle="modal" data-bs-placement="top" title="Delete" data-original-title="Delete"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></a>
+                                                <div class="p-1"></div>
+                                                <a href="javascript:void(0);" class="bs-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Print Tonase Dooring" data-original-title="Print"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-printer"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg></a>
+                                                <a href="javascript:void(0);" class="bs-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Print Timbang Dooring" data-original-title="Print"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-printer"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg></a>
+                                                <a href="javascript:void(0);" class="bs-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Print Real Dooring" data-original-title="Print"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-printer"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg></a>
                                             </td>
                                         </tr>
                                         @endforeach
@@ -184,7 +200,7 @@
             </div>
         </div>
         @foreach ($invdp as $tdp)
-        <div class="modal fade bd-example-modal-xl" id="modalInvPel-{{ $tdp->id_track }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal fade bd-example-modal-xl" id="modalIPLcur-{{ $tdp->id_track }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-xl" role="document">
                 <div class="modal-content">
                     {{-- <div class="modal-body"> --}}
@@ -194,20 +210,46 @@
                         <div class="modal-body">
                             <form name="modal-tracking-ada" class="row g-3 needs-validation" action=""  method="POST" enctype="multipart/form-data" novalidate>
                                 @csrf
-                                <input type="text" name="id_track_i" id="id_track_i" value="{{ $tdp->id_track }}">
-                                <div class="col-md-3">
+                                <input type="hidden" name="id_track_i" id="id_track_i" value="{{ $tdp->id_track }}">
+                                <div class="col-md-6">
+                                    <label for="validationCustom04" class="form-label">Tipe Kapal</label>
+                                    <select class="form-select" name="cb_kapal" id="cb_kapal" required>
+                                        <option selected disabled value="">Pilih...</option>
+                                        <option value="">Curah</option>
+                                        <option value="">Container</option>
+                                    </select>
+                                    <div class="invalid-feedback">
+                                        Pilih Tipe Kapal
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
                                     <label for="validationCustom04" class="form-label">PO Muat</label>
                                     <select class="form-select" name="cb_bypo" id="cb_bypo" required>
                                         <option selected disabled value="">Pilih...</option>
+                                        <option value="">Contoh 232002101 (estate dari dooring)</option>
                                     </select>
                                     <div class="invalid-feedback">
                                         Pilih PO Muat
                                     </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <label for="notAllowCont" class="form-label">Total Tonase by Date</label>
+                                </div>                                
+                                <div class="col-md-4">
+                                    <label for="notAllowCont" class="form-label">Total Tonase Dooring</label>
                                     <div class="input-group">
                                         <input name="ttdb" step="any" min="0" id="ttdb" type="number" class="form-control qty_cont" required>
+                                        <span class="input-group-text" id="inputGroupPrepend">KG</span>
+                                    </div>     
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="notAllowCont" class="form-label">Total Tonase Timbang Dooring</label>
+                                    <div class="input-group">
+                                        <input name="hrg_freight" step="any" min="0" id="hrg_freight" type="number" class="form-control qty_cont" required>
+                                        <span class="input-group-text" id="inputGroupPrepend">KG</span>
+                                    </div>     
+                                </div>                                
+                                <div class="col-md-4">
+                                    <label for="notAllowCont" class="form-label">Total Tonase Real Dooring</label>
+                                    <div class="input-group">
+                                        <input name="total_harga" min="0" id="total_harga" type="text" class="form-control" required>
                                         <span class="input-group-text" id="inputGroupPrepend">KG</span>
                                     </div>     
                                 </div>
@@ -225,20 +267,6 @@
                                         <input name="total_harga" min="0" id="total_harga" type="text" class="form-control" required>
                                     </div>     
                                 </div>                                
-                                <div class="col-md-2">
-                                    <label for="notAllowCont" class="form-label">Prosentase DP</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text" id="inputGroupPrepend">%</span>
-                                        <input name="qty_tonase" step="any" min="0" id="qty_cont" type="number" class="form-control qty_cont" required>
-                                    </div>     
-                                </div>
-                                <div class="col-md-4">
-                                    <label for="notAllowCont" class="form-label">Total DP</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text" id="inputGroupPrepend">Rp</span>
-                                        <input name="qty_tonase" step="any" min="0" id="qty_cont" type="number" class="form-control qty_cont" required>
-                                    </div>     
-                                </div>
                                 <div class="col-md-2">
                                     <label for="notAllowCont" class="form-label">Prosentase PPn</label>
                                     <div class="input-group">
@@ -259,7 +287,7 @@
                                 </div>
                             </form>
                         </div>
-                        <div id="basic" class="col-lg-12 col-sm-12 col-12 layout-spacing mx-auto">
+                        {{-- <div id="basic" class="col-lg-12 col-sm-12 col-12 layout-spacing mx-auto">
                             <div class="statbox widget box box-shadow">
                                 <div class="widget-header">                                
                                     <div class="row">
@@ -299,7 +327,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
                     {{-- </div> --}}
                 </div>
             </div>
@@ -429,75 +457,60 @@
                     var id_track = $("#id_track_i").val();
 
                     // Send an AJAX request to fetch options based on id_track
-                    $.get("/horizontal-dark-menu/finance/invoice-dp/dp/getOptionsPO/" + id_track, function (data) {
-                        // Populate the select options with the retrieved data
-                        var select = $("#cb_bypo");
-                        select.empty(); // Clear existing options
-                        select.append($('<option>', {
-                            value: '',
-                            text: 'Pilih...',
-                            disabled: true,
-                            selected: true
-                        }));
+                    // $.get("/horizontal-dark-menu/finance/invoice-dp/dp/getOptionsPO/" + id_track, function (data) {
+                    //     var select = $("#cb_bypo");
+                    //     select.empty(); 
+                    //     select.append($('<option>', {
+                    //         value: '',
+                    //         text: 'Pilih...',
+                    //         disabled: true,
+                    //         selected: true
+                    //     }));
 
-                        // Loop through the data and append options to the select
-                        $.each(data, function (key, value) {
-                            // var text = (value.no_container === null) ? value.oa_kpl_kayu : value.oa_container;
-                            select.append($('<option>', {
-                                value: key.id_track,
-                                // text: value.no_po+' ('+value.formatted_tgl_muat+')'+value.oa_kpl_kayu+value.oa_container+value.total_muat
-                                text: value.no_po + '(' + value.formatted_tgl_muat + ')'
-                            }));
-                        });
-                    });
+                    //     $.each(data, function (key, value) {
+                    //         select.append($('<option>', {
+                    //             value: key.id_track,
+                    //             text: value.no_po + '(' + value.formatted_tgl_muat + ')'
+                    //         }));
+                    //     });
+                    // });
 
-                    $('#cb_bypo').change(function() {
-                        var selectedId = $(this).val();
-                        var url = "{{ route('getDetailPO', [':id_track']) }}"
-                                .replace(':id_track', selectedId);
-                        if (selectedId !== '') {
-                            $.ajax({
-                                url: url,
-                                type: 'GET',
-                                dataType: 'json',
-                                success: function(response) {
-                                    var data = response[0];
-                                    $("#ttdb").empty();
-                                    $("#hrg_freight").empty();
-                                    if (response.length > 0) {
-                                        for (var i=0; i<response.length; i++) {
-                                            var text = (response[i].no_container === null) ? response[i].oa_kpl_kayu : response[i].oa_container;
-                                            $('#ttdb').val(response[i].total_muat);
-                                            $('#hrg_freight').val(text);
-                                            var muat = parseFloat($('#ttdb').val());
-                                            var harga = parseFloat($('#hrg_freight').val());
-                                            var total = harga * muat;
-                                            $('#total_harga').val(formatter.format(total).replace('Rp', ''));
-                                        }
-                                    }else{
-                                        console.log("no data");
-                                    }
-                                },
-                                error: function(xhr, status, error) {
-                                    console.log("AJAX Error: " + error);
-                                }
-                            });
-                        } else {
-                            $('#ttdb').val('');
-                            $('#hrg_freight').val('');
-                        }
-                    });
-                    // function updateValues() {
-                    //     var ttdb = parseFloat($('#ttdb').val()) || 0; // Parse float or default to 0
-                    //     var hrg_freight = parseFloat($('#hrg_freight').val()) || 0; // Parse float or default to 0
-                    //     var total_harga = ttdb * hrg_freight;
-
-                    //     $('#total_harga').val(total_harga.toFixed(2)); // Display total_harga with two decimal places
-                    //     console.log(total_harga);
-                    // }
-                    // updateValues();
-
-                    // $('#ttdb, #hrg_freight').on('input', updateValues);
+                    // $('#cb_bypo').change(function() {
+                    //     var selectedId = $(this).val();
+                    //     var url = "{{ route('getDetailPO', [':id_track']) }}"
+                    //             .replace(':id_track', selectedId);
+                    //     if (selectedId !== '') {
+                    //         $.ajax({
+                    //             url: url,
+                    //             type: 'GET',
+                    //             dataType: 'json',
+                    //             success: function(response) {
+                    //                 var data = response[0];
+                    //                 $("#ttdb").empty();
+                    //                 $("#hrg_freight").empty();
+                    //                 if (response.length > 0) {
+                    //                     for (var i=0; i<response.length; i++) {
+                    //                         var text = (response[i].no_container === null) ? response[i].oa_kpl_kayu : response[i].oa_container;
+                    //                         $('#ttdb').val(response[i].total_muat);
+                    //                         $('#hrg_freight').val(text);
+                    //                         var muat = parseFloat($('#ttdb').val());
+                    //                         var harga = parseFloat($('#hrg_freight').val());
+                    //                         var total = harga * muat;
+                    //                         $('#total_harga').val(formatter.format(total).replace('Rp', ''));
+                    //                     }
+                    //                 }else{
+                    //                     console.log("no data");
+                    //                 }
+                    //             },
+                    //             error: function(xhr, status, error) {
+                    //                 console.log("AJAX Error: " + error);
+                    //             }
+                    //         });
+                    //     } else {
+                    //         $('#ttdb').val('');
+                    //         $('#hrg_freight').val('');
+                    //     }
+                    // });
             });
         </script>
         <script>
