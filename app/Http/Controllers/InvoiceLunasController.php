@@ -197,12 +197,12 @@ class InvoiceLunasController extends Controller
 
     public function store(Request $request)
     {
-        if ($request->cb_tipe_inv == 1) {
+        // if ($request->cb_tipe_inv == 1) {
             $invoices = InvoiceDp::join('doc_dooring', 'doc_dooring.id_track', '=', 'invoice_dp.id_track')
                 ->where('id_dooring', $request->cb_po)->where('invoice_dp.status', '=', '2')
                 ->select('invoice_dp.id_invoice_dp', 'invoice_dp.id_track')
                 ->first();
-        }
+        // }
         $iddooring = $request->cb_po;
         $currentYear = date('Y');
         $currentMonth = date('m');
