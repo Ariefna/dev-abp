@@ -259,6 +259,7 @@ class InvoiceLunasController extends Controller
                 'terms' => $request->terms,
                 'tipe_invoice' => $request->cb_tipe_inv,
                 'id_invoice_dp' => $request->cb_tipe_inv == 1 ? $invoices->id_invoice_dp : 0,
+                'id_dooring' => $iddooring,
                 'total_invoice' => 0,
                 'status' => '1'
             ]);
