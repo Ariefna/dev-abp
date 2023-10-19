@@ -222,54 +222,39 @@
                                     <label for="validationCustom04" class="form-label">PO Muat</label>
                                     <select class="form-select" name="cb_bypo" id="cb_bypo" required>
                                         <option selected disabled value="">Pilih...</option>
-                                        <!-- <option value="">Contoh 232002101 (estate dari dooring)</option> -->
                                     </select>
                                     <div class="invalid-feedback">
                                         Pilih PO Muat
                                     </div>
                                 </div>                                
-                                <div class="col-md-4">
+                                <div class="col-md-6">
                                     <label for="notAllowCont" class="form-label">Total Tonase Dooring</label>
                                     <div class="input-group">
                                         <input name="ttdb" step="any" min="0" id="ttdb" type="number" class="form-control qty_cont" required readonly>
                                         <span class="input-group-text" id="inputGroupPrepend">KG</span>
                                     </div>     
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-6">
                                     <label for="notAllowCont" class="form-label">Total Tonase Timbang Dooring</label>
                                     <div class="input-group">
                                         <input name="tttd" step="any" min="0" id="tttd" type="number" class="form-control qty_cont" required readonly>
                                         <span class="input-group-text" id="inputGroupPrepend">KG</span>
                                     </div>     
                                 </div>                                
-                                <div class="col-md-4">
-                                    <label for="notAllowCont" class="form-label">Total Tonase Real Dooring</label>
-                                    <div class="input-group">
-                                        <input name="ttrd" min="0" id="ttrd" type="text" class="form-control" required readonly>
-                                        <span class="input-group-text" id="inputGroupPrepend">KG</span>
-                                    </div>     
-                                </div>                              
-                                <div class="col-md-4">
+                                <div class="col-md-6">
                                     <label for="notAllowCont" class="form-label">Total Harga Dooring</label>
                                     <div class="input-group">
                                         <span class="input-group-text" id="inputGroupPrepend">Rp</span>
                                         <input name="TotalHargaDooring" min="0" id="TotalHargaDooring" type="text" class="form-control" required readonly>
                                     </div>     
                                 </div>                            
-                                <div class="col-md-4">
+                                <div class="col-md-6">
                                     <label for="notAllowCont" class="form-label">Total Harga Timbang Dooring</label>
                                     <div class="input-group">
                                         <span class="input-group-text" id="inputGroupPrepend">Rp</span>
                                         <input name="TotalHargaTimbangDooring" min="0" id="TotalHargaTimbangDooring" type="text" class="form-control" required readonly>
                                     </div>     
-                                </div>                            
-                                <div class="col-md-4">
-                                    <label for="notAllowCont" class="form-label">Total Harga Real Dooring</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text" id="inputGroupPrepend">Rp</span>
-                                        <input name="TotalHargaRealDooring" min="0" id="TotalHargaRealDooring" type="text" class="form-control" required readonly>
-                                    </div>     
-                                </div>   
+                                </div>      
                                 
                                 <div class="col-md-4">
                                     <label for="notAllowCont" class="form-label">Harga Freight</label>
@@ -746,15 +731,13 @@
             // data: { selectedValue: selectedValue },
             success: function(data) {
                 // Update the input fields with the received data
-                // $('#ttdb').val(data.ttdb);
-                // $('#hrg_freight').val(data.hrg_freight);
-                $('#ttdb').val(0);
-                $('#hrg_freight').val(0);
-                $('#tttd').val(0);
-                $('#ttrd').val(0);
-                $('#TotalHargaDooring').val(0);
-                $('#TotalHargaTimbangDooring').val(0);
-                $('#TotalHargaRealDooring').val(0);
+                $('#ttdb').val(data.total_qty_tonase);
+                $('#hrg_freight').val(data.susut);
+                $('#tttd').val(data.total_qty_timbang);
+                $('#ttrd').val(data.qty_tonase_real);
+                $('#TotalHargaDooring').val(data.total_qty_tonase*data.susut);
+                $('#TotalHargaTimbangDooring').val(data.total_qty_timbang*data.susut);
+                $('#TotalHargaRealDooring').val(data.qty_tonase_real*data.susut);
                 
                 
                 
@@ -813,7 +796,7 @@
                     // Add new options from the response
                     cbPo.append('<option selected disabled value="">Pilih...</option>');
                     $.each(response, function(index, value) {
-                        cbPo.append('<option value="' + value.id_track + '">' + value.no_po + '</option>');
+                        cbPo.append('<option value="' + value.id_dooring + '">' + value.no_po + '</option>');
                     });
                 },
                 error: function(error) {
