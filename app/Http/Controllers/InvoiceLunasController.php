@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\DetailInvoicePel;
+use App\DetailInvoicePel as AppDetailInvoicePel;
+use App\Models\DetailInvoicePel;
 use App\Models\DetailPH;
 use App\Models\PortOfLoading;
 use App\Models\PortOfDestination;
@@ -79,29 +80,39 @@ class InvoiceLunasController extends Controller
         $breadcrumb = 'This Breadcrumb';
         return view('pages.abp-page.ipel', compact('title', 'breadcrumb', 'pomuat', 'bank', 'invdp'));
     }
-
-    public function detailstore(Request $request)
+    
+    public function delete($id)
     {
-        DetailInvoicePel::create([
-            'id_invoice_pel' => $request->id_invoice_pel,
-            'estate' => $request->estate,
-            'total_tonase_dooring' => $request->total_tonase_dooring,
-            'total_tonase_timbang' => $request->total_tonase_timbang,
-            'total_tonase_real' => $request->total_tonase_real,
-            'total_harga_dooring' => $request->total_harga_dooring,
-            'total_harga_timbang' => $request->total_harga_timbang,
-            'total_harga_real' => $request->total_harga_real,
-            'harga_brg' => $request->harga_brg,
-            'prosentase_ppn' => $request->prosentase_ppn,
-            'total_ppn' => $request->total_ppn,
-            'tipe' => $request->tipe,
-            'status' => $request->status,
+        InvoicePelunasan::where('id_invoice_dp', $id)->update([
+            'status' => '0'
         ]);
         return redirect()->back();
     }
-
-    // public function cbkapal($cb_kapal, Request $request)
-
+    public function detailstore(Request $request)
+    {
+        $purchase = DB::table('purchase_orders as po')
+    ->select('dd.id_dooring', 'dt.id_track', 'po.id_po', 'dphs.oa_kpl_kayu', 'dphs.oa_container')
+    ->join('detail_p_h_s as dphs', 'po.id_detail_ph', '=', 'dphs.id_detail_ph')
+    ->join('doc_tracking as dt', 'dt.no_po', '=', 'po.po_muat')
+    ->join('doc_dooring as dd', 'dd.id_track', '=', 'dt.id_track')
+    ->where('dd.id_dooring', $request->cb_bypo)
+    ->first();
+    $doring = DetailDooring::select('estate')->first();
+    DetailInvoicePel::create([
+            'estate' => $doring->estate,
+            'total_tonase_dooring' => $request->ttdb,
+            'total_tonase_timbang' => $request->tttd,
+            'total_harga_dooring' => $request->TotalHargaDooring,
+            'total_harga_timbang' => $request->TotalHargaTimbangDooring,
+            'total_harga_real' => 0,
+            'harga_brg' => $request->cb_kapal==1?$purchase->oa_container:$purchase->oa_kpl_kayu,
+            'prosentase_ppn' => $request->prosentaseppn,
+            'total_ppn' => $request->totalppn,
+            'tipe' => $request->cb_kapal,
+            'status' => 1,
+        ]);
+        return redirect()->back();
+    }
     public function calculate($dooringId)
     {
         $details = DetailDooring::selectRaw('SUM(qty_tonase) as total_qty_tonase')
@@ -158,7 +169,7 @@ class InvoiceLunasController extends Controller
         } else {
             $data = DocTracking::select('id_dooring', 'no_po')
                 ->join('doc_dooring', 'doc_dooring.id_track', '=', 'doc_tracking.id_track')
-                ->whereNotIn('id_track', function ($query) {
+                ->whereNotIn('doc_tracking.id_track', function ($query) {
                     $query->select('id_track')->from('invoice_dp');
                 })->get();
         }
