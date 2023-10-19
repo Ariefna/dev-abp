@@ -295,6 +295,7 @@ class InvoiceDPController extends Controller
             $newCounter = $cekrow<=1 ? $cekrow+1 : 1;
             $newInvoiceNumber = "ABP/{$currentYear}/{$currentMonth}/" .
                 str_pad($newCounter, 4, '0', STR_PAD_LEFT) . '-' . $newStatus;
+                var_dump( $newInvoiceNumber);
             InvoiceDP::create([
                 'id_bank'     => $request->cb_bank,
                 'id_track'     => $request->cb_po,
@@ -321,9 +322,6 @@ class InvoiceDPController extends Controller
                 $a = 1;
                 $newStatus = $existingStatus + 1;
             }
-
-          
-            // dd ($a);
             $newInvoiceNumber = "ABP/{$currentYear}/{$currentMonth}/" .
                 str_pad($newCounter, 4, '0', STR_PAD_LEFT) . '-' . $newStatus;
             InvoiceDP::create([
