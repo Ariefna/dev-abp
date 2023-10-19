@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\DetailInvoicePel;
 use App\Models\DetailPH;
 use App\Models\PortOfLoading;
 use App\Models\PortOfDestination;
@@ -22,6 +23,7 @@ use App\Models\Bank;
 use App\Http\Controllers\DB;
 use App\Models\DetailDooring;
 use Illuminate\Http\Request;
+use App\Models\DetailInvoiceDP;
 
 class InvoiceLunasController extends Controller
 {
@@ -77,6 +79,26 @@ class InvoiceLunasController extends Controller
         $breadcrumb = 'This Breadcrumb';
         return view('pages.abp-page.ipel', compact('title', 'breadcrumb', 'pomuat', 'bank', 'invdp'));
     }
+
+    public function detailstore(Request $request)
+    {   
+        DetailInvoicePel::create([
+            'id_invoice_pel' => $request->id_invoice_pel,
+            'estate' => $request->estate,
+            'total_tonase_dooring' => $request->total_tonase_dooring,
+            'total_tonase_timbang' => $request->total_tonase_timbang,
+            'total_tonase_real' => $request->total_tonase_real,
+            'total_harga_dooring' => $request->total_harga_dooring,
+            'total_harga_timbang' => $request->total_harga_timbang,
+            'total_harga_real' => $request->total_harga_real,
+            'harga_brg' => $request->harga_brg,
+            'prosentase_ppn' => $request->prosentase_ppn,
+            'total_ppn' => $request->total_ppn,
+            'tipe' => $request->tipe,
+            'status' => $request->status,
+        ]);
+        return redirect()->back(); 
+    }
     
     // public function cbkapal($cb_kapal, Request $request)
     
@@ -123,11 +145,15 @@ class InvoiceLunasController extends Controller
     public function tipeinv($tipe_inv)
     {
         if ($tipe_inv == 1) {
-            $data = DocTracking::select('id_track', 'no_po')->whereIn('id_track', function($query) {
+            $data = DocTracking::select('id_dooring', 'no_po')
+            ->join('doc_dooring', 'doc_dooring.id_track', '=', 'doc_tracking.id_track')
+            ->whereIn('id_track', function($query) {
                 $query->select('id_track')->from('invoice_dp');
             })->get();
         }else {
-            $data = DocTracking::select('id_track', 'no_po')->whereNotIn('id_track', function($query) {
+            $data = DocTracking::select('id_dooring', 'no_po')
+            ->join('doc_dooring', 'doc_dooring.id_track', '=', 'doc_tracking.id_track')
+            ->whereNotIn('id_track', function($query) {
                 $query->select('id_track')->from('invoice_dp');
             })->get();
         }
@@ -186,18 +212,18 @@ class InvoiceLunasController extends Controller
 //             InvoicePelunasan::create($data);
 //         }
 if ($request->cb_tipe_inv == 1) {
-    $invoices = InvoiceDp::where('id_track', $request->cb_po)->where('status', '=', '2')
-    ->select('id_invoice_dp')
+    $invoices = InvoiceDp::join('doc_dooring', 'doc_dooring.id_track', '=', 'invoice_dp.id_track')
+    ->where('id_dooring', $request->cb_po)->where('invoice_dp.status', '=', '2')
+    ->select('invoice_dp.id_invoice_dp','invoice_dp.id_track')
     ->first();
 }
 
-$iddooring = DocDooring::where('id_track', $request->cb_po)->where('status', '=', '3')
-    ->select('id_dooring')
-    ->first();
+$iddooring = $request->cb_po;
 $currentYear = date('Y');
         $currentMonth = date('m');
-        $cekrow = InvoiceDp::where('id_track', $request->cb_po)
-    ->whereYear('invoice_date', $currentYear)->where('status', '=', '2')
+        $cekrow = InvoiceDp::join('doc_dooring', 'doc_dooring.id_track', '=', 'invoice_dp.id_track')
+        ->where('id_dooring', $request->cb_po)->where('invoice_dp.status', '=', '2')
+    ->whereYear('invoice_date', $currentYear)
     ->count() ?? 0;
         $newCounter = 1;    
         $newStatus = 1;
@@ -208,7 +234,7 @@ $currentYear = date('Y');
                 str_pad($newCounter, 4, '0', STR_PAD_LEFT) . '-' . $newStatus;
                 InvoicePelunasan::create([
                 'id_bank'     => $request->cb_bank,
-                'id_track'     => $request->cb_po,
+                'id_track'     => $invoices->id_track,
                 'invoice_date'     => $request->tgl_inv_dp,
                 'invoice_no' => $newInvoiceNumber,
                 'tipe_job' => $request->cb_tipe,
@@ -216,7 +242,7 @@ $currentYear = date('Y');
                 'terms' => $request->terms,
                 'tipe_invoice'=>$request->cb_tipe_inv,
                 'id_invoice_dp'=>$request->cb_tipe_inv==1?$invoices->id_invoice_dp:0,
-                'id_dooring'=>$iddooring->id_dooring,
+                'id_dooring'=>$iddooring,
                 'total_invoice' => 0,
                 'status' => '1'
             ]);
@@ -240,7 +266,7 @@ $currentYear = date('Y');
                 str_pad($newCounter, 4, '0', STR_PAD_LEFT) . '-' . $newStatus;
                 InvoicePelunasan::create([
                 'id_bank'     => $request->cb_bank,
-                'id_track'     => $request->cb_po,
+                'id_track'     => $invoices->id_track,
                 'invoice_date'     => $request->tgl_inv_dp,
                 'invoice_no' => $newInvoiceNumber,
                 'tipe_job' => $request->cb_tipe,
