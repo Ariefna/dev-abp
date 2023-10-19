@@ -219,7 +219,7 @@ class InvoiceLunasController extends Controller
                 str_pad($newCounter, 4, '0', STR_PAD_LEFT) . '-' . $newStatus;
             InvoicePelunasan::create([
                 'id_bank'     => $request->cb_bank,
-                'id_track'     => $invoices->id_track,
+                'id_track'     => $invoices->id_track ?? 0,
                 'invoice_date'     => $request->tgl_inv_dp,
                 'invoice_no' => $newInvoiceNumber,
                 'tipe_job' => $request->cb_tipe,
