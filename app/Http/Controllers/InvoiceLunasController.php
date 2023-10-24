@@ -99,6 +99,7 @@ class InvoiceLunasController extends Controller
             ->first();
         $doring = DetailDooring::select('estate')->first();
         DetailInvoicePel::create([
+            'id_invoice_pel' => $request->idInvoicePel,
             'estate' => $doring->estate,
             'total_tonase_dooring' => $request->ttdb,
             'total_tonase_timbang' => $request->tttd,
