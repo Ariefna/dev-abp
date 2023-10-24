@@ -197,19 +197,14 @@ class InvoiceLunasController extends Controller
 
     public function store(Request $request)
     {
-        // if ($request->cb_tipe_inv == 1) {
             $invoices = InvoiceDp::join('doc_dooring', 'doc_dooring.id_track', '=', 'invoice_dp.id_track')
                 ->where('id_dooring', $request->cb_po)->where('invoice_dp.status', '=', '2')
                 ->select('invoice_dp.id_invoice_dp', 'invoice_dp.id_track')
                 ->first();
-        // }
         $iddooring = $request->cb_po;
         $currentYear = date('Y');
         $currentMonth = date('m');
-        $cekrow = InvoiceDp::join('doc_dooring', 'doc_dooring.id_track', '=', 'invoice_dp.id_track')
-            ->where('id_dooring', $request->cb_po)->where('invoice_dp.status', '=', '2')
-            ->whereYear('invoice_date', $currentYear)
-            ->count() ?? 0;
+        $cekrow = InvoiceDp::join('doc_dooring', 'doc_dooring.id_track', '=', 'invoice_dp.id_track')->where('id_dooring', $request->cb_po)->where('invoice_dp.status', '=', 2)->whereYear('invoice_date', $currentYear)->count();
         $newCounter = 1;
         $newStatus = 1;
         if ($cekrow == 0) {
@@ -217,6 +212,7 @@ class InvoiceLunasController extends Controller
             $newCounter = $cekrow <= 1 ? $cekrow + 1 : 1;
             $newInvoiceNumber = "ABP/{$currentYear}/{$currentMonth}/" .
                 str_pad($newCounter, 4, '0', STR_PAD_LEFT) . '-' . $newStatus;
+                die($newInvoiceNumber);
             InvoicePelunasan::create([
                 'id_bank'     => $request->cb_bank,
                 'id_track'     => $invoices->id_track ?? 0,
@@ -234,11 +230,10 @@ class InvoiceLunasController extends Controller
             return redirect()->back();
         } else {
             $latestInvoice = InvoiceDP::whereYear('invoice_date', $currentYear)
-                ->where('id_track', $request->cb_po)
+                ->where('id_track', $invoices->id_track)
                 ->where('status', '=', '2')
                 ->orderBy('id_invoice_dp', 'desc')
                 ->first();
-
             if ($latestInvoice) {
                 $parts = preg_split('/[-\/]/', $latestInvoice->invoice_no);
                 $existingCounter = intval($parts[3]);
