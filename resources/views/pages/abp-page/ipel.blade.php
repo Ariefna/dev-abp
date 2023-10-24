@@ -178,7 +178,7 @@
                                             <td>{{ $tdp->rinci_tipe }}</td>
                                             <td class="text-center"><span class="shadow-none badge badge-danger">Pending</span></td>
                                             <td class="text-center">
-                                                <a href="#modalIPLcur" data-id-track="{{$tdp->id_track }}" class="bs-tooltip"  data-bs-toggle="modal" data-bs-placement="top" title="Tambah Detail" data-original-title="Tambah Detail"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus-circle"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg></a>
+                                                <a href="#modalIPLcur" data-id-track="{{$tdp->id_track }}" data-id-invoice-pel="{{$tdp->id_invoice_pel }}" class="bs-tooltip"  data-bs-toggle="modal" data-bs-placement="top" title="Tambah Detail" data-original-title="Tambah Detail"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus-circle"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg></a>
                                                 <a href="javascript:void(0);" class="bs-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Detail" data-original-title="Print"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg></a>
                                                 <a href="/invoice-pelunasan/delete/{{ $tdp->id_track }}" class="bs-tooltip" data-bs-placement="top" title="Delete" data-original-title="Delete"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></a>
                                                 <div class="p-1"></div>
@@ -207,6 +207,8 @@
                             <form name="modal-tracking-ada" class="row g-3 needs-validation" action="{{ route('invoice-pelunasan-detail.detailstore') }}"  method="POST" enctype="multipart/form-data" novalidate>
                                 @csrf
                                 <input type="hidden" name="id_track_i" id="id_track_i" value="">
+                                <input type="hidden" name="idInvoicePel" id="idInvoicePel" value="">
+                                
                                 <div class="col-md-6">
                                     <label for="validationCustom04" class="form-label">Tipe Kapal</label>
                                     <select class="form-select" name="cb_kapal" id="cb_kapal" required>
@@ -717,9 +719,13 @@
         $('#modalIPLcur').on('show.bs.modal', function (event) {
       var button = $(event.relatedTarget); // Button that triggered the modal
       var idTrack = button.data('id-track'); // Get the data-id-track attribute from the button
+      var idInvoicePel = button.data('id-invoice-pel'); // Get the data-id-track attribute from the button
+      
 
       // Set the value of the hidden input
       $('#id_track_i').val(idTrack);
+      $('#idInvoicePel').val(idInvoicePel);
+      
     });
     $('#cb_bypo').change(function() {
         var selectedValue = $(this).val();
