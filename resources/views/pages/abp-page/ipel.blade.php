@@ -723,12 +723,12 @@
     });
     $('#cb_bypo').change(function() {
         var selectedValue = $(this).val();
-
+        var cbkapal = $('#cb_kapal').val(); // Get the value from the hidden input field
         // Make an AJAX request to fetch data based on the selected value
         $.ajax({
             url: '/horizontal-dark-menu/finance/invoice-pelunasan/calculate/'+selectedValue, // Replace with your actual route URL
             type: 'GET',
-            // data: { selectedValue: selectedValue },
+            data: { cbkapal: cbkapal },
             success: function(data) {
                 // Update the input fields with the received data
                 $('#ttdb').val(data.total_qty_tonase);
@@ -757,10 +757,10 @@
             $.ajax({
                 type: 'GET',
                 url: '/horizontal-dark-menu/finance/invoice-pelunasan/cb-kapal/'+selectedValue, // Replace with your actual endpoint URL
-                // data: { 'idtrack': idTrack },
+                data: { 'idtrack': idTrack },
                 success: function (response) {
                     // Populate the cb_bypo select field with the received data
-                    console.log(response);
+                    // console.log(response);
                     // Populate the 'cb_po' dropdown with the response data
                     var cbbypo = $('#cb_bypo');
                     cbbypo.empty(); // Clear existing options
