@@ -80,7 +80,7 @@ class InvoiceLunasController extends Controller
         $breadcrumb = 'This Breadcrumb';
         return view('pages.abp-page.ipel', compact('title', 'breadcrumb', 'pomuat', 'bank', 'invdp'));
     }
-    
+
     public function delete($id)
     {
         InvoicePelunasan::where('id_invoice_dp', $id)->update([
@@ -91,21 +91,21 @@ class InvoiceLunasController extends Controller
     public function detailstore(Request $request)
     {
         $purchase = DB::table('purchase_orders as po')
-    ->select('dd.id_dooring', 'dt.id_track', 'po.id_po', 'dphs.oa_kpl_kayu', 'dphs.oa_container')
-    ->join('detail_p_h_s as dphs', 'po.id_detail_ph', '=', 'dphs.id_detail_ph')
-    ->join('doc_tracking as dt', 'dt.no_po', '=', 'po.po_muat')
-    ->join('doc_dooring as dd', 'dd.id_track', '=', 'dt.id_track')
-    ->where('dd.id_dooring', $request->cb_bypo)
-    ->first();
-    $doring = DetailDooring::select('estate')->first();
-    DetailInvoicePel::create([
+            ->select('dd.id_dooring', 'dt.id_track', 'po.id_po', 'dphs.oa_kpl_kayu', 'dphs.oa_container')
+            ->join('detail_p_h_s as dphs', 'po.id_detail_ph', '=', 'dphs.id_detail_ph')
+            ->join('doc_tracking as dt', 'dt.no_po', '=', 'po.po_muat')
+            ->join('doc_dooring as dd', 'dd.id_track', '=', 'dt.id_track')
+            ->where('dd.id_dooring', $request->cb_bypo)
+            ->first();
+        $doring = DetailDooring::select('estate')->first();
+        DetailInvoicePel::create([
             'estate' => $doring->estate,
             'total_tonase_dooring' => $request->ttdb,
             'total_tonase_timbang' => $request->tttd,
             'total_harga_dooring' => $request->TotalHargaDooring,
             'total_harga_timbang' => $request->TotalHargaTimbangDooring,
             'total_harga_real' => 0,
-            'harga_brg' => $request->cb_kapal==1?$purchase->oa_container:$purchase->oa_kpl_kayu,
+            'harga_brg' => $request->cb_kapal == 1 ? $purchase->oa_container : $purchase->oa_kpl_kayu,
             'prosentase_ppn' => $request->prosentaseppn,
             'total_ppn' => $request->totalppn,
             'tipe' => $request->cb_kapal,
@@ -113,47 +113,68 @@ class InvoiceLunasController extends Controller
         ]);
         return redirect()->back();
     }
-    public function calculate($dooringId)
+    public function calculate($dooringId, Request $request)
     {
-        $details = DetailDooring::selectRaw('SUM(qty_tonase) as total_qty_tonase')
-            ->selectRaw('SUM(qty_timbang) as total_qty_timbang')
-            ->selectRaw('COALESCE(SUM(qty_timbang), 0) - COALESCE(SUM(qty_tonase), 0) as susut')
-            ->selectRaw('COALESCE(SUM(qty_tonase), 0) - COALESCE(SUM(qty_timbang), 0) - COALESCE(SUM(qty_tonase), 0) as qty_tonase_real')
-            ->where('id_dooring', $dooringId)
-            ->first(); // You can use "get()" if you expect multiple rows
+        // $details = DetailDooring::selectRaw('SUM(qty_tonase) as total_qty_tonase')
+        //     ->selectRaw('SUM(qty_timbang) as total_qty_timbang')
+        //     ->selectRaw('COALESCE(SUM(qty_timbang), 0) - COALESCE(SUM(qty_tonase), 0) as susut')
+        //     ->selectRaw('COALESCE(SUM(qty_tonase), 0) - COALESCE(SUM(qty_timbang), 0) - COALESCE(SUM(qty_tonase), 0) as qty_tonase_real')
+        //     ->where('id_dooring', $dooringId)
+        //     ->first();
+if ($request->cbkapal == 1) {
+    $jenis = 'Container';
+}else {
+    $jenis = 'Curah';
+}
+        $details = DB::table('doc_tracking')
+    ->join('purchase_orders', 'purchase_orders.po_muat', '=', 'doc_tracking.no_po')
+    ->join('detail_p_h_s', 'purchase_orders.id_detail_ph', '=', 'detail_p_h_s.id_detail_ph')
+    ->join('doc_dooring', 'doc_dooring.id_track', '=', 'doc_tracking.id_track')
+    ->join('detail_dooring', 'detail_dooring.id_dooring', '=', 'doc_dooring.id_dooring')
+    ->select(
+        DB::raw("CONCAT(doc_tracking.no_po, ' (', detail_dooring.estate, ')') as po_muat_estate"),
+        'detail_dooring.estate',
+        'detail_dooring.tipe',
+        DB::raw("SUM(detail_dooring.qty_tonase) as total_qty_tonase"),
+        DB::raw("SUM(detail_dooring.qty_timbang) as total_qty_timbang"),
+        'detail_p_h_s.oa_container as susut',
+        DB::raw("(detail_p_h_s.oa_container * SUM(detail_dooring.qty_tonase)) as hrg_tonase"),
+        DB::raw("(detail_p_h_s.oa_container * SUM(detail_dooring.qty_timbang)) as hrg_timbang")
+    )
+    ->where('detail_dooring.tipe', $jenis)
+    ->whereIn('doc_dooring.status', [2, 3])
+    ->whereIn('detail_dooring.status', [2, 3])
+    ->where('doc_dooring.id_dooring', $dooringId)
+    ->groupBy('detail_dooring.estate', 'doc_tracking.no_po')
+    ->first();
+
 
         // Access the calculated values with default 0
         $details->total_qty_tonase ?? 0;
         $details->total_qty_timbang ?? 0;
         $details->susut ?? 0;
-        $details->qty_tonase_real ?? 0;
         return response()->json($details);
     }
-    public function cbkapal($cb_kapal)
+    public function cbkapal($cb_kapal, Request $request)
     {
         if ($cb_kapal == 1) {
             $details = DetailDooring::join('doc_dooring as b', 'detail_dooring.id_dooring', '=', 'b.id_dooring')
                 ->join('doc_tracking as c', 'c.id_track', '=', 'b.id_track')
-                ->select('c.no_po', 'detail_dooring.id_dooring')
+                ->selectRaw("CONCAT(c.no_po, ' (', detail_dooring.estate, ')') as no_po, detail_dooring.id_dooring")
                 ->where('detail_dooring.tipe', 'Container')
                 ->where('detail_dooring.status', 3)
-                ->Groupby('c.no_po', 'detail_dooring.id_dooring')
+                ->where('b.id_track', $request->idtrack)
+                ->groupBy('c.no_po', 'detail_dooring.id_dooring')
                 ->get();
         } else {
             $details = DetailDooring::join('doc_dooring as b', 'detail_dooring.id_dooring', '=', 'b.id_dooring')
                 ->join('doc_tracking as c', 'c.id_track', '=', 'b.id_track')
-                ->select('c.no_po', 'detail_dooring.id_dooring')
-                ->where('detail_dooring.tipe', 'Container')
+                ->selectRaw("CONCAT(c.no_po, ' (', detail_dooring.estate, ')') as no_po, detail_dooring.id_dooring")
+                ->where('detail_dooring.tipe', 'Curah')
                 ->where('detail_dooring.status', 3)
-                ->Groupby('c.no_po', 'detail_dooring.id_dooring')->get();
-            //         $details = DetailDooring::join('doc_dooring as b', 'detail_dooring.id_dooring', '=', 'b.id_dooring')
-            // ->join('doc_tracking as c', 'c.id_track', '=', 'b.id_track')
-            // ->select('c.no_po', 'detail_dooring.id_dooring')
-            // ->where('detail_dooring.tipe', 'Curah')
-            // ->where('detail_dooring.status', 3)
-            // ->Groupby('c.no_po', 'detail_dooring.id_dooring')
-            // // ->where('b.id_track', $request->idtrack)
-            // ->get();
+                ->where('b.id_track', $request->idtrack)
+                ->groupBy('c.no_po', 'detail_dooring.id_dooring')
+                ->get();
         }
         return response()->json($details);
     }
@@ -197,19 +218,14 @@ class InvoiceLunasController extends Controller
 
     public function store(Request $request)
     {
-        // if ($request->cb_tipe_inv == 1) {
-            $invoices = InvoiceDp::join('doc_dooring', 'doc_dooring.id_track', '=', 'invoice_dp.id_track')
-                ->where('id_dooring', $request->cb_po)->where('invoice_dp.status', '=', '2')
-                ->select('invoice_dp.id_invoice_dp', 'invoice_dp.id_track')
-                ->first();
-        // }
+        $invoices = InvoiceDp::join('doc_dooring', 'doc_dooring.id_track', '=', 'invoice_dp.id_track')
+            ->where('id_dooring', $request->cb_po)->where('invoice_dp.status', '=', '2')
+            ->select('invoice_dp.id_invoice_dp', 'invoice_dp.id_track')
+            ->first();
         $iddooring = $request->cb_po;
         $currentYear = date('Y');
         $currentMonth = date('m');
-        $cekrow = InvoiceDp::join('doc_dooring', 'doc_dooring.id_track', '=', 'invoice_dp.id_track')
-            ->where('id_dooring', $request->cb_po)->where('invoice_dp.status', '=', '2')
-            ->whereYear('invoice_date', $currentYear)
-            ->count() ?? 0;
+        $cekrow = InvoiceDp::join('doc_dooring', 'doc_dooring.id_track', '=', 'invoice_dp.id_track')->where('id_dooring', $request->cb_po)->where('invoice_dp.status', '=', 2)->whereYear('invoice_date', $currentYear)->count();
         $newCounter = 1;
         $newStatus = 1;
         if ($cekrow == 0) {
@@ -217,6 +233,7 @@ class InvoiceLunasController extends Controller
             $newCounter = $cekrow <= 1 ? $cekrow + 1 : 1;
             $newInvoiceNumber = "ABP/{$currentYear}/{$currentMonth}/" .
                 str_pad($newCounter, 4, '0', STR_PAD_LEFT) . '-' . $newStatus;
+            die($newInvoiceNumber);
             InvoicePelunasan::create([
                 'id_bank'     => $request->cb_bank,
                 'id_track'     => $invoices->id_track ?? 0,
@@ -234,11 +251,10 @@ class InvoiceLunasController extends Controller
             return redirect()->back();
         } else {
             $latestInvoice = InvoiceDP::whereYear('invoice_date', $currentYear)
-                ->where('id_track', $request->cb_po)
+                ->where('id_track', $invoices->id_track)
                 ->where('status', '=', '2')
                 ->orderBy('id_invoice_dp', 'desc')
                 ->first();
-
             if ($latestInvoice) {
                 $parts = preg_split('/[-\/]/', $latestInvoice->invoice_no);
                 $existingCounter = intval($parts[3]);
