@@ -58,6 +58,9 @@ class InvoiceLunasController extends Controller
             ->select('doc_tracking.no_po')
             ->get();
 
+
+
+
         // return response()->json($docTrackingData);
 
         $bank = Bank::where('status', '=', '1')
@@ -76,14 +79,28 @@ class InvoiceLunasController extends Controller
         //         ->whereIn('doc_tracking.status', [2, 3])
         //         ->groupBy('detail_tracking.tgl_muat')
         //         ->get();
+        $datadetailInvoicePel = DetailInvoicePel::where('status', '=', '1')->get();
         $title = 'Adhipramana Bahari Perkasa';
         $breadcrumb = 'This Breadcrumb';
-        return view('pages.abp-page.ipel', compact('title', 'breadcrumb', 'pomuat', 'bank', 'invdp'));
+        return view('pages.abp-page.ipel', compact('title', 'breadcrumb', 'pomuat', 'bank', 'invdp', 'datadetailInvoicePel'));
     }
-
+    
+    public function detail($id)
+    {
+        $datadetail = DetailInvoicePel::where('id_invoice_pel', $id)->get();
+        return response()->json($datadetail);
+    }
+    
+    public function deletedetail($id)
+    {
+        DetailInvoicePel::where('id_detail_pel', $id)->update([
+            'status' => '0'
+        ]);
+        return redirect()->back();
+    }
     public function delete($id)
     {
-        InvoicePelunasan::where('id_invoice_dp', $id)->update([
+        InvoicePelunasan::where('id_invoice_pel', $id)->update([
             'status' => '0'
         ]);
         return redirect()->back();
@@ -108,7 +125,8 @@ class InvoiceLunasController extends Controller
             'total_harga_real' => 0,
             'harga_brg' => $request->cb_kapal == 1 ? $purchase->oa_container : $purchase->oa_kpl_kayu,
             'prosentase_ppn' => $request->prosentaseppn,
-            'total_ppn' => $request->totalppn,
+            'total_ppn_dooring' => $request->totalppndoring,
+            'total_ppn_timbang' => $request->totalppntimbang,
             'tipe' => $request->cb_kapal,
             'status' => 1,
         ]);
