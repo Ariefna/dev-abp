@@ -238,8 +238,10 @@ foreach ($prefixRouters as $prefixRouter) {
                 Route::match(['get'], '/invoice-pelunasan/cb-tipe-inv/{tipe_inv}', [\App\Http\Controllers\InvoiceLunasController::class, 'tipeinv'])->name('invoice-dp.tipeinv');
                 Route::match(['get'], '/invoice-pelunasan/cb-kapal/{cb_kapal}', [\App\Http\Controllers\InvoiceLunasController::class, 'cbkapal'])->name('invoice-dp.cbkapal');
                 Route::match(['get'], '/invoice-pelunasan/calculate/{id_track}', [\App\Http\Controllers\InvoiceLunasController::class, 'calculate'])->name('invoice-dp.calculate');
+                Route::match(['get'], '/invoice-pelunasan/detail/{id}', [\App\Http\Controllers\InvoiceLunasController::class, 'detail'])->name('invoice-dp.detail');
                 Route::match(['get', 'post'], '/invoice-pelunasan/store', [\App\Http\Controllers\InvoiceLunasController::class, 'store'])->name('invoice-pelunasan.store');
                 Route::match(['get', 'post'], '/invoice-pelunasan/delete/{id}', [\App\Http\Controllers\InvoiceLunasController::class, 'delete'])->name('invoice-pelunasan.delete');
+                Route::match(['get', 'post'], '/invoice-pelunasan/deletedetail/{id}', [\App\Http\Controllers\InvoiceLunasController::class, 'deletedetail'])->name('invoice-pelunasan.deletedetail');
                 Route::post('/invoice-pelunasan-detail/save', [\App\Http\Controllers\InvoiceLunasController::class, 'detailstore'])->name('invoice-pelunasan-detail.detailstore');
                 // Route::post('/invoice-pelunasan/store', [\App\Http\Controllers\InvoiceLunasController::class, 'store'])->name('store');
             });

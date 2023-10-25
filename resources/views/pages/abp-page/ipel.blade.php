@@ -179,7 +179,17 @@
                                             <td class="text-center"><span class="shadow-none badge badge-danger">Pending</span></td>
                                             <td class="text-center">
                                                 <a href="#modalIPLcur" data-id-track="{{$tdp->id_track }}" data-id-invoice-pel="{{$tdp->id_invoice_pel }}" class="bs-tooltip"  data-bs-toggle="modal" data-bs-placement="top" title="Tambah Detail" data-original-title="Tambah Detail"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus-circle"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg></a>
-                                                <a href="javascript:void(0);" class="bs-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Detail" data-original-title="Print"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg></a>
+                                                <!-- <a href="#modalDetailInvoice" data-id-track="{{$tdp->id_track }}" data-id-invoice-pel="{{$tdp->id_invoice_pel }}" class="bs-tooltip" data-bs-toggle="modal" data-bs-placement="top" title="Detail" data-original-title="Print"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg></a> -->
+                                                <a href="#modalDetailInvoice{{ $tdp->id_invoice_pel }}" class="bs-tooltip" data-bs-toggle="modal" data-bs-placement="top" title="Detail" data-original-title="Print">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+        <polyline points="14 2 14 8 20 8"></polyline>
+        <line x1="16" y1="13" x2="8" y2="13"></line>
+        <line x1="16" y1="17" x2="8" y2="17"></line>
+        <polyline points="10 9 9 9 8 9"></polyline>
+    </svg>
+</a>
+
                                                 <a href="/invoice-pelunasan/delete/{{ $tdp->id_track }}" class="bs-tooltip" data-bs-placement="top" title="Delete" data-original-title="Delete"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></a>
                                                 <div class="p-1"></div>
                                                 <a href="javascript:void(0);" class="bs-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Print Tonase Dooring" data-original-title="Print"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-printer"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg></a>
@@ -196,7 +206,65 @@
                 </div>
             </div>
         </div>
-       
+        @foreach($invdp as $tdp)
+        <div class="modal fade bd-example-modal-xl" id="modalDetailInvoice{{ $tdp->id_invoice_pel }}" tabindex="-1" role="dialog" aria-labelledby="modalIDPdetail" aria-hidden="true">
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalIDPdetail">Detail Invoice</h5>
+                    </div>
+                    <div class="modal-body">
+                    <table id="style-4" class="table style-4 dt-table-hover" style="width:100%;">
+    <thead style="border-bottom: none;">
+        <tr>
+            <th>No Invoice</th>
+            <th>Estate</th>
+            <th>Total Tonase Dooring</th>
+            <th>Total Harga Dooring</th>
+            <th>Total PPN Dooring</th>
+            <th>Total Tonase Timbang Dooring</th>
+            <th>Total Harga Timbang Dooring</th>
+            <th>Total PPN Timbang Dooring</th>
+            <th>Total DP</th>
+            <th class="text-center">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach ($datadetailInvoicePel as $item)
+            @if ($tdp->id_invoice_pel == $item->id_invoice_pel)
+                <tr>
+                    <td>{{$item->id_invoice_pel}}</td>
+                    <td>{{$item->estate}}</td>
+                    <td>{{number_format($item->total_tonase_dooring , 2, ',', '.')}}</td>
+                    <td>{{number_format($item->total_harga_dooring , 2, ',', '.')}}</td>
+                    <td>{{number_format($item->total_ppn_dooring , 2, ',', '.')}}</td>
+                    <td>{{number_format($item->total_tonase_timbang , 2, ',', '.')}}</td>
+                    <td>{{number_format($item->total_harga_timbang , 2, ',', '.')}}</td>
+                    <td>{{number_format($item->total_ppn_timbang , 2, ',', '.')}}</td>
+                    <td>{{number_format($item->total_dp , 2, ',', '.')}}</td>
+                    <td class="text-center">
+                        <a href="{{route('invoice-pelunasan.deletedetail',['id'=>$item->id_detail_pel])}}" class="bs-tooltip" data-bs-placement="top" title="Delete" data-original-title="Delete">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash p-1 br-8 mb-1">
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            </svg>
+                        </a>
+                    </td>
+                </tr>
+            @endif
+        @endforeach
+    </tbody>
+</table>
+
+                    </div>
+                    <div class="modal-footer">
+                        <a class="btn btn-success" href="">Approve Timbang Dooring</a>
+                        <a class="btn btn-success" href="">Approve Dooring</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endforeach
         <div class="modal fade bd-example-modal-xl" id="modalIPLcur" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-xl" role="document">
                 <div class="modal-content">
@@ -258,27 +326,34 @@
                                     </div>     
                                 </div>      
                                 
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <label for="notAllowCont" class="form-label">Harga Freight</label>
                                     <div class="input-group">
                                         <span class="input-group-text" id="inputGroupPrepend">Rp</span>
                                         <input name="hrg_freight" step="any" min="0" id="hrg_freight" type="number" class="form-control qty_cont" required readonly>
                                     </div>     
                                 </div>                               
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <label for="notAllowCont" class="form-label">Prosentase PPn</label>
                                     <div class="input-group">
                                         <span class="input-group-text" id="inputGroupPrepend">%</span>
                                         <input name="prosentaseppn" step="any" min="0" value="0" id="prosentaseppn" type="number" class="form-control qty_cont" required>
                                     </div>     
                                 </div>
-                                <div class="col-md-4">
-                                    <label for="notAllowCont" class="form-label">Total PPn</label>
+                                <div class="col-md-3">
+                                    <label for="notAllowCont" class="form-label">Total PPn Dooring</label>
                                     <div class="input-group">
                                         <span class="input-group-text" id="inputGroupPrepend">Rp</span>
-                                        <input name="totalppn" step="any" min="0" value="0" id="qty_cont" name="totalppn" type="number" class="form-control qty_cont" required>
+                                        <input name="totalppndoring" step="any" min="0" value="0" id="totalppndoring" type="number" class="form-control qty_cont" required>
                                     </div>     
                                 </div>
+                                <div class="col-md-3">
+                                    <label for="notAllowCont" class="form-label">Total PPn Timbang</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text" id="inputGroupPrepend">Rp</span>
+                                        <input name="totalppntimbang" step="any" min="0" value="0" id="totalppntimbang" type="number" class="form-control qty_cont" required>
+                                    </div>     
+                                </div>  
                                 <div class="modal-footer justify-content-center">
                                     <button id ="btn-modal-curah" type="submit" class="btn btn-primary">Tambah</button>
                                     <button type="button" class="btn btn btn-light-dark" data-bs-dismiss="modal"><i class="flaticon-cancel-12"></i>Batal</button>
@@ -715,7 +790,73 @@
             $('#style-3, #style-4').DataTable(dataTableConfig);            
         </script>
       <script>
+        // $('#detail-invoice').on('click', function (event) {
+        //     event.preventDefault();
+        //     $('#modal-detail-invoice').modal('show');
+            // var idInvoicePel = $(this).data('id-invoice-pel');
+            // $.ajax({
+            // url: '/horizontal-dark-menu/finance/invoice-pelunasan/detail/'+idInvoicePel, // Replace with your actual route URL
+            // type: 'GET',
+            // success: function (data) {
+            //     console.log(data);
+    // var table = $('#style-4 tbody'); // Menggunakan jQuery untuk mengakses elemen tbody
+    // table.empty(); // Bersihkan baris yang sudah ada
+    // $.each(data, function (index, value) {
+    //     var row = '<tr>' +
+    //         '<td>' + value.id_invoice_pel + '</td>' +
+    //         '<td>' + value.no_po + '</td>' +
+    //         '<td>' + value.total_tonase_dooring + '</td>' +
+    //         '<td>' + value.total_harga_dooring + '</td>' +
+    //         '<td>' + value.total_ppn_dooring + '</td>' +
+    //         '<td>' + value.total_tonase_timbang_dooring + '</td>' +
+    //         '<td>' + value.total_harga_timbang_dooring + '</td>' +
+    //         '<td>' + value.total_ppn_timbang_dooring + '</td>' +
+    //         '<td>' + value.total_dp + '</td>' +
+    //         '<td class="text-center"><a href="/edit/' + value.id_detail_pel + '">Edit</a></td>' +
+    //         '</tr>';
+    //     table.append(row);
+    // });
+// }
+//             error: function() {
+//                 console.log('Error fetching data');
+//             }
+//         });
+        });
     $(document).ready(function() {
+        
+        // $('#modalDetailInvoice').on('show.bs.modal', function (event) {
+        //     console.log(event);
+//             var button = $(event.relatedTarget); 
+//             var idInvoicePel = button.data('id-invoice-pel');
+//             console.log(button);
+//              $.ajax({
+//             url: '/horizontal-dark-menu/finance/invoice-pelunasan/detail/'+idInvoicePel, // Replace with your actual route URL
+//             type: 'GET',
+//             success: function (data) {
+//                 console.log(data);
+//     // var table = $('#style-4 tbody'); // Menggunakan jQuery untuk mengakses elemen tbody
+//     // table.empty(); // Bersihkan baris yang sudah ada
+//     // $.each(data, function (index, value) {
+//     //     var row = '<tr>' +
+//     //         '<td>' + value.id_invoice_pel + '</td>' +
+//     //         '<td>' + value.no_po + '</td>' +
+//     //         '<td>' + value.total_tonase_dooring + '</td>' +
+//     //         '<td>' + value.total_harga_dooring + '</td>' +
+//     //         '<td>' + value.total_ppn_dooring + '</td>' +
+//     //         '<td>' + value.total_tonase_timbang_dooring + '</td>' +
+//     //         '<td>' + value.total_harga_timbang_dooring + '</td>' +
+//     //         '<td>' + value.total_ppn_timbang_dooring + '</td>' +
+//     //         '<td>' + value.total_dp + '</td>' +
+//     //         '<td class="text-center"><a href="/edit/' + value.id_detail_pel + '">Edit</a></td>' +
+//     //         '</tr>';
+//     //     table.append(row);
+//     // });
+// }
+//             error: function() {
+//                 console.log('Error fetching data');
+//             }
+//         });
+        // });
         $('#modalIPLcur').on('show.bs.modal', function (event) {
       var button = $(event.relatedTarget); // Button that triggered the modal
       var idTrack = button.data('id-track'); // Get the data-id-track attribute from the button
@@ -726,6 +867,13 @@
       $('#id_track_i').val(idTrack);
       $('#idInvoicePel').val(idInvoicePel);
       
+    });
+    $('#prosentaseppn').change(function() {
+        var ppn = $(this).val();
+        var TotalHargaDooring = $('#TotalHargaDooring').val();
+        var TotalHargaTimbangDooring = $('#TotalHargaTimbangDooring').val();
+        $('#totalppndoring').val(ppn*TotalHargaDooring);
+        $('#totalppntimbang').val(ppn*TotalHargaTimbangDooring);
     });
     $('#cb_bypo').change(function() {
         var selectedValue = $(this).val();
