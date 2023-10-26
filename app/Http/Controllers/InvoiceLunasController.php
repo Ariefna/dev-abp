@@ -239,7 +239,7 @@ class InvoiceLunasController extends Controller
             ->whereIn('doc_dooring.status', [2, 3])
             ->whereIn('detail_dooring.status', [2, 3])
             ->where('detail_dooring.id_dooring', $dooringId)
-            ->where('detail_dooring.estate', '=', 'MCMR2')
+            ->where('detail_dooring.estate', '=', $request->estate)
             ->groupBy('detail_dooring.estate', 'doc_tracking.no_po', 'detail_dooring.tipe')
             ->first();
 

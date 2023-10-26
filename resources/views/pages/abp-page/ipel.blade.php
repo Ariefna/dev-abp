@@ -705,13 +705,14 @@
                                 });
                                 $('#cb_bypo').change(function() {
                                     var selectedValue = $(this).val();
-                                    var cbkapal = $('#cb_kapal').val(); // Get the value from the hidden input field
+                                    var parts = selectedValue.split('-');
                                     // Make an AJAX request to fetch data based on the selected value
                                     $.ajax({
-                                        url: '/horizontal-dark-menu/finance/invoice-pelunasan/calculate/' + selectedValue, // Replace with your actual route URL
+                                        url: '/horizontal-dark-menu/finance/invoice-pelunasan/calculate/' + parts[0], // Replace with your actual route URL
                                         type: 'GET',
                                         data: {
-                                            cbkapal: cbkapal
+                                            cbkapal: parts[0],
+                                            estate: parts[1]
                                         },
                                         success: function(data) {
                                             // Update the input fields with the received data
@@ -754,7 +755,7 @@
                                                 // Add new options from the response
                                                 cbbypo.append('<option selected disabled value="">Pilih...</option>');
                                                 $.each(response, function(index, value) {
-                                                    cbbypo.append('<option value="' + value.id_dooring + '" data-estate="'+value.estate+'">' + value.no_po + '</option>');
+                                                    cbbypo.append('<option value="' + value.id_dooring + '-' + value.estate + '">' + value.no_po + '</option>');
                                                 });
                                             },
                                             error: function() {
