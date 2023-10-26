@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>Invoice Pelunasan</title>
-    <style>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Invoice Pelunasan</title>
+  <style>
         @page{margin: 10px;}
         .toggle-code-snippet { margin-bottom: 0px; }
         body.dark .toggle-code-snippet { margin-bottom: 0px; }
@@ -47,9 +47,8 @@
     </style>
 </head>
 <body>
-    <div class="no-page-break">
-        {{-- new table --}}
-        <table class="tg" width="100%">
+<div class="no-page-break">
+<table class="tg" width="100%">
             <thead>
               <tr>
                 <th class="tg-sobq" style="border: none; font-family:'Arial Black'; font-size:18pt !important;" colspan="7">PT Adhipramana Bahari Perkasa</th>
@@ -117,7 +116,6 @@
               </tr>
               <tr>
               </tr>
-              {{-- @foreach ($groupedData as $name => $group) --}}
               @foreach ($data['kapal'] as $key => $kapal)
               <tr>
                 <td class="tg-0pky" style="border-right: none;border-top:none;border-bottom: none;">
@@ -144,7 +142,6 @@
                 <td class="tg-0pky" style="border-left: none;border-top:none;border-bottom: none;"></td>
               </tr>
               @endforeach
-              {{-- @endforeach --}}
               <tr>
                 <td class="tg-0pky" style="border-right: none;border-top:none;">Total</td>
                 <td class="tg-c3ow" style="border-right: none;border-top:none; border-left: none;">:</td>
@@ -177,22 +174,24 @@
                 <td class="tg-0pky" style="border-bottom: none; border-top: none; border-right: none;" colspan="2">Subtotal</td>
                 <td class="tg-0pky" style="border-bottom: none; border-top: none; border-left:none;" colspan="2">Rp. {{ number_format($subtotal, 0, ',', '.') }}</td>
               </tr>
+              @if ($data['id_invoice_dp'] != 0)
               <tr>
                 <td class="tg-0pky" style="border-bottom: none; border-top: none; border-right: none;" colspan="3"></td>
                 <td class="tg-0pky" style="border-bottom: none; border-top: none; border-right: none;" colspan="2">DP 50%</td>
                 <td class="tg-0pky" style="border-bottom: none; border-top: none; border-left:none;" colspan="2">Rp. {{ number_format($dp_50, 0, ',', '.') }}</td>
               </tr>
+              @endif
+             
               <tr>
                 <td class="tg-0pky" style="border-bottom: none; border-top: none; border-right: none;" colspan="3"></td>
                 <td class="tg-0pky" style="border-bottom: none; border-top: none; border-right: none;" colspan="2">PPN 1,1%</td>
                 <td class="tg-0pky" style="border-bottom: none; border-top: none; border-left:none;" colspan="2">Rp. {{ number_format($desc['prosentase_ppn'] * $subtotal / 100, 0, ',', '.') }}</td>
-                {{-- <td class="tg-0pky" style="border-bottom: none; border-top: none; border-left:none;" colspan="2">Rp. {{ number_format($desc['total_ppn']) }}</td> --}}
               </tr>
               <tr>
                 <td class="tg-0pky" style="border-bottom: none; border-top: none; border-right: none;" colspan="3"></td>
                 <td class="tg-0pky" style="border-bottom: none; border-top: none; border-right: none;" colspan="2">Total Invoice</td>
                 <td class="tg-0pky" style="border-bottom: none; border-top: none; border-left:none;" colspan="2">
-                    <b>Rp. {{ (number_format($desc['prosentase_ppn'] * $subtotal / 100 + $dp_50, 0, ',', '.') }}</b>
+                <b>Rp. {{ number_format(($desc['prosentase_ppn'] * $subtotal / 100)+ $dp_50, 0, ',', '.') }}</b>
                 </td>
               </tr>
               <tr>
@@ -214,6 +213,6 @@
               </tr>
             </tbody>
         </table>
-    </div>                
+</div>
 </body>
 </html>
