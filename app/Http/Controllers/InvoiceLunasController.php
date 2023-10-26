@@ -183,17 +183,18 @@ class InvoiceLunasController extends Controller
     }
     public function detailstore(Request $request)
     {
+
+        $parts = explode('-', $request->cb_bypo);
         $purchase = DB::table('purchase_orders as po')
             ->select('dd.id_dooring', 'dt.id_track', 'po.id_po', 'dphs.oa_kpl_kayu', 'dphs.oa_container')
             ->join('detail_p_h_s as dphs', 'po.id_detail_ph', '=', 'dphs.id_detail_ph')
             ->join('doc_tracking as dt', 'dt.no_po', '=', 'po.po_muat')
             ->join('doc_dooring as dd', 'dd.id_track', '=', 'dt.id_track')
-            ->where('dd.id_dooring', $request->cb_bypo)
+            ->where('dd.id_dooring', $parts[0])
             ->first();
-        $doring = DetailDooring::where('id_detail_door', $request->cb_bypo)->value('estate');
         DetailInvoicePel::create([
             'id_invoice_pel' => $request->idInvoicePel,
-            'estate' => $doring,
+            'estate' => $parts[1],
             'total_tonase_dooring' => $request->ttdb,
             'total_tonase_timbang' => $request->tttd,
             'total_harga_dooring' => $request->TotalHargaDooring,
