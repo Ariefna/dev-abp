@@ -705,13 +705,14 @@
                                 });
                                 $('#cb_bypo').change(function() {
                                     var selectedValue = $(this).val();
+                                    var valuecbkapal = $('#cb_kapal').val();
                                     var parts = selectedValue.split('-');
                                     // Make an AJAX request to fetch data based on the selected value
                                     $.ajax({
                                         url: '/horizontal-dark-menu/finance/invoice-pelunasan/calculate/' + parts[0], // Replace with your actual route URL
                                         type: 'GET',
                                         data: {
-                                            cbkapal: parts[0],
+                                            cbkapal: valuecbkapal,
                                             estate: parts[1]
                                         },
                                         success: function(data) {
