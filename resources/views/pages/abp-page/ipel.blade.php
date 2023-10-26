@@ -397,138 +397,9 @@
                                         </div>
                                     </form>
                                 </div>
-                                {{-- <div id="basic" class="col-lg-12 col-sm-12 col-12 layout-spacing mx-auto">
-                            <div class="statbox widget box box-shadow">
-                                <div class="widget-header">                                
-                                    <div class="row">
-                                        <div class="col-xl-12 col-md-12 col-sm-12 col-12">
-                                            <h4>Tabel Detail Invoice Pelunasan</h4>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="widget-content widget-content-area">
-                                    <div class="col-lg-12">
-                                        <div class="statbox widget box box-shadow">
-                                            <div class="widget-content widget-content-area">
-                                                <table id="style-4" class="table style-4 dt-table-hover" style="width:100%;">
-                                                    <thead style="border-bottom: none;">
-                                                        <tr>
-                                                            <th>PO Muat</th>
-                                                            <th>Total Harga</th>
-                                                            <th>Subtotal</th>
-                                                            <th class="text-center">Status</th>
-                                                            <th class="text-center">Action</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr>
-                                                            <td>162002101</td>
-                                                            <td>1.200.000</td>
-                                                            <td>1.200.000</td>
-                                                            <td class="text-center"><span class="shadow-none badge badge-success">Success</span></td>
-                                                            <td class="text-center">
-                                                                <a href="#exampleModalhps" class="bs-tooltip" data-bs-toggle="modal" data-bs-placement="top" title="Delete" data-original-title="Delete"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash p-1 br-8 mb-1"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></a>
-                                                            </td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div> --}}
-                                {{-- </div> --}}
                             </div>
                         </div>
                     </div>
-
-
-                    {{-- <div id="basic" class="col-lg-12 col-sm-12 col-12 layout-spacing">
-            <div class="statbox widget box box-shadow">
-                <div class="widget-header">                                
-                    <div class="row">
-                        <div class="col-xl-12 col-md-12 col-sm-12 col-12">
-                            <h4>Tabel Detail Dooring</h4>
-                        </div>
-                    </div>
-                </div>
-                <div class="widget-content widget-content-area">
-                    <div class="col-lg-12">
-                        <div class="statbox widget box box-shadow">
-                            <div class="widget-content widget-content-area">
-                                <table id="style-4" class="table style-4 dt-table-hover" style="width:100%;">
-                                    <thead style="border-bottom: none;">
-                                        <tr>
-                                            <th>Tgl Muat</th>
-                                            <th>Gudang Muat</th>
-                                            <th>Nopol</th>
-                                            <th>No Container</th>
-                                            <th>No Segel</th>
-                                            <th>Tonase</th>
-                                            <th>SAK</th>
-                                            <th>Timbangan</th>
-                                            <th>No Surat Jalan</th>
-                                            <th class="text-center">Status</th>
-                                            <th class="text-center">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>                 --}}
-                    {{-- <div id="basic" class="col-lg-12 col-sm-12 col-12 layout-spacing">
-            <div class="statbox widget box box-shadow">
-                <div class="widget-header">                                
-                    <div class="row">
-                        <div class="col-xl-12 col-md-12 col-sm-12 col-12">
-                            <h4>Tabel Dooring</h4>
-                        </div>
-                    </div>
-                </div>
-                <div class="widget-content widget-content-area">
-                    <div class="col-lg-12">
-                        <div class="statbox widget box box-shadow">
-                            <div class="widget-content widget-content-area">
-                                <table id="show-hide-col" class="table show-hide-col dt-table-hover" style="width:100%;">
-                                    <thead style="border-bottom: none;">
-                                        <tr>
-                                            <th>Customer</th>
-                                            <th>SPK</th>
-                                            <th>Rute</th>
-                                            <th>PO Kebun</th>
-                                            <th>PT Kebun</th>
-                                            <th>Estate</th>
-                                            <th>Description Barang</th>
-                                            <th>Qty Dooring</th>
-                                            <th>KG</th>
-                                            <th>SAK</th>
-                                            <th>Date Berangkat</th>
-                                            <th>Date Tiba</th>
-                                            <th>No Tiket Timbang</th>
-                                            <th>No CONT</th>
-                                            <th>Nopol</th>
-                                            <th>Qty Timbang Kebun</th>
-                                            <th>Nama Kapal</th>
-                                            <th>TD</th>
-                                            <th class="text-center">Status</th>
-                                            <th class="text-center">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>     --}}
                 </div>
 
                 <!--  BEGIN CUSTOM SCRIPTS FILE  -->
@@ -555,136 +426,37 @@
                             defaultDate: new Date()
                         });
                     </script>
-                    {{--
-        <script type='text/javascript'>
-            $(document).ready(function() {
+                    <script>
+                        const dataTableConfig = {
+                            "dom": "<'dt--top-section'<'row'<'col-12 col-sm-6 d-flex justify-content-sm-start justify-content-center'l><'col-12 col-sm-6 d-flex justify-content-sm-end justify-content-center mt-sm-0 mt-3'f>>>" +
+                            "<'table-responsive'tr>" +
+                            "<'dt--bottom-section d-sm-flex justify-content-sm-between text-center'<'dt--pages-count  mb-sm-0 mb-3'i><'dt--pagination'p>>",
+                            "oLanguage": {
+                                "oPaginate": {
+                                    "sPrevious": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>',
+                                    "sNext": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>'
+                                },
+                                "sInfo": "Showing page _PAGE_ of _PAGES_",
+                                "sSearch": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>',
+                                "sSearchPlaceholder": "Search...",
+                                "sLengthMenu": "Results :  _MENU_",
+                            },
+                            "stripeClasses": [],
+                            "lengthMenu": [5, 10, 20, 50],
+                            "pageLength": 10,
+                            "responsive": true
+                        };
 
-                    var formatter = new Intl.NumberFormat('id-ID', {
-                        style: 'currency',
-                        currency: 'IDR',
-                        minimumFractionDigits: 0 // Set the number of decimal places to 0 for whole numbers
-                    });
-
-                    var id_track = $("#id_track_i").val();
-
-                    // Send an AJAX request to fetch options based on id_track
-                    // $.get("/horizontal-dark-menu/finance/invoice-dp/dp/getOptionsPO/" + id_track, function (data) {
-                    //     var select = $("#cb_bypo");
-                    //     select.empty(); 
-                    //     select.append($('<option>', {
-                    //         value: '',
-                    //         text: 'Pilih...',
-                    //         disabled: true,
-                    //         selected: true
-                    //     }));
-
-                    //     $.each(data, function (key, value) {
-                    //         select.append($('<option>', {
-                    //             value: key.id_track,
-                    //             text: value.no_po + '(' + value.formatted_tgl_muat + ')'
-                    //         }));
-                    //     });
-                    // });
-
-                    // $('#cb_bypo').change(function() {
-                    //     var selectedId = $(this).val();
-                    //     var url = "{{ route('getDetailPO', [':id_track']) }}"
-                    // .replace(':id_track', selectedId);
-                    // if (selectedId !== '') {
-                    // $.ajax({
-                    // url: url,
-                    // type: 'GET',
-                    // dataType: 'json',
-                    // success: function(response) {
-                    // var data = response[0];
-                    // $("#ttdb").empty();
-                    // $("#hrg_freight").empty();
-                    // if (response.length > 0) {
-                    // for (var i=0; i<response.length; i++) { // var text=(response[i].no_container===null) ? response[i].oa_kpl_kayu : response[i].oa_container; // $('#ttdb').val(response[i].total_muat); // $('#hrg_freight').val(text); // var muat=parseFloat($('#ttdb').val()); // var harga=parseFloat($('#hrg_freight').val()); // var total=harga * muat; // $('#total_harga').val(formatter.format(total).replace('Rp', '' )); // } // }else{ // console.log("no data"); // } // }, // error: function(xhr, status, error) { // console.log("AJAX Error: " + error);
-                    //             }
-                    //         });
-                    //     } else {
-                    //         $('#ttdb').val('');
-                    //         $('#hrg_freight').val('');
-                    //     }
-                    // });
-            });
-        </script> --}}
-        <script>
-            var table = $('#show-hide-col').DataTable( {
-                " dom": "<'dt--top-section'<'row'<'col-sm-12 col-md-6 d-flex justify-content-md-start justify-content-center'B><'col-sm-12 col-md-6 d-flex justify-content-md-end justify-content-center mt-md-0 mt-3'f>>>" + "<'table-responsive'tr>" + "<'dt--bottom-section d-sm-flex justify-content-sm-between text-center'<'dt--pages-count  mb-sm-0 mb-3'i><'dt--pagination'p>>" , "oLanguage" : { "oPaginate" : { "sPrevious" : '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>' , "sNext" : '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>' }, "sInfo" : "Showing page _PAGE_ of _PAGES_" , "sSearch" : '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>' , "sSearchPlaceholder" : "Search..." , "sLengthMenu" : "Results :  _MENU_" , }, buttons: [ { text: 'Customer' , className: 'btn btn-secondary toggle-vis mb-1' , action: function(e, dt, node, config ) { var column=dt.column( 0 ); column.visible( ! column.visible() ); } }, { text: 'SPK' , className: 'btn btn-secondary toggle-vis mb-1' , action: function(e, dt, node, config ) { var column=dt.column( 1 ); column.visible( ! column.visible() ); } }, { text: 'Rute' , className: 'btn btn-secondary toggle-vis mb-1' , action: function(e, dt, node, config ) { var column=dt.column( 2 ); column.visible( ! column.visible() ); } }, { text: 'PO Kebun' , className: 'btn btn-secondary toggle-vis mb-1' , action: function(e, dt, node, config ) { var column=dt.column( 3 ); column.visible( ! column.visible() ); } }, { text: 'PT Kebun' , className: 'btn btn-secondary toggle-vis mb-1' , action: function(e, dt, node, config ) { var column=dt.column( 4 ); column.visible( ! column.visible() ); } }, { text: 'Estate' , className: 'btn btn-secondary toggle-vis mb-1' , action: function(e, dt, node, config ) { var column=dt.column( 5 ); column.visible( ! column.visible() ); } }, { text: 'Description Barang' , className: 'btn btn-secondary toggle-vis mb-1' , action: function(e, dt, node, config ) { var column=dt.column( 6 ); column.visible( ! column.visible() ); } }, { text: 'QTY Dooring' , className: 'btn btn-secondary toggle-vis mb-1' , action: function(e, dt, node, config ) { var column=dt.column( 7 ); column.visible( ! column.visible() ); } }, { text: 'KG' , className: 'btn btn-secondary toggle-vis mb-1' , action: function(e, dt, node, config ) { var column=dt.column( 8 ); column.visible( ! column.visible() ); } }, { text: 'SAK' , className: 'btn btn-secondary toggle-vis mb-1' , action: function(e, dt, node, config ) { var column=dt.column( 9 ); column.visible( ! column.visible() ); } }, { text: 'Date Berangkat' , className: 'btn btn-secondary toggle-vis mb-1' , action: function(e, dt, node, config ) { var column=dt.column( 10 ); column.visible( ! column.visible() ); } }, { text: 'Date Tiba' , className: 'btn btn-secondary toggle-vis mb-1' , action: function(e, dt, node, config ) { var column=dt.column( 11 ); column.visible( ! column.visible() ); } }, { text: 'No Tiket Timbang' , className: 'btn btn-secondary toggle-vis mb-1' , action: function(e, dt, node, config ) { var column=dt.column( 12 ); column.visible( ! column.visible() ); } }, { text: 'No CONT' , className: 'btn btn-secondary toggle-vis mb-1' , action: function(e, dt, node, config ) { var column=dt.column( 13 ); column.visible( ! column.visible() ); } }, { text: 'Nopol' , className: 'btn btn-secondary toggle-vis mb-1' , action: function(e, dt, node, config ) { var column=dt.column( 14 ); column.visible( ! column.visible() ); } }, { text: 'QTY Timbang Kebun' , className: 'btn btn-secondary toggle-vis mb-1' , action: function(e, dt, node, config ) { var column=dt.column( 15 ); column.visible( ! column.visible() ); } }, { text: 'Nama Kapal' , className: 'btn btn-secondary toggle-vis mb-1' , action: function(e, dt, node, config ) { var column=dt.column( 16 ); column.visible( ! column.visible() ); } }, { text: 'TD' , className: 'btn btn-secondary toggle-vis mb-1' , action: function(e, dt, node, config ) { var column=dt.column( 17 ); column.visible( ! column.visible() ); } }, { text: 'Status' , className: 'btn btn-secondary toggle-vis mb-1' , action: function(e, dt, node, config ) { var column=dt.column( 18 ); column.visible( ! column.visible() ); } }, { text: 'Action' , className: 'btn btn-secondary toggle-vis mb-1' , action: function(e, dt, node, config ) { var column=dt.column( 19 ); column.visible( ! column.visible() ); } }, ], "stripeClasses" : [], "lengthMenu" : [7, 10, 20, 50], "pageLength" : 7, }); // Create a reusable configuration object const dataTableConfig={ "dom" : "<'dt--top-section'<'row'<'col-12 col-sm-6 d-flex justify-content-sm-start justify-content-center'l><'col-12 col-sm-6 d-flex justify-content-sm-end justify-content-center mt-sm-0 mt-3'f>>>" + "<'table-responsive'tr>" + "<'dt--bottom-section d-sm-flex justify-content-sm-between text-center'<'dt--pages-count  mb-sm-0 mb-3'i><'dt--pagination'p>>" , "oLanguage" : { "oPaginate" : { "sPrevious" : '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>' , "sNext" : '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>' }, "sInfo" : "Showing page _PAGE_ of _PAGES_" , "sSearch" : '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>' , "sSearchPlaceholder" : "Search..." , "sLengthMenu" : "Results :  _MENU_" , }, "stripeClasses" : [], "lengthMenu" : [5, 10, 20, 50], "pageLength" : 10, "responsive" : true }; // Initialize DataTables using the configuration $('#style-3, #style-4').DataTable(dataTableConfig); </script>
-                        <script type='text/javascript'>
-                            // $('#detail-invoice').on('click', function (event) {
-                            //     event.preventDefault();
-                            //     $('#modal-detail-invoice').modal('show');
-                            // var idInvoicePel = $(this).data('id-invoice-pel');
-                            // $.ajax({
-                            // url: '/horizontal-dark-menu/finance/invoice-pelunasan/detail/'+idInvoicePel, // Replace with your actual route URL
-                            // type: 'GET',
-                            // success: function (data) {
-                            //     console.log(data);
-                            // var table = $('#style-4 tbody'); // Menggunakan jQuery untuk mengakses elemen tbody
-                            // table.empty(); // Bersihkan baris yang sudah ada
-                            // $.each(data, function (index, value) {
-                            //     var row = '<tr>' +
-                            //         '<td>' + value.id_invoice_pel + '</td>' +
-                            //         '<td>' + value.no_po + '</td>' +
-                            //         '<td>' + value.total_tonase_dooring + '</td>' +
-                            //         '<td>' + value.total_harga_dooring + '</td>' +
-                            //         '<td>' + value.total_ppn_dooring + '</td>' +
-                            //         '<td>' + value.total_tonase_timbang_dooring + '</td>' +
-                            //         '<td>' + value.total_harga_timbang_dooring + '</td>' +
-                            //         '<td>' + value.total_ppn_timbang_dooring + '</td>' +
-                            //         '<td>' + value.total_dp + '</td>' +
-                            //         '<td class="text-center"><a href="/edit/' + value.id_detail_pel + '">Edit</a></td>' +
-                            //         '</tr>';
-                            //     table.append(row);
-                            // });
-                            // }
-                            //             error: function() {
-                            //                 console.log('Error fetching data');
-                            //             }
-                            //         });
+                        // Initialize DataTables using the configuration
+                        $('#style-3, #style-4').DataTable(dataTableConfig);            
+                    </script>                    
+                    <script>
                             $(document).ready(function() {
                                 var formatter = new Intl.NumberFormat('id-ID', {
                                     style: 'currency',
                                     currency: 'IDR',
                                     minimumFractionDigits: 0
                                 });
-
-                                // $('#modalDetailInvoice').on('show.bs.modal', function (event) {
-                                //     console.log(event);
-                                //             var button = $(event.relatedTarget); 
-                                //             var idInvoicePel = button.data('id-invoice-pel');
-                                //             console.log(button);
-                                //              $.ajax({
-                                //             url: '/horizontal-dark-menu/finance/invoice-pelunasan/detail/'+idInvoicePel, // Replace with your actual route URL
-                                //             type: 'GET',
-                                //             success: function (data) {
-                                //                 console.log(data);
-                                //     // var table = $('#style-4 tbody'); // Menggunakan jQuery untuk mengakses elemen tbody
-                                //     // table.empty(); // Bersihkan baris yang sudah ada
-                                //     // $.each(data, function (index, value) {
-                                //     //     var row = '<tr>' +
-                                //     //         '<td>' + value.id_invoice_pel + '</td>' +
-                                //     //         '<td>' + value.no_po + '</td>' +
-                                //     //         '<td>' + value.total_tonase_dooring + '</td>' +
-                                //     //         '<td>' + value.total_harga_dooring + '</td>' +
-                                //     //         '<td>' + value.total_ppn_dooring + '</td>' +
-                                //     //         '<td>' + value.total_tonase_timbang_dooring + '</td>' +
-                                //     //         '<td>' + value.total_harga_timbang_dooring + '</td>' +
-                                //     //         '<td>' + value.total_ppn_timbang_dooring + '</td>' +
-                                //     //         '<td>' + value.total_dp + '</td>' +
-                                //     //         '<td class="text-center"><a href="/edit/' + value.id_detail_pel + '">Edit</a></td>' +
-                                //     //         '</tr>';
-                                //     //     table.append(row);
-                                //     // });
-                                // }
-                                //             error: function() {
-                                //                 console.log('Error fetching data');
-                                //             }
-                                //         });
-                                // });
                                 $('#modalIPLcur').on('show.bs.modal', function(event) {
                                     var button = $(event.relatedTarget); // Button that triggered the modal
                                     var idTrack = button.data('id-track'); // Get the data-id-track attribute from the button
