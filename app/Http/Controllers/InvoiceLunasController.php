@@ -28,6 +28,71 @@ use Illuminate\Support\Facades\DB;
 
 class InvoiceLunasController extends Controller
 {
+    public function approvetimbang(Request $request, $id_invoice_pel){
+        $total = DetailInvoicePel::join('invoice_pelunasan','invoice_pelunasan.id_invoice_pel','=','detail_invoice_pel.id_invoice_pel')
+                ->leftJoin('invoice_dp', 'invoice_pelunasan.id_invoice_dp', '=', 'invoice_dp.id_invoice_dp')
+                ->where('detail_invoice_pel.id_invoice_pel', $id_invoice_pel)
+                ->whereNotIn('detail_invoice_pel.status',[0])
+                ->selectRaw('CASE 
+                    WHEN invoice_pelunasan.id_invoice_dp != 0 
+                        THEN (
+                            CASE 
+                                WHEN invoice_dp.id_invoice_dp = invoice_pelunasan.id_invoice_dp 
+                                THEN (SUM(total_harga_timbang) - invoice_dp.total_invoice)
+                                ELSE SUM(total_harga_timbang)
+                            END
+                        )
+                    ELSE SUM(total_harga_timbang)
+                    END AS total')
+                ->first();
+        if ($total) {
+            $total = $total->total;
+        } else {
+            $total = 0; // Handle the case where no records match the criteria.
+        }
+        DetailInvoicePel::where('id_invoice_pel',$id_invoice_pel)->whereNotIn('detail_invoice_pel.status',[0])
+        ->update([
+            'status' => '2',
+        ]);
+        InvoicePelunasan::where('id_invoice_pel', $id_invoice_pel)->update([
+            'status' => '2',
+            'total_invoice' => $total
+        ]);
+        return redirect()->back();   
+    }
+    public function approvedooring(Request $request, $id_invoice_pel){
+        $total = DetailInvoicePel::join('invoice_pelunasan','invoice_pelunasan.id_invoice_pel','=','detail_invoice_pel.id_invoice_pel')
+                ->leftJoin('invoice_dp', 'invoice_pelunasan.id_invoice_dp', '=', 'invoice_dp.id_invoice_dp')
+                ->where('detail_invoice_pel.id_invoice_pel', $id_invoice_pel)
+                ->whereNotIn('detail_invoice_pel.status',[0])
+                ->selectRaw('CASE 
+                    WHEN invoice_pelunasan.id_invoice_dp != 0 
+                        THEN (
+                            CASE 
+                                WHEN invoice_dp.id_invoice_dp = invoice_pelunasan.id_invoice_dp 
+                                THEN (SUM(total_harga_dooring) - invoice_dp.total_invoice)
+                                ELSE SUM(total_harga_dooring)
+                            END
+                        )
+                    ELSE SUM(total_harga_dooring)
+                    END AS total')
+                ->first();
+        if ($total) {
+            $total = $total->total;
+        } else {
+            $total = 0; // Handle the case where no records match the criteria.
+        }
+        DetailInvoicePel::where('id_invoice_pel',$id_invoice_pel)->whereNotIn('detail_invoice_pel.status',[0])
+        ->update([
+            'status' => '3',
+        ]);
+        InvoicePelunasan::where('id_invoice_pel', $id_invoice_pel)->update([
+            'status' => '3',
+            'total_invoice' => $total
+        ]);
+        return redirect()->back();           
+    }
+
     public function index()
     {
         $pomuat = DocTracking::select('*', 'doc_tracking.no_po')
@@ -65,10 +130,10 @@ class InvoiceLunasController extends Controller
 
         $bank = Bank::where('status', '=', '1')
             ->get();
-        $invdp = InvoicePelunasan::select('*', 'doc_tracking.no_po')
+        $invdp = InvoicePelunasan::select('*', 'doc_tracking.no_po','invoice_pelunasan.status')
             ->join('doc_dooring', 'doc_dooring.id_dooring', '=', 'invoice_pelunasan.id_dooring')
             ->join('doc_tracking', 'doc_tracking.id_track', '=', 'doc_dooring.id_track')
-            ->where('invoice_pelunasan.status', '=', '1')
+            ->whereIn('invoice_pelunasan.status', [1,2,3])
             ->get();
         // $totalmuat = DocTracking::select('*','doc_tracking.id_track', 'doc_tracking.no_po')
         //         ->selectRaw('SUM(detail_tracking.qty_tonase) as total_muat')
@@ -79,7 +144,13 @@ class InvoiceLunasController extends Controller
         //         ->whereIn('doc_tracking.status', [2, 3])
         //         ->groupBy('detail_tracking.tgl_muat')
         //         ->get();
-        $datadetailInvoicePel = DetailInvoicePel::where('status', '=', '1')->get();
+        $datadetailInvoicePel = DetailInvoicePel::whereIn('detail_invoice_pel.status',[1,2,3])
+                                ->join('invoice_pelunasan','invoice_pelunasan.id_invoice_pel','=','detail_invoice_pel.id_invoice_pel')
+                                ->leftJoin('invoice_dp','invoice_dp.id_invoice_dp','=','invoice_pelunasan.id_invoice_dp')
+                                ->select('*','invoice_dp.total_invoice','detail_invoice_pel.status')
+                                ->selectRaw('CASE WHEN invoice_dp.id_invoice_dp != invoice_pelunasan.id_invoice_dp THEN 0 ELSE invoice_dp.total_invoice END AS total_invoice_adjusted')
+                                ->get();
+                                // dd($datadetailInvoicePel);
         $title = 'Adhipramana Bahari Perkasa';
         $breadcrumb = 'This Breadcrumb';
         return view('pages.abp-page.ipel', compact('title', 'breadcrumb', 'pomuat', 'bank', 'invdp', 'datadetailInvoicePel'));
@@ -103,6 +174,9 @@ class InvoiceLunasController extends Controller
         InvoicePelunasan::where('id_invoice_pel', $id)->update([
             'status' => '0'
         ]);
+        DetailInvoicePel::where('id_invoice_pel', $id)->update([
+            'status' => '0'
+        ]);
         return redirect()->back();
     }
     public function detailstore(Request $request)
@@ -114,16 +188,16 @@ class InvoiceLunasController extends Controller
             ->join('doc_dooring as dd', 'dd.id_track', '=', 'dt.id_track')
             ->where('dd.id_dooring', $request->cb_bypo)
             ->first();
-        $doring = DetailDooring::select('estate')->first();
+        $doring = DetailDooring::where('id_detail_door',$request->cb_bypo)->value('estate');
         DetailInvoicePel::create([
             'id_invoice_pel' => $request->idInvoicePel,
-            'estate' => $doring->estate,
+            'estate' => $doring,
             'total_tonase_dooring' => $request->ttdb,
             'total_tonase_timbang' => $request->tttd,
             'total_harga_dooring' => $request->TotalHargaDooring,
             'total_harga_timbang' => $request->TotalHargaTimbangDooring,
             'total_harga_real' => 0,
-            'harga_brg' => $request->cb_kapal == 1 ? $purchase->oa_container : $purchase->oa_kpl_kayu,
+            'harga_brg' => $request->hrg_freight,
             'prosentase_ppn' => $request->prosentaseppn,
             'total_ppn_dooring' => $request->totalppndoring,
             'total_ppn_timbang' => $request->totalppntimbang,
@@ -134,17 +208,11 @@ class InvoiceLunasController extends Controller
     }
     public function calculate($dooringId, Request $request)
     {
-        // $details = DetailDooring::selectRaw('SUM(qty_tonase) as total_qty_tonase')
-        //     ->selectRaw('SUM(qty_timbang) as total_qty_timbang')
-        //     ->selectRaw('COALESCE(SUM(qty_timbang), 0) - COALESCE(SUM(qty_tonase), 0) as susut')
-        //     ->selectRaw('COALESCE(SUM(qty_tonase), 0) - COALESCE(SUM(qty_timbang), 0) - COALESCE(SUM(qty_tonase), 0) as qty_tonase_real')
-        //     ->where('id_dooring', $dooringId)
-        //     ->first();
-if ($request->cbkapal == 1) {
-    $jenis = 'Container';
-}else {
-    $jenis = 'Curah';
-}
+    if ($request->cbkapal == 1) {
+        $jenis = 'Container';
+    }else {
+        $jenis = 'Curah';
+    }
         $details = DB::table('doc_tracking')
     ->join('purchase_orders', 'purchase_orders.po_muat', '=', 'doc_tracking.no_po')
     ->join('detail_p_h_s', 'purchase_orders.id_detail_ph', '=', 'detail_p_h_s.id_detail_ph')
@@ -158,13 +226,19 @@ if ($request->cbkapal == 1) {
         DB::raw("SUM(detail_dooring.qty_timbang) as total_qty_timbang"),
         'detail_p_h_s.oa_container as susut',
         DB::raw("(detail_p_h_s.oa_container * SUM(detail_dooring.qty_tonase)) as hrg_tonase"),
-        DB::raw("(detail_p_h_s.oa_container * SUM(detail_dooring.qty_timbang)) as hrg_timbang")
+        DB::raw("(detail_p_h_s.oa_container * SUM(detail_dooring.qty_timbang)) as hrg_timbang"),
+        DB::raw("CASE 
+            WHEN '$jenis' = 'Container' 
+                THEN detail_p_h_s.oa_container
+            ELSE detail_p_h_s.oa_kpl_kayu
+        END AS hrg_frg")
     )
     ->where('detail_dooring.tipe', $jenis)
     ->whereIn('doc_dooring.status', [2, 3])
     ->whereIn('detail_dooring.status', [2, 3])
-    ->where('doc_dooring.id_dooring', $dooringId)
-    ->groupBy('detail_dooring.estate', 'doc_tracking.no_po')
+    ->where('detail_dooring.id_dooring', $dooringId)
+    ->where('detail_dooring.estate', '=','MCMR2')
+    ->groupBy('detail_dooring.estate', 'doc_tracking.no_po','detail_dooring.tipe')
     ->first();
 
 
@@ -179,20 +253,20 @@ if ($request->cbkapal == 1) {
         if ($cb_kapal == 1) {
             $details = DetailDooring::join('doc_dooring as b', 'detail_dooring.id_dooring', '=', 'b.id_dooring')
                 ->join('doc_tracking as c', 'c.id_track', '=', 'b.id_track')
-                ->selectRaw("CONCAT(c.no_po, ' (', detail_dooring.estate, ')') as no_po, detail_dooring.id_dooring")
+                ->selectRaw("CONCAT(c.no_po, ' (', detail_dooring.estate, ')') as no_po, detail_dooring.id_dooring, detail_dooring.id_detail_door")
                 ->where('detail_dooring.tipe', 'Container')
                 ->where('detail_dooring.status', 3)
                 ->where('b.id_track', $request->idtrack)
-                ->groupBy('c.no_po', 'detail_dooring.id_dooring')
+                ->groupBy('c.no_po', 'detail_dooring.estate','detail_dooring.tipe')
                 ->get();
         } else {
             $details = DetailDooring::join('doc_dooring as b', 'detail_dooring.id_dooring', '=', 'b.id_dooring')
                 ->join('doc_tracking as c', 'c.id_track', '=', 'b.id_track')
-                ->selectRaw("CONCAT(c.no_po, ' (', detail_dooring.estate, ')') as no_po, detail_dooring.id_dooring")
+                ->selectRaw("CONCAT(c.no_po, ' (', detail_dooring.estate, ')') as no_po, detail_dooring.id_dooring, detail_dooring.id_detail_door")
                 ->where('detail_dooring.tipe', 'Curah')
                 ->where('detail_dooring.status', 3)
                 ->where('b.id_track', $request->idtrack)
-                ->groupBy('c.no_po', 'detail_dooring.id_dooring')
+                ->groupBy('c.no_po', 'detail_dooring.estate','detail_dooring.tipe')
                 ->get();
         }
         return response()->json($details);
@@ -202,6 +276,8 @@ if ($request->cbkapal == 1) {
         if ($tipe_inv == 1) {
             $data = DB::table('doc_tracking as a')
                 ->join('doc_dooring as b', 'a.id_track', '=', 'b.id_track')
+                ->where('a.status',3)
+                ->where('b.status',3)
                 ->whereIn('a.id_track', function ($query) {
                     $query->select('id_track')->from('invoice_dp');
                 })
@@ -209,6 +285,8 @@ if ($request->cbkapal == 1) {
         } else {
             $data = DocTracking::select('id_dooring', 'no_po')
                 ->join('doc_dooring', 'doc_dooring.id_track', '=', 'doc_tracking.id_track')
+                ->where('doc_tracking.status',3)
+                ->where('doc_dooring.status',3)
                 ->whereNotIn('doc_tracking.id_track', function ($query) {
                     $query->select('id_track')->from('invoice_dp');
                 })->get();
@@ -252,7 +330,7 @@ if ($request->cbkapal == 1) {
             $newCounter = $cekrow <= 1 ? $cekrow + 1 : 1;
             $newInvoiceNumber = "ABP/{$currentYear}/{$currentMonth}/" .
                 str_pad($newCounter, 4, '0', STR_PAD_LEFT) . '-' . $newStatus;
-            die($newInvoiceNumber);
+            // die($newInvoiceNumber);
             InvoicePelunasan::create([
                 'id_bank'     => $request->cb_bank,
                 'id_track'     => $invoices->id_track ?? 0,

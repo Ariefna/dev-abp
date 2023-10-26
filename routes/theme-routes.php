@@ -142,6 +142,7 @@ foreach ($prefixRouters as $prefixRouter) {
                 Route::get('/purchase-order/po/getDetailOA/{id}', [\App\Http\Controllers\POController::class, 'getDetailOA'])->name('getDetailOA');
                 Route::match(['get', 'post'], '/purchase-order/approve/{po_muat}', [\App\Http\Controllers\POController::class, 'approve'])->name('purchase-order.approve');
                 Route::match(['get', 'post'], '/purchase-order/removed/{po_muat}', [\App\Http\Controllers\POController::class, 'removed'])->name('purchase-order.removed');
+                Route::get('/purchase-order/po/downloadpo/{path}', [\App\Http\Controllers\POController::class, 'downloadpo'])->name('downloadpo');
 
                 Route::get('/surat-perintah-kerja', function () {
                     return view('pages.abp-page.dspk', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
@@ -243,6 +244,8 @@ foreach ($prefixRouters as $prefixRouter) {
                 Route::match(['get', 'post'], '/invoice-pelunasan/delete/{id}', [\App\Http\Controllers\InvoiceLunasController::class, 'delete'])->name('invoice-pelunasan.delete');
                 Route::match(['get', 'post'], '/invoice-pelunasan/deletedetail/{id}', [\App\Http\Controllers\InvoiceLunasController::class, 'deletedetail'])->name('invoice-pelunasan.deletedetail');
                 Route::post('/invoice-pelunasan-detail/save', [\App\Http\Controllers\InvoiceLunasController::class, 'detailstore'])->name('invoice-pelunasan-detail.detailstore');
+                Route::match(['get', 'post'], '/invoice-pelunasan/approvetimbang/{id_invoice_pel}', [\App\Http\Controllers\InvoiceLunasController::class, 'approvetimbang'])->name('invoice-pelunasan.approvetimbang');
+                Route::match(['get', 'post'], '/invoice-pelunasan/approvedooring/{id_invoice_pel}', [\App\Http\Controllers\InvoiceLunasController::class, 'approvedooring'])->name('invoice-pelunasan.approvedooring');
                 // Route::post('/invoice-pelunasan/store', [\App\Http\Controllers\InvoiceLunasController::class, 'store'])->name('store');
             });
 

@@ -176,9 +176,17 @@
                                             <td>{{ $tdp->no_po }}</td>
                                             <td>{{ $tdp->tipe_job }}</td>
                                             <td>{{ $tdp->rinci_tipe }}</td>
-                                            <td class="text-center"><span class="shadow-none badge badge-danger">Pending</span></td>
+                                            @if ($tdp->status == 1)
+                                                <td class="text-center"><span class="shadow-none badge badge-danger">Pending</span></td>
+                                            @elseif($tdp->status == 3)
+                                                <td class="text-center"><span class="shadow-none badge badge-success">Approved Dooring</span></td>
+                                            @elseif($tdp->status == 2)
+                                                <td class="text-center"><span class="shadow-none badge badge-success">Approved Timbang Dooring</span></td>
+                                            @endif
                                             <td class="text-center">
+                                                @if ($tdp->status == 1)
                                                 <a href="#modalIPLcur" data-id-track="{{$tdp->id_track }}" data-id-invoice-pel="{{$tdp->id_invoice_pel }}" class="bs-tooltip"  data-bs-toggle="modal" data-bs-placement="top" title="Tambah Detail" data-original-title="Tambah Detail"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus-circle"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg></a>
+                                                @endif
                                                 <!-- <a href="#modalDetailInvoice" data-id-track="{{$tdp->id_track }}" data-id-invoice-pel="{{$tdp->id_invoice_pel }}" class="bs-tooltip" data-bs-toggle="modal" data-bs-placement="top" title="Detail" data-original-title="Print"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg></a> -->
                                                 <a href="#modalDetailInvoice{{ $tdp->id_invoice_pel }}" class="bs-tooltip" data-bs-toggle="modal" data-bs-placement="top" title="Detail" data-original-title="Print">
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text">
@@ -233,7 +241,7 @@
         @foreach ($datadetailInvoicePel as $item)
             @if ($tdp->id_invoice_pel == $item->id_invoice_pel)
                 <tr>
-                    <td>{{$item->id_invoice_pel}}</td>
+                    <td>{{$tdp->invoice_no}}</td>
                     <td>{{$item->estate}}</td>
                     <td>{{number_format($item->total_tonase_dooring , 2, ',', '.')}}</td>
                     <td>{{number_format($item->total_harga_dooring , 2, ',', '.')}}</td>
@@ -241,14 +249,16 @@
                     <td>{{number_format($item->total_tonase_timbang , 2, ',', '.')}}</td>
                     <td>{{number_format($item->total_harga_timbang , 2, ',', '.')}}</td>
                     <td>{{number_format($item->total_ppn_timbang , 2, ',', '.')}}</td>
-                    <td>{{number_format($item->total_dp , 2, ',', '.')}}</td>
+                    <td>{{number_format($item->total_invoice_adjusted , 2, ',', '.') ?? 0}}</td>
                     <td class="text-center">
+                        @if ($tdp->status == 1 && $item->status == 1)
                         <a href="{{route('invoice-pelunasan.deletedetail',['id'=>$item->id_detail_pel])}}" class="bs-tooltip" data-bs-placement="top" title="Delete" data-original-title="Delete">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash p-1 br-8 mb-1">
                                 <polyline points="3 6 5 6 21 6"></polyline>
                                 <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
                             </svg>
                         </a>
+                        @endif
                     </td>
                 </tr>
             @endif
@@ -258,8 +268,10 @@
 
                     </div>
                     <div class="modal-footer">
-                        <a class="btn btn-success" href="">Approve Timbang Dooring</a>
-                        <a class="btn btn-success" href="">Approve Dooring</a>
+                        @if ($tdp->status == 1)
+                            <a class="btn btn-success" href="{{ route('invoice-pelunasan.approvetimbang', ['id_invoice_pel' => $tdp->id_invoice_pel]) }}">Approve Timbang Dooring</a>
+                            <a class="btn btn-success" href="{{ route('invoice-pelunasan.approvedooring', ['id_invoice_pel' => $tdp->id_invoice_pel]) }}">Approve Dooring</a>
+                        @endif                            
                     </div>
                 </div>
             </div>
@@ -518,7 +530,7 @@
                 defaultDate: new Date()
             });
         </script>
-
+{{-- 
         <script type='text/javascript'>
             $(document).ready(function() {
 
@@ -586,7 +598,7 @@
                     //     }
                     // });
             });
-        </script>
+        </script> --}}
         <script>
             var table = $('#show-hide-col').DataTable( {
                 "dom": "<'dt--top-section'<'row'<'col-sm-12 col-md-6 d-flex justify-content-md-start justify-content-center'B><'col-sm-12 col-md-6 d-flex justify-content-md-end justify-content-center mt-md-0 mt-3'f>>>" +
@@ -789,7 +801,7 @@
             // Initialize DataTables using the configuration
             $('#style-3, #style-4').DataTable(dataTableConfig);            
         </script>
-      <script>
+      <script type='text/javascript'>
         // $('#detail-invoice').on('click', function (event) {
         //     event.preventDefault();
         //     $('#modal-detail-invoice').modal('show');
@@ -821,8 +833,12 @@
 //                 console.log('Error fetching data');
 //             }
 //         });
-        });
     $(document).ready(function() {
+        var formatter = new Intl.NumberFormat('id-ID', {
+                                style: 'currency',
+                                currency: 'IDR',
+                                minimumFractionDigits: 0
+                            });
         
         // $('#modalDetailInvoice').on('show.bs.modal', function (event) {
         //     console.log(event);
@@ -868,12 +884,12 @@
       $('#idInvoicePel').val(idInvoicePel);
       
     });
-    $('#prosentaseppn').change(function() {
+    $('#prosentaseppn').on('input', function() {
         var ppn = $(this).val();
         var TotalHargaDooring = $('#TotalHargaDooring').val();
         var TotalHargaTimbangDooring = $('#TotalHargaTimbangDooring').val();
-        $('#totalppndoring').val(ppn*TotalHargaDooring);
-        $('#totalppntimbang').val(ppn*TotalHargaTimbangDooring);
+        $('#totalppndoring').val(((ppn * TotalHargaDooring) / 100).toFixed(2));
+        $('#totalppntimbang').val(((ppn * TotalHargaTimbangDooring) / 100).toFixed(2));
     });
     $('#cb_bypo').change(function() {
         var selectedValue = $(this).val();
@@ -886,12 +902,12 @@
             success: function(data) {
                 // Update the input fields with the received data
                 $('#ttdb').val(data.total_qty_tonase);
-                $('#hrg_freight').val(data.susut);
+                $('#hrg_freight').val(data.hrg_frg);
                 $('#tttd').val(data.total_qty_timbang);
                 $('#ttrd').val(data.qty_tonase_real);
-                $('#TotalHargaDooring').val(data.total_qty_tonase*data.susut);
-                $('#TotalHargaTimbangDooring').val(data.total_qty_timbang*data.susut);
-                $('#TotalHargaRealDooring').val(data.qty_tonase_real*data.susut);
+                $('#TotalHargaDooring').val(data.total_qty_tonase*data.hrg_frg);
+                $('#TotalHargaTimbangDooring').val(data.total_qty_timbang*data.hrg_frg);
+                $('#TotalHargaRealDooring').val(data.qty_tonase_real*data.hrg_frg);
                 
                 
                 
@@ -951,6 +967,7 @@
                     cbPo.append('<option selected disabled value="">Pilih...</option>');
                     $.each(response, function(index, value) {
                         cbPo.append('<option value="' + value.id_dooring + '">' + value.no_po + '</option>');
+                        console.log(value.id_dooring)
                     });
                 },
                 error: function(error) {
