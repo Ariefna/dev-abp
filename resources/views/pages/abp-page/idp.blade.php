@@ -682,10 +682,10 @@
                                 var total_harga = parseFloat(modal.find('.total_harga').val().replace(/\D/g, '')) || 0;
                                 var subtotal = $('.sub_total').val();
                                 var total_dp = (total_harga * prodp) / 100;
-                                var total_ppn = (total_harga * proppn) / 100;
+                                var total_ppn = (total_dp * proppn) / 100;
 
                                 modal.find('.todp').val(formatter.format(total_dp).replace('Rp', ''));
-                                modal.find('.toppn').val(formatter.format(total_ppn).replace('Rp', ''));
+                                modal.find('.toppn').val(formatter.format(total_ppn).replace(',', '.').replace('Rp', ''));
                             });
                             $('.prodpcont, .proppncont').on('input', function() {
                                 var modal = $(this).closest('.modal');

@@ -196,8 +196,8 @@ class InvoiceDPController extends Controller
             ->whereRaw('CONCAT(doc_tracking.no_po, "(", DATE_FORMAT(detail_tracking.tgl_muat, "%e-%M-%Y"), ")") = ?', [$id_track])
             ->count();
         $query = DocTracking::select('*', 'invoice_dp.id_track', 'doc_tracking.no_po')
-            ->selectRaw('SUM(detail_tracking.qty_tonase) / ' . $get . ' as total_muat')
-            // ->selectRaw('SUM(detail_tracking.qty_tonase) as total_muat')
+            // ->selectRaw('SUM(detail_tracking.qty_tonase) / ' . $get . ' as total_muat')
+            ->selectRaw('SUM(detail_tracking.qty_tonase) as total_muat')
             ->selectRaw("DATE_FORMAT(detail_tracking.tgl_muat, '%e-%M-%Y') as formatted_tgl_muat")
             ->join('detail_tracking', 'doc_tracking.id_track', '=', 'detail_tracking.id_track')
             ->join('purchase_orders', 'purchase_orders.po_muat', '=', 'doc_tracking.no_po')
@@ -247,8 +247,8 @@ class InvoiceDPController extends Controller
 
     public function approve(Request $request, $id_invoic_dp)
     {
-        $total = DetailInvoiceDp::selectRaw('SUM(total_tonase) + SUM(total_ppn) as total')
-            ->where('id_invoice_dp', 41)
+        $total = DetailInvoiceDp::selectRaw('SUM(total_dp) as total')
+            ->where('id_invoice_dp', $id_invoic_dp)
             ->first();
         if ($total) {
             $total = $total->total;
@@ -321,6 +321,9 @@ class InvoiceDPController extends Controller
                 $a = 1;
                 $newStatus = $existingStatus + 1;
             }
+
+          
+            // dd ($a);
             $newInvoiceNumber = "ABP/{$currentYear}/{$currentMonth}/" .
                 str_pad($newCounter, 4, '0', STR_PAD_LEFT) . '-' . $newStatus;
             InvoiceDP::create([
@@ -584,9 +587,6 @@ class InvoiceDPController extends Controller
             }
 
             $data['description'] = [];
-            // dd($pushData);
-            // die();
-
             $totalTonasePerNoPO = [];
             foreach ($pushData as $key => $item) {
                 $key = $item["no_po"] . $item["tipe"];
@@ -600,14 +600,14 @@ class InvoiceDPController extends Controller
                     $totalTonasePerNoPO[$key]['total_tonase'] = $total_tonase;
                     $totalTonasePerNoPO[$key]['total_dp'] = $item["total_dp"];
                     $totalTonasePerNoPO[$key]['total_ppn'] = $item["total_ppn"];
-                }
-                $totalTonasePerNoPO[$key]['harga_brg'] = $item["harga_brg"];
+                }                
+		$totalTonasePerNoPO[$key]['harga_brg'] = $item["harga_brg"];
                 $totalTonasePerNoPO[$key]['no_po'] = $item["no_po"];
                 $totalTonasePerNoPO[$key]['date'] = $item["date"];
                 $totalTonasePerNoPO[$key]['tipe'] = $item["tipe"];
                 $totalTonasePerNoPO[$key]['prosentase_ppn'] = $item["prosentase_ppn"] ?? 0;
-                $totalTonasePerNoPO[$key]['total_ppn'] = $item["total_ppn"];
             }
+
 
             foreach ($totalTonasePerNoPO as $no_po => $value) {
                 // echo "no_po: $no_po, total_tonase: $total_tonase\n";
@@ -617,18 +617,16 @@ class InvoiceDPController extends Controller
             }
 
 
-
-
             $data['bank'] = Bank::where('status', 1)->first();
         }
 
         $title = 'Print Invoice DP';
         $breadcrumb = 'This breadcrumb';
 
-        // $filename = 'invoice-dp-report-' . date('YmdHis') . '-' . rand(0, 1000) . ".xlsx";
+        $filename = 'invoice-dp-report-' . date('YmdHis') . '-' . rand(0, 1000) . ".xlsx";
         // dd($data);
         // die();
-        // return Excel::download(new InvoiceDpExport($data), $filename);
+        return Excel::download(new InvoiceDpExport($data), $filename);
 
         // $pdf = PDF::loadview('pages.abp-page.print.invoice_dp', compact(
         //     'title', 'breadcrumb',
@@ -645,9 +643,9 @@ class InvoiceDPController extends Controller
         // return $pdf->stream('invoice-dp.pdf');
         // return $pdf->download('invoice-dp.pdf');
 
-        return view('pages.abp-page.print.invoice_dp', compact(
-            'title', 'breadcrumb',
-            'data'
-        ));
+//        return view('pages.abp-page.print.invoice_dp', compact(
+  //          'title', 'breadcrumb',
+        //    'data'
+    //    ));
     }
 }

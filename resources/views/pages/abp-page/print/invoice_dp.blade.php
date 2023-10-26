@@ -168,16 +168,18 @@
               @php
                 $subtotal = 0;
                 $dp_50 = 0;
+                $ppn = 0;
               @endphp
               @foreach ($data['description'] as $desc)
                 <tr>
-                    <td class="tg-0pky" style="border-bottom: none; border-top: none; text-align:left;" colspan="3">{{ $desc['name'] }}</td>                    
+		    <td class="tg-0pky" style="border-bottom: none; border-top: none; text-align:left;" colspan="3">{{ $desc['name'] }}</td>                    
                     <td class="tg-0pky" style="border-bottom: none; border-top: none; border-right: none; text-align:left;" colspan="2">Harga Cont</td>
                     <td class="tg-0pky" style="border-bottom: none; border-top: none; border-left:none; text-align:left;" colspan="2">{{ number_format($desc['total_tonase'] * $desc['harga_brg'], 0, ',', '') }}</td>
                 </tr>
                 @php
                     $subtotal += $desc['total_tonase'] * $desc['harga_brg'];
                     $dp_50 += $desc['total_dp'];
+                    $ppn += $desc['total_ppn'];
                 @endphp                
               @endforeach
               <tr>
@@ -193,14 +195,15 @@
               <tr>
                 <td class="tg-0pky" style="border-bottom: none; border-top: none; border-right: none;text-align:left;" colspan="3"></td>
                 <td class="tg-0pky" style="border-bottom: none; border-top: none; border-right: none;text-align:left;" colspan="2">PPN 1,1%</td>
-                <td class="tg-0pky" style="border-bottom: none; border-top: none; border-left:none;text-align:left;" colspan="2">{{ (number_format(isset($desc['prosentase_ppn']) ? ($desc['prosentase_ppn'] * $subtotal / 100 + $dp_50) : 0, 0, ',', '')) }}</td>
+                {{-- <td class="tg-0pky" style="border-bottom: none; border-top: none; border-left:none;text-align:left;" colspan="2">{{ (number_format(isset($desc['prosentase_ppn']) ? ($desc['prosentase_ppn'] * $subtotal / 100 + $dp_50) : 0, 0, ',', '')) }}</td> --}}
+                <td class="tg-0pky" style="border-bottom: none; border-top: none; border-left:none;text-align:left;" colspan="2">{{ number_format($ppn, 0, ',', '') }}</td>
                 {{-- <td class="tg-0pky" style="border-bottom: none; border-top: none; border-left:none;" colspan="2">Rp. {{ number_format($desc['total_ppn']) }}</td> --}}
               </tr>
               <tr>
                 <td class="tg-0pky" style="border-bottom: none; border-top: none; border-right: none;text-align:left;" colspan="3"></td>
                 <td class="tg-0pky" style="border-bottom: none; border-top: none; border-right: none;text-align:left;" colspan="2">Total Invoice</td>
                 <td class="tg-0pky" style="border-bottom: none; border-top: none; border-left:none;text-align:left;" colspan="2">
-                    <b>Rp. {{ (number_format(isset($desc['prosentase_ppn']) ? ($desc['prosentase_ppn'] * $subtotal / 100 + $dp_50) : 0, 0, ',', '.')) }}</b>
+                    <b>Rp. {{ number_format($dp_50 + $ppn, 0, ',', '.') }}</b>
                 </td>
               </tr>
               <tr>

@@ -207,6 +207,13 @@ class InvoiceDpExport implements FromView, WithStyles, WithColumnWidths, WithEve
                             $sheet->getStyle("A$rowIndex:G$rowIndex")->getBorders()
                                 ->getTop()->setBorderStyle(Border::BORDER_NONE);
                                 $sheet->getStyle("F$rowIndex:G$rowIndex")->getNumberFormat()->setFormatCode('_("Rp."* #,##0_);_("Rp."* \(#,##0\);_("Rp."* ""-""??_);_(@_)');
+                                $sheet->getStyle("F$rowIndex:G$rowIndex")->applyFromArray([
+                                    'alignment' => [
+                                        'vertical' => Alignment::VERTICAL_CENTER,
+                                        'horizontal' => Alignment::HORIZONTAL_RIGHT,
+                                    ],
+                                ]);
+
                         }
                         if (stripos($cellValue, 'Note') !== false) {
                             // Apply border styles to the entire row (left, right, and bottom borders)
