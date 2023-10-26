@@ -213,21 +213,21 @@
                                                                     <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
                                                                 </svg></a>
                                                             <div class="p-1"></div>
-                                                            <a href="javascript:void(0);" class="bs-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Print Tonase Dooring" data-original-title="Print"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-printer">
+                                                            @if ($tdp->status == 3)
+                                                            <a href="/horizontal-dark-menu/finance/invoice-pelunasan/print/{{ $tdp->id_invoice_pel }}" class="bs-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Print Tonase Dooring" data-original-title="Print"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-printer">
                                                                     <polyline points="6 9 6 2 18 2 18 9"></polyline>
                                                                     <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
                                                                     <rect x="6" y="14" width="12" height="8"></rect>
                                                                 </svg></a>
-                                                            <a href="javascript:void(0);" class="bs-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Print Timbang Dooring" data-original-title="Print"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-printer">
+                                                            @else
+                                                            <a href="/horizontal-dark-menu/finance/invoice-pelunasan/print/{{ $tdp->id_invoice_pel }}" class="bs-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Print Timbang Dooring" data-original-title="Print"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-printer">
                                                                     <polyline points="6 9 6 2 18 2 18 9"></polyline>
                                                                     <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
                                                                     <rect x="6" y="14" width="12" height="8"></rect>
                                                                 </svg></a>
-                                                            <a href="javascript:void(0);" class="bs-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Print Real Dooring" data-original-title="Print"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-printer">
-                                                                    <polyline points="6 9 6 2 18 2 18 9"></polyline>
-                                                                    <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
-                                                                    <rect x="6" y="14" width="12" height="8"></rect>
-                                                                </svg></a>
+                                                            @endif
+                                                           
+                                                           
                                                         </td>
                                                     </tr>
                                                     @endforeach

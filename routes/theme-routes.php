@@ -246,6 +246,8 @@ foreach ($prefixRouters as $prefixRouter) {
                 Route::post('/invoice-pelunasan-detail/save', [\App\Http\Controllers\InvoiceLunasController::class, 'detailstore'])->name('invoice-pelunasan-detail.detailstore');
                 Route::match(['get', 'post'], '/invoice-pelunasan/approvetimbang/{id_invoice_pel}', [\App\Http\Controllers\InvoiceLunasController::class, 'approvetimbang'])->name('invoice-pelunasan.approvetimbang');
                 Route::match(['get', 'post'], '/invoice-pelunasan/approvedooring/{id_invoice_pel}', [\App\Http\Controllers\InvoiceLunasController::class, 'approvedooring'])->name('invoice-pelunasan.approvedooring');
+                Route::match(['get', 'post'], '/invoice-pelunasan/print/{id}', [\App\Http\Controllers\InvoiceLunasController::class, 'print'])->name('invoice-pelunasan.print');
+               
                 // Route::post('/invoice-pelunasan/store', [\App\Http\Controllers\InvoiceLunasController::class, 'store'])->name('store');
             });
 
