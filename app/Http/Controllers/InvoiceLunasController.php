@@ -90,8 +90,8 @@ class InvoiceLunasController extends Controller
     ->get();
 
     $deskripsi = InvoicePelunasan::select(
-        DB::raw('CONCAT("FREIGHT PO ", purchase_orders.id_po, " (", detail_invoice_pel.total_tonase_dooring, " KG X Rp. ", detail_invoice_pel.total_harga_dooring, ")") as name_doring'),
-        DB::raw('CONCAT("FREIGHT PO ", purchase_orders.id_po, " (", detail_invoice_pel.total_tonase_timbang, " KG X Rp. ", detail_invoice_pel.total_harga_timbang, ")") as name_timbang'),
+        DB::raw('CONCAT("FREIGHT (", detail_invoice_pel.total_tonase_dooring, " KG X Rp. ", detail_invoice_pel.total_harga_dooring, ") PO ", purchase_orders.id_po) as name_doring'),
+        DB::raw('CONCAT("FREIGHT (", detail_invoice_pel.total_tonase_timbang, " KG X Rp. ", detail_invoice_pel.total_harga_timbang, ") PO ", purchase_orders.id_po) as name_timbang'),        
         'detail_invoice_pel.total_tonase_dooring',
         'detail_invoice_pel.total_harga_dooring',
         'detail_invoice_pel.total_tonase_timbang',
