@@ -110,7 +110,6 @@ class InvoiceLunasController extends Controller
     ->leftJoin('purchase_orders', 'purchase_orders.po_muat', '=', 'doc_tracking.no_po')
     ->leftJoin('invoice_dp', 'invoice_pelunasan.id_invoice_dp', '=', 'invoice_dp.id_invoice_dp')
     ->where('invoice_pelunasan.id_invoice_pel', $id)
-    ->groupBy('detail_invoice_pel.estate')
     ->get();
 
         if (!is_null($invoicePelunasanData)) {
