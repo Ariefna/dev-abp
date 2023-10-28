@@ -171,7 +171,7 @@
               @endforeach
               <tr>
                 <td class="tg-0pky" style="border-bottom: none; border-top: none; border-right: none;" colspan="3"></td>
-                <td class="tg-0pky" style="border-bottom: none; border-top: none; border-right: none;" colspan="2">Subtotal</td>
+                <td class="tg-0pky" style="border-bottom: none; border-top: none; border-right: none;" colspan="2">Pelunasan</td>
                 <td class="tg-0pky" style="border-bottom: none; border-top: none; border-left:none;" colspan="2">Rp. {{ number_format($subtotal, 0, ',', '.') }}</td>
               </tr>
               @if ($data['id_invoice_dp'] != 0)
