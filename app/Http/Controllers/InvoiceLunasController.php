@@ -36,38 +36,39 @@ class InvoiceLunasController extends Controller
         $data = [];
         $array = [];
       
-        $invoicePelunasanData = DB::table('invoice_pelunasan')
-        ->select(
-            'customers.nama_customer',
-            'customers.kota',
-            'invoice_pelunasan.invoice_date',
-            'invoice_pelunasan.invoice_no',
-            'invoice_pelunasan.terms',
-            'invoice_pelunasan.tipe_job',
-            'doc_tracking.no_po',
-            'port_of_loading.nama_pol',
-            'port_of_destination.nama_pod',
-            'invoice_pelunasan.status',
-            'invoice_pelunasan.id_invoice_dp',
-            DB::raw('SUM(detail_invoice_pel.total_tonase_dooring) as sum_total_tonase_dooring'),
-            DB::raw('SUM(detail_invoice_pel.total_tonase_timbang) as sum_total_tonase_timbang')
-        )
-        ->leftJoin('doc_dooring', 'doc_dooring.id_dooring', '=', 'invoice_pelunasan.id_dooring')
-        ->leftJoin('detail_invoice_pel', 'detail_invoice_pel.id_invoice_pel', '=', 'invoice_pelunasan.id_invoice_pel')
-        ->leftJoin('doc_tracking', 'doc_dooring.id_track', '=', 'doc_tracking.id_track')
-        ->leftJoin('purchase_orders', 'purchase_orders.po_muat', '=', 'doc_tracking.no_po')
-        ->leftJoin('detail_p_h_s', 'detail_p_h_s.id_detail_ph', '=', 'purchase_orders.id_detail_ph')
-        ->leftJoin('penawaran_hargas', 'penawaran_hargas.id_penawaran', '=', 'detail_p_h_s.id_penawaran')
-        ->leftJoin('customers', 'customers.id', '=', 'penawaran_hargas.id_customer')
-        ->leftJoin('port_of_loading', 'port_of_loading.id', '=', 'doc_tracking.id_pol')
-        ->leftJoin('port_of_destination', 'port_of_destination.id', '=', 'doc_tracking.id_pod')
-        ->leftJoin('detail_tracking', 'detail_tracking.id_track', '=', 'doc_tracking.id_track')
-        ->leftJoin('kapals', 'kapals.id', '=', 'detail_tracking.id_kapal')
-        ->leftJoin('c_ports', 'c_ports.id_company_port', '=', 'kapals.id_company_port')
-        ->where('invoice_pelunasan.id_invoice_pel', $id)
-        ->groupBy('doc_tracking.no_po')
-        ->limit(1)
-        ->first();
+        $invoicePelunasanData = DB::table(DB::raw('(
+            SELECT
+                customers.nama_customer,
+                customers.kota,
+                invoice_pelunasan.invoice_date,
+                invoice_pelunasan.invoice_no,
+                invoice_pelunasan.terms,
+                invoice_pelunasan.tipe_job,
+                doc_tracking.no_po,
+                port_of_loading.nama_pol,
+                port_of_destination.nama_pod,
+                invoice_pelunasan.status,
+                detail_invoice_pel.id_detail_pel,
+                detail_invoice_pel.total_tonase_dooring,
+                detail_invoice_pel.total_tonase_timbang
+            FROM invoice_pelunasan
+            LEFT JOIN doc_dooring ON doc_dooring.id_dooring = invoice_pelunasan.id_dooring
+            LEFT JOIN detail_invoice_pel ON detail_invoice_pel.id_invoice_pel = invoice_pelunasan.id_invoice_pel
+            LEFT JOIN doc_tracking ON doc_dooring.id_track = doc_tracking.id_track
+            LEFT JOIN purchase_orders ON purchase_orders.po_muat = doc_tracking.no_po
+            LEFT JOIN detail_p_h_s ON detail_p_h_s.id_detail_ph = purchase_orders.id_detail_ph
+            LEFT JOIN penawaran_hargas ON penawaran_hargas.id_penawaran = detail_p_h_s.id_penawaran
+            LEFT JOIN customers ON customers.id = penawaran_hargas.id_customer
+            LEFT JOIN port_of_loading ON port_of_loading.id = doc_tracking.id_pol
+            LEFT JOIN port_of_destination ON port_of_destination.id = doc_tracking.id_pod
+            LEFT JOIN detail_tracking ON detail_tracking.id_track = doc_tracking.id_track
+            LEFT JOIN kapals ON kapals.id = detail_tracking.id_kapal
+            LEFT JOIN c_ports ON c_ports.id_company_port = kapals.id_company_port
+            WHERE invoice_pelunasan.id_invoice_pel = '.$id.'
+            GROUP BY detail_invoice_pel.id_detail_pel
+        ) as a'))
+            ->select('*', DB::raw('SUM(total_tonase_dooring) as sum_total_tonase_dooring'), DB::raw('SUM(total_tonase_timbang) as sum_total_tonase_timbang'))
+            ->first();
         $kapal = InvoicePelunasan::select(DB::raw("CONCAT(IFNULL(kapals.kode_kapal, ''), ' ', IFNULL(kapals.nama_kapal, ''), ' ', IFNULL(detail_tracking.voyage, '')) AS nama"),
              'c_ports.nama as pelayaran',
              'detail_tracking.tgl_muat',
@@ -154,31 +155,6 @@ class InvoiceLunasController extends Controller
             $data['description'] = $array;
             $data['bank'] = Bank::where('status', 1)->first();
         }
-        // $data['description'] = [
-        //         0 => [
-        //             "total_tonase" => "400",
-        //             "total_dp" => "140000.00",
-        //             "total_ppn" => "1540.00",
-        //             "harga_brg" => "700.00",
-        //             "no_po" => "232002101",
-        //             "date" => "2023-10-10",
-        //             "tipe" => "Curah",
-        //             "prosentase_ppn" => 1.1,
-        //             "name" => "FREIGHT PO 232002101 (400 KG X Rp. 700)"
-        //         ],
-        //         1 => [
-        //             "total_tonase" => "150",
-        //             "total_dp" => "56250.00",
-        //             "total_ppn" => "1237.00",
-        //             "harga_brg" => "750.00",
-        //             "no_po" => "232002101",
-        //             "date" => "2023-10-09",
-        //             "tipe" => "Container",
-        //             "prosentase_ppn" => 1.1,
-        //             "name" => "FREIGHT PO 232002101 (150 KG X Rp. 750)"
-        //         ]
-        //         ];
-        // dd($data);
         $filename = 'invoice-pel-report-' . date('YmdHis') . '-' . rand(0, 1000) . ".xlsx";
         return Excel::download(new InvoicePelExport($data), $filename);
     }
