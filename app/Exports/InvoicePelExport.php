@@ -45,7 +45,7 @@ class InvoicePelExport implements FromView, WithStyles, WithColumnWidths, WithEv
         return [
             AfterSheet::class => function (AfterSheet $event) {
                 $sheet = $event->sheet;
-                $keywords = ['FREIGHT PO', 'Harga Cont', 'Subtotal', 'DP', 'PPN'];
+                $keywords = ['FREIGHT PO', 'Harga Cont', 'Subtotal', 'DP', 'PPN', 'Pelunasan'];
                 $rowCount = 0; // Initialize the row count
                 $descriptionFound = false;
                 $amountFound = false;

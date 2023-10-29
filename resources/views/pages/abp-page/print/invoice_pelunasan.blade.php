@@ -156,7 +156,7 @@
               </tr>
               @php
                 $subtotal = 0;
-                $dp_50 = 0;
+                $dp_50 = $data['total_dp'];
               @endphp
               @foreach ($data['description'] as $desc)
                 <tr>
@@ -166,26 +166,29 @@
                 </tr>
                 @php
                     $subtotal += $desc['total_tonase'] * $desc['harga_brg'];
-                    $dp_50 += $desc['total_dp'];
                 @endphp                
               @endforeach
+              @if ($data['id_invoice_dp'] != 0)
               <tr>
                 <td class="tg-0pky" style="border-bottom: none; border-top: none; border-right: none;" colspan="3"></td>
-                <td class="tg-0pky" style="border-bottom: none; border-top: none; border-right: none;" colspan="2">Pelunasan</td>
+                <td class="tg-0pky" style="border-bottom: none; border-top: none; border-right: none;" colspan="2">Subtotal</td>
                 <td class="tg-0pky" style="border-bottom: none; border-top: none; border-left:none;" colspan="2">Rp. {{ number_format($subtotal, 0, ',', '.') }}</td>
               </tr>
-              @if ($data['id_invoice_dp'] != 0)
               <tr>
                 <td class="tg-0pky" style="border-bottom: none; border-top: none; border-right: none;" colspan="3"></td>
                 <td class="tg-0pky" style="border-bottom: none; border-top: none; border-right: none;" colspan="2">DP 50%</td>
                 <td class="tg-0pky" style="border-bottom: none; border-top: none; border-left:none;" colspan="2">Rp. {{ number_format($dp_50, 0, ',', '.') }}</td>
               </tr>
               @endif
-             
+              <tr>
+                <td class="tg-0pky" style="border-bottom: none; border-top: none; border-right: none;" colspan="3"></td>
+                <td class="tg-0pky" style="border-bottom: none; border-top: none; border-right: none;" colspan="2">Pelunasan</td>
+                <td class="tg-0pky" style="border-bottom: none; border-top: none; border-left:none;" colspan="2">Rp. {{ number_format(($subtotal-$dp_50), 0, ',', '.') }}</td>
+              </tr>
               <tr>
                 <td class="tg-0pky" style="border-bottom: none; border-top: none; border-right: none;" colspan="3"></td>
                 <td class="tg-0pky" style="border-bottom: none; border-top: none; border-right: none;" colspan="2">PPN 1,1%</td>
-                <td class="tg-0pky" style="border-bottom: none; border-top: none; border-left:none;" colspan="2">Rp. {{ number_format($desc['prosentase_ppn'] * $subtotal / 100, 0, ',', '.') }}</td>
+                <td class="tg-0pky" style="border-bottom: none; border-top: none; border-left:none;" colspan="2">Rp. {{ number_format($desc['prosentase_ppn'] * (($subtotal-$dp_50)) / 100, 0, ',', '.') }}</td>
               </tr>
               <tr>
                 <td class="tg-0pky" style="border-bottom: none; border-top: none; border-right: none;" colspan="3"></td>
@@ -195,8 +198,11 @@
                 if($data['id_invoice_dp'] == 0){
                   $dp_50 = 0;
                 }
+                $ppn = $desc['prosentase_ppn'] * (($subtotal-$dp_50)) / 100;
+                $pelunasan = $subtotal-$dp_50;
+                $totalinvoice = $pelunasan+$ppn;
               @endphp
-                <b>Rp. {{ number_format($subtotal + $dp_50 + ($desc['prosentase_ppn'] * $subtotal / 100), 0, ',', '.') }}</b>
+                <b>Rp. {{ number_format($totalinvoice, 0, ',', '.') }}</b>
                 </td>
               </tr>
               <tr>
