@@ -208,7 +208,7 @@
                                                                 </svg>
                                                             </a>
 
-                                                            <a href="/invoice-pelunasan/delete/{{ $tdp->id_track }}" class="bs-tooltip" data-bs-placement="top" title="Delete" data-original-title="Delete"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash">
+                                                            <a href="/horizontal-dark-menu/finance/invoice-pelunasan/delete/{{ $tdp->id_invoice_pel }}" class="bs-tooltip" data-bs-placement="top" title="Delete" data-original-title="Delete"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash">
                                                                     <polyline points="3 6 5 6 21 6"></polyline>
                                                                     <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
                                                                 </svg></a>
@@ -219,7 +219,7 @@
                                                                     <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
                                                                     <rect x="6" y="14" width="12" height="8"></rect>
                                                                 </svg></a>
-                                                            @else
+                                                            @elseif ($tdp->status == 2)
                                                             <a href="/horizontal-dark-menu/finance/invoice-pelunasan/print/{{ $tdp->id_invoice_pel }}" class="bs-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Print Timbang Dooring" data-original-title="Print"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-printer">
                                                                     <polyline points="6 9 6 2 18 2 18 9"></polyline>
                                                                     <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
@@ -254,10 +254,8 @@
                                                 <th>Estate</th>
                                                 <th>Total Tonase Dooring</th>
                                                 <th>Total Harga Dooring</th>
-                                                <th>Total PPN Dooring</th>
                                                 <th>Total Tonase Timbang Dooring</th>
                                                 <th>Total Harga Timbang Dooring</th>
-                                                <th>Total PPN Timbang Dooring</th>
                                                 <th>Total DP</th>
                                                 <th class="text-center">Action</th>
                                             </tr>
@@ -270,10 +268,8 @@
                                                 <td>{{$item->estate}}</td>
                                                 <td>{{number_format($item->total_tonase_dooring , 2, ',', '.')}}</td>
                                                 <td>{{number_format($item->total_harga_dooring , 2, ',', '.')}}</td>
-                                                <td>{{number_format($item->total_ppn_dooring , 2, ',', '.')}}</td>
                                                 <td>{{number_format($item->total_tonase_timbang , 2, ',', '.')}}</td>
                                                 <td>{{number_format($item->total_harga_timbang , 2, ',', '.')}}</td>
-                                                <td>{{number_format($item->total_ppn_timbang , 2, ',', '.')}}</td>
                                                 <td>{{number_format($item->total_invoice_adjusted , 2, ',', '.') ?? 0}}</td>
                                                 <td class="text-center">
                                                     @if ($tdp->status == 1 && $item->status == 1)

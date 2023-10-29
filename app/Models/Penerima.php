@@ -13,6 +13,6 @@ class Penerima extends Model
 
     public function ptPenerima()
     {
-        return $this->hasOne(PTPenerima::class,'id_pt_penerima','id_pt_penerima');
+        return $this->hasOne(PTpenerima::class,'id_pt_penerima','id_pt_penerima');
     }
 }
