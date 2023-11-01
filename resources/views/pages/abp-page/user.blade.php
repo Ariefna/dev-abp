@@ -36,9 +36,10 @@
                 input[type=number] {
                     -moz-appearance: textfield;
                 }
+
                 #PopupAutoComplete[resultstyles~="insecureWarning"] {
- display:none !important;
-}
+                    display: none !important;
+                }
             </style>
             </x-slot>
             <!-- END GLOBAL MANDATORY STYLES -->
@@ -94,8 +95,12 @@
                                     <div class="col-md-12">
                                         <label for="role" class="form-label">Role</label>
                                         <select name="role" class="form-select" id="role" required>
-                                            <option value="0">Admin</option>
-                                            <option value="1">Superadmin</option>
+                                            <option value="0">Superadmin</option>
+                                            @foreach ($aksesgroup as $itemaksesgroup)
+                                            <option value="{{ $itemaksesgroup->akses_group_id }}">
+                                                {{ $itemaksesgroup->nama }}
+                                            </option>
+                                            @endforeach
                                         </select>
                                         <div class="invalid-feedback">
                                             Pilih salah satu role
@@ -114,7 +119,7 @@
                             <div class="widget-header justify-content-center">
                                 <div class="row">
                                     <div class="col-xl-12 col-md-12 col-sm-12 col-12">
-                                        <h4>Tabel Data Menu Halaman</h4>
+                                        <h4>Tabel Data User</h4>
                                     </div>
                                 </div>
                             </div>
@@ -138,7 +143,7 @@
                                                         <td>{{ $user->id }}</td>
                                                         <td>{{ $user->name }}</td>
                                                         <td>{{ $user->email }}</td>
-                                                        <td>{{ $user->role === '0' ? 'admin' : 'superadmin' }}</td>
+                                                        <td>{{ $user->role === '0' ? 'superadmin' : $user->nama_role }}</td>
                                                         <td class="text-center">
                                                             <ul class="table-controls">
                                                                 <li>
@@ -190,8 +195,12 @@
                                                                 <div class="mb-3">
                                                                     <label for="editRole" class="form-label">Role</label>
                                                                     <select class="form-select" id="editRole" name="edit_role" required>
-                                                                        <option value="0" @if ($user->role === '0') selected @endif>Admin</option>
-                                                                        <option value="1" @if ($user->role === '1') selected @endif>Superadmin</option>
+                                                                        <option value="0" @if ($user->role === '0') selected @endif>Superadmin</option>
+                                                                        @foreach ($aksesgroup as $itemaksesgroup)
+                                                                        <option value="{{ $itemaksesgroup->akses_group_id }}" @if ($user->role == $itemaksesgroup->akses_group_id) selected @endif>
+                                                                            {{ $itemaksesgroup->nama }}
+                                                                        </option>
+                                                                        @endforeach
                                                                     </select>
                                                                 </div>
                                                                 <button type="submit" class="btn btn-primary">Simpan Perubahan</button>

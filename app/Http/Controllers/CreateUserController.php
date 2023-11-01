@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-// use App\Http\Controllers\DB;
+use App\Models\AksesGroup;
 use Illuminate\Support\Facades\DB; // Ubah ini
 use Illuminate\Http\Request;
 
@@ -11,11 +11,15 @@ class CreateUserController extends Controller
 {
     public function index()
     {
-        $users = User::orderBy('id', 'desc')
-            ->get();
+        $aksesgroup = AksesGroup::orderBy('akses_group_id', 'desc')
+        ->get();
+        $users = User::select('users.*', 'akses_group.nama as nama_role')
+            ->leftjoin('akses_group', 'users.role', '=', 'akses_group.akses_group_id')->orderBy('id', 'desc')->get();
+    
+            
         $title = 'Adhipramana Bahari Perkasa';
         $breadcrumb = 'This Breadcrumb';
-        return view('pages.abp-page.user', compact('title', 'breadcrumb', 'users'));
+        return view('pages.abp-page.user', compact('title', 'breadcrumb', 'users', 'aksesgroup'));
     }
 
     public function store(Request $request)

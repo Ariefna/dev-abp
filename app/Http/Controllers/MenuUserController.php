@@ -4,17 +4,30 @@ namespace App\Http\Controllers;
 
 use App\Models\ActionMenu;
 use App\Models\MenuHalaman;
+use App\Models\AksesGroup;
+use App\Models\AksesUserMenu;
+use App\Models\AksesUserDetail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class MenuUserController extends Controller
 {
     public function index()
     {
-        $role = request('role') != '' ? request('role') : '1'; // Read the 'id' query parameter from the URL
-        if ($role !== null && $role === '0') {
+        $role = request('role') != '' ? request('role') : '0'; // Read the 'id' query parameter from the URL
+        if ($role !== null && $role !== '0') {
             // Filter by user ID if provided
             $menuuser = MenuHalaman::where('status', '1')
-                ->where('isadmin', '1')
+                ->orderBy('id', 'desc')
+                ->join('akses_user_menu', 'menu_halaman.id', '=', 'akses_user_menu.menu_halaman_id')
+                ->where('akses_user_menu.akses_group_id', $role)
+                ->get();
+            $mastermenu = MenuHalaman::where('status', '1')
+                ->whereNotIn('id', function ($query) use ($role) {
+                    $query->select('menu_halaman_id')
+                        ->from('akses_user_menu')
+                        ->where('akses_group_id', $role);
+                })
                 ->orderBy('id', 'desc')
                 ->get();
         } else {
@@ -22,29 +35,33 @@ class MenuUserController extends Controller
             $menuuser = MenuHalaman::where('status', '1')
                 ->orderBy('id', 'desc')
                 ->get();
+            $mastermenu = MenuHalaman::where('status', '1')
+                ->orderBy('id', 'desc')
+                ->get();
         }
-        $mastermenu = MenuHalaman::where('status', '1')
-            ->orderBy('id', 'desc')
+        $aksesgroup = AksesGroup::orderBy('akses_group_id', 'desc')
             ->get();
 
-        $actions = ActionMenu::where('status', '1')
-            ->orderBy('id', 'desc')
+        $actions = ActionMenu::select('action_menu.*')
+            ->leftJoin('akses_user_detail', function ($query) use ($role) {
+                $query->on('action_menu.id', '=', 'akses_user_detail.action_menu_id')
+                    ->where('akses_user_detail.akses_group_id', '=', $role);
+            })
+            ->selectRaw('IF(akses_user_detail.akses_user_detail_id IS NOT NULL, 1, 0) AS akses')
             ->get();
 
         $title = 'Adhipramana Bahari Perkasa';
         $breadcrumb = 'This Breadcrumb';
 
-        return view('pages.abp-page.menuuser', compact('title', 'breadcrumb', 'menuuser', 'role', 'mastermenu', 'actions'));
+        return view('pages.abp-page.menuuser', compact('title', 'breadcrumb', 'menuuser', 'role', 'mastermenu', 'actions', 'aksesgroup'));
     }
 
     public function add(Request $request)
     {
-        $id = $request->nama_menu_halaman;
-        // Find the MenuHalaman by its ID
-        $menuHalaman = MenuHalaman::findOrFail($id);
-        $menuHalaman->isadmin = '1'; // You can adjust this value as needed
-
-        $menuHalaman->save();
+        $akses_user_menu = new AksesUserMenu();
+        $akses_user_menu->akses_group_id = $request->akses_group_id;
+        $akses_user_menu->menu_halaman_id = $request->nama_menu_halaman;
+        $akses_user_menu->save();
 
         return redirect()->back();
     }
@@ -60,17 +77,21 @@ class MenuUserController extends Controller
 
     public function update(Request $request, $id)
     {
+        $idActions = $request->input('id_action', []);
+        $satuidaction = $idActions[0];
+        $aksesGroupId = $request->akses_group_id;
+        AksesUserDetail::whereIn('action_menu_id', function ($query) use ($satuidaction) {
+            $query->select('f.id')
+                ->from('action_menu as f')
+                ->join(DB::raw('(select b.menu_halaman_id from akses_user_detail a join action_menu b on a.action_menu_id = b.id where a.action_menu_id = '.$satuidaction.') as g'), 'f.menu_halaman_id', '=', 'g.menu_halaman_id');
+        })
+            ->where('akses_group_id', $aksesGroupId)
+            ->delete();
         foreach ($request->input('id_action', []) as $actionId) {
-            $actionMenu = ActionMenu::find($actionId);
-            // Update the actionMenu record if it exists
-            if ($actionMenu) {
-                if ($actionMenu->isadmin == '1') {
-                    $actionMenu->isadmin = '0';
-                } else {
-                    $actionMenu->isadmin = '1';
-                }
-                $actionMenu->save();
-            }
+            $aksesUserDetail = new AksesUserDetail();
+            $aksesUserDetail->akses_group_id = $request->akses_group_id; // Menggunakan nilai akses_group_id dari permintaan
+            $aksesUserDetail->action_menu_id = $actionId; // Menggunakan nilai action_id dari array input
+            $aksesUserDetail->save();
         }
 
         return redirect()->back();
