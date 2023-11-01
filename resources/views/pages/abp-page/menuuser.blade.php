@@ -51,12 +51,13 @@
                             <div class="modal-header">
                                 <h5 class="modal-title" id="tambahModalLabel">Tambah Data Menu Halaman</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
                             </div>
                             <div class="modal-body">
                                 <form action="{{ route('menuuser.add') }}" method="POST">
                                     @csrf
+                                    <input type="hidden" value="{{$role}}" name="akses_group_id">
                                     <div class="form-group">
                                         <label for="nama_menu_halaman">Nama Menu Halaman</label>
                                         <select class="form-control" id="nama_menu_halaman" name="nama_menu_halaman" required>
@@ -66,7 +67,7 @@
                                         </select>
                                     </div>
                                     <div class="modal-footer">
-                                    <button type="button" class="btn btn btn-light-dark" data-bs-dismiss="modal"><i class="flaticon-cancel-12"></i>Batal</button>
+                                        <button type="button" class="btn btn btn-light-dark" data-bs-dismiss="modal"><i class="flaticon-cancel-12"></i>Batal</button>
                                         <button type="submit" class="btn btn-primary">Simpan</button>
                                     </div>
                                 </form>
@@ -99,12 +100,15 @@
                             </div>
                             <div class="widget-content widget-content-area" style="padding: 2%;">
                                 <form class="row g-3 needs-validation" action="{{ route('menuuser.index') }}" method="GET" enctype="multipart/form-data" novalidate>
-
                                     <div class="col-md-12">
                                         <label for="nama_menu_halaman" class="form-label">Nama Role</label>
                                         <select name="role" class="form-select" id="role" required>
-                                            <option value="0" @if ($role==="0" ) selected @endif>Admin</option>
-                                            <option value="1" @if ($role==="1" ) selected @endif>Superadmin</option>
+                                            <option value="0" @if ($role==="0" ) selected @endif>Superadmin</option>
+                                            @foreach ($aksesgroup as $itemaksesgroup)
+                                            <option value="{{ $itemaksesgroup->akses_group_id }}" @if ($role==$itemaksesgroup->akses_group_id) selected @endif>
+                                                {{ $itemaksesgroup->nama }}
+                                            </option>
+                                            @endforeach
                                         </select>
 
                                         <div class="invalid-feedback">
@@ -140,7 +144,7 @@
                                                     <tr>
                                                         <th> Id </th>
                                                         <th>Nama Halaman</th>
-                                                        @if ($role === "0")
+                                                        @if ($role !== "0")
                                                         <th class="text-center dt-no-sorting">Action</th>
                                                         @endif
                                                     </tr>
@@ -150,10 +154,10 @@
                                                     <tr>
                                                         <td>{{ $mnuser->id }}</td>
                                                         <td>{{ $mnuser->nama_menu_halaman }}</td>
-                                                        @if ($role === "0")
+                                                        @if ($role !== "0")
                                                         <td class="text-center">
                                                             <ul class="table-controls">
-                                                            @if(in_array('userrole-menu-user-UPDATE', Session::get('nama_action')) || Session::get('role') == 'superadmin')
+                                                                @if(in_array('userrole-menu-user-UPDATE', Session::get('nama_action')) || Session::get('role') == 'superadmin')
                                                                 <li><a href="#exampleModal-{{ $mnuser->id }}" class="bs-tooltip" data-bs-toggle="modal" data-bs-placement="top" title="Edit" data-original-title="Edit"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2 p-1 br-8 mb-1">
                                                                             <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
                                                                         </svg></a></li>
@@ -181,10 +185,13 @@
                                                         <div class="modal-body">
                                                             <form class="row g-3 needs-validation" action="{{ route('menuuser.update', ['menuuser' => $mnuser->id]) }}" method="POST" enctype="multipart/form-data" novalidate>
                                                                 @csrf
+                                                                <input type="hidden" value="{{$role}}" name="akses_group_id">
+                                                                <input type="hidden" value="{{$mnuser->id}}" name="menu_halaman_id">
+                                                                
                                                                 @method('PUT')
                                                                 <div class="col-md-12">
                                                                     <label for="nama_menu" class="form-label">Nama Menu</label>
-                                                                    <input value="{{ $mnuser->nama_menu_halaman }}  {{$mnuser->id}}" readonly='true' name="nama_menu_halaman" type="text" class="form-control" id="nama_menu_halaman" placeholder="Masukkan nama menu" required>
+                                                                    <input value="{{ $mnuser->nama_menu_halaman }}" readonly='true' name="nama_menu_halaman" type="text" class="form-control" id="nama_menu_halaman" placeholder="Masukkan nama menu" required>
                                                                     <div class="invalid-feedback">
                                                                         Form nama menu tidak boleh kosong
                                                                     </div>
@@ -194,7 +201,7 @@
                                                                     @foreach($actions as $action)
                                                                     @if($action->menu_halaman_id == $mnuser->id)
                                                                     <div class="form-check">
-                                                                        <input class="form-check-input" type="checkbox" name="id_action[]" value="{{ $action->id }}" {{ $role === "1" || $action->isadmin ? 'checked' : '' }}>
+                                                                        <input class="form-check-input" type="checkbox" name="id_action[]" value="{{ $action->id }}" {{ $role === "0" || $action->akses ? 'checked' : '' }}>
                                                                         <label class="form-check-label" for="nama_action_{{ $action->id }}">
                                                                             {{ $action->nama_action }}
                                                                         </label>
