@@ -8,6 +8,8 @@ use App\Models\AksesGroup;
 use App\Models\AksesUserMenu;
 use App\Models\AksesUserDetail;
 use Illuminate\Http\Request;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class MenuUserController extends Controller
@@ -55,7 +57,14 @@ class MenuUserController extends Controller
 
         return view('pages.abp-page.menuuser', compact('title', 'breadcrumb', 'menuuser', 'role', 'mastermenu', 'actions', 'aksesgroup'));
     }
+    public function addrole(Request $request)
+    {
+        $aksesgroup = new AksesGroup();
+        $aksesgroup->nama = $request->nama_role;
+        $aksesgroup->save();
 
+        return redirect()->back();
+    }
     public function add(Request $request)
     {
         $akses_user_menu = new AksesUserMenu();
@@ -97,12 +106,11 @@ class MenuUserController extends Controller
         return redirect()->back();
     }
 
-    public function destroy($id)
+    public function destroy($id, Request $request)
     {
-        $barang = MenuHalaman::find($id);
-        $barang->update([
-            'isadmin' => '0'
-        ]);
+        AksesUserMenu::where('akses_group_id', $request->akses_group_id)
+        ->where('menu_halaman_id', $id)
+        ->delete();
         return redirect()->back();
     }
 }

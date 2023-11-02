@@ -259,6 +259,8 @@ foreach ($prefixRouters as $prefixRouter) {
 
              Route::prefix('userrole')->group(function () {
                 Route::post('/menuuser/add', [\App\Http\Controllers\MenuUserController::class, 'add'])->name('menuuser.add');
+                Route::post('/menuuser/addrole', [\App\Http\Controllers\MenuUserController::class, 'addrole'])->name('menuuser.addrole');
+                
                 Route::get('/menuuser', function () {
                     return view('pages.abp-page.menuuser', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
                 })->name('menuuser.index');
