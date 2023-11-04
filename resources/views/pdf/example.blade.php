@@ -104,12 +104,10 @@
     <table>
         <table border="0" cellspacing="0" cellpadding="0" style="margin-top: 24%;">
             <tr>
-                
             </tr>
         </table>
         <?php
-        // var_dump($data);
-        $updated_at = date("Y-m-d");// Gantilah ini dengan nilai tanggal yang sesuai
+        $updated_at = date("Y-m-d"); // Gantilah ini dengan nilai tanggal yang sesuai
 
         $timestamp = strtotime($updated_at);
 
@@ -141,6 +139,7 @@
                     <p class="s2" style="text-indent: 0pt;line-height: 13pt;text-align: center;">OA CONTAINER</p>
                 </td>
             </tr>
+
             @foreach ($data2 as $key => $item)
             <tr style="height:15pt">
                 <td style="width:88pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
@@ -153,36 +152,58 @@
                     <p class="s3" style="text-indent: 0pt;line-height: 12pt;text-align: center;">Rp {{ $item['oa_container'] }} ,-/KG</p>
                 </td>
             </tr>
+            @if ($key == 25)
+            @php
+            break;
+            @endphp
+            @endif
             @endforeach
         </table>
+    </table>
+    @if (count($data2) > 5)
+    <p style="padding-top: 165pt"></p>
+    @endif
+    @if (count($data2) > 26)
+    <table style="border-collapse:collapse;margin-left:87.1125pt" cellspacing="0">
+            <tr style="height:15pt">
+                <td style="width:88pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p class="s2" style="text-indent: 0pt;line-height: 13pt;text-align: center;">ESTATE</p>
+                </td>
+                <td style="width:144pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p class="s2" style="text-indent: 0pt;line-height: 13pt;text-align: center;">OA KAPAL KAYU</p>
+                </td>
+                <td style="width:144pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p class="s2" style="text-indent: 0pt;line-height: 13pt;text-align: center;">OA CONTAINER</p>
+                </td>
+            </tr>
+
+            @foreach ($data2 as $key => $item)
+            @if ($key <= 26)
+            @php
+            continue;
+            @endphp
+            @endif
+            <tr style="height:15pt">
+                <td style="width:88pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p style="text-indent: 0pt;text-align: center;">{{ $item['estate'] }}<br /></p>
+                </td>
+                <td style="width:100pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;" bgcolor="#FFFFFF">
+                    <p class="s3" style="text-indent: 0pt;line-height: 12pt;text-align: center;">Rp {{ $item['oa_kpl_kayu'] }} ,-/KG</p>
+                </td>
+                <td style="width:100pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;" bgcolor="#FFFFFF">
+                    <p class="s3" style="text-indent: 0pt;line-height: 12pt;text-align: center;">Rp {{ $item['oa_container'] }} ,-/KG</p>
+                </td>
+            </tr>
+          
+            @endforeach
+        </table>
+    @endif
+    @if (count($data2) > 29)
+    <p style="padding-top: 165pt"></p>
+    @endif
+      
         <p style="text-indent: 0pt;text-align: left;"><br /></p>
         <p style="padding-top: 8pt;padding-left: 41pt;text-indent: 0pt;text-align: left;">Ketentuan :</p>
-        <!-- <ol id="l1">
-            <li data-list-text="1.">
-                <p style="padding-top: 5pt;padding-left: 59pt;text-indent: -18pt;line-height: 13pt;text-align: left;">Harga di atas Sudah termasuk biaya perset B/L</p>
-            </li>
-            <li data-list-text="2.">
-                <p style="padding-left: 59pt;text-indent: -18pt;line-height: 13pt;text-align: left;">Harga di atas <i>Belum </i>termasuk asuransi</p>
-            </li>
-            <li data-list-text="3.">
-                <p style="padding-left: 59pt;text-indent: -18pt;line-height: 13pt;text-align: left;">Harga di atas <i>Belum </i>termasuk PPN 11%</p>
-            </li>
-            <li data-list-text="4.">
-                <p style="padding-left: 59pt;text-indent: -18pt;line-height: 13pt;text-align: left;">Harga di atas Non <i><b>Negotiable</b></i></p>
-            </li>
-            <li data-list-text="5.">
-                <p style="padding-left: 59pt;text-indent: -18pt;text-align: left;">Barang yang sudah tiba harus sudah di bongkar sebelum masa free time demorage berakhir, segala biaya yang timbul akibat kelalaian yang sengaja atau tidak sengaja adalah tanggung jawab shipper</p>
-            </li>
-            <li data-list-text="6.">
-                <p style="padding-left: 59pt;text-indent: -18pt;line-height: 12pt;text-align: left;">Harga di atas adalah termasuk biaya bongkar barang dengan <i><b>tenaga buruh</b></i></p>
-            </li>
-            <li data-list-text="7.">
-                <p style="padding-left: 59pt;text-indent: -18pt;line-height: 13pt;text-align: left;">Pembayaran : Uang muka 50% setelah selesai muat dan Pelunasan 50% 30 hari setelah terima BAP</p>
-            </li>
-            <li data-list-text="8.">
-                <p style="padding-left: 59pt;text-indent: -18pt;text-align: left;">Untuk tujuan Pontianak, apabila terjadi force majure, di mana akan membutuhkan gudang, akan muncul tambahan biaya sebesar 100.000/ton (Sewa gudang, Handling, trucking)</p>
-            </li>
-        </ol> -->
         <?php
         $lines = explode("\n", $data1['ketentuan']);
 
@@ -202,7 +223,6 @@
 
         echo $html;
         ?>
-
         <br>
         <br>
         <table width="787" style="color: black; font-family: 'Times New Roman', serif; font-style: normal; font-weight: normal; text-decoration: none; font-size: 11pt; margin: 0pt;padding-left: 41pt">
@@ -234,8 +254,6 @@
                 </tr>
             </tbody>
         </table>
-
-
 </body>
 
 </html>

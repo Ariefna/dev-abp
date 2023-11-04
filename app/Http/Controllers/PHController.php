@@ -73,9 +73,6 @@ class PHController extends Controller
             ->where('id_penawaran', $id)
             ->select('detail_p_h_s.oa_container', 'detail_p_h_s.oa_kpl_kayu', 'penerimas.estate')
             ->get()->toArray();
-
-
-        // return ['data' => $data];
         $pdf = PDF::loadView('pdf.example', ['data1' => $data, 'data2' => $dataDetailPH]);
 
         return $pdf->stream('surat_pesanawaran.pdf');
