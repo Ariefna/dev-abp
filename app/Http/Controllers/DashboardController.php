@@ -75,13 +75,28 @@ class DashboardController extends Controller
                 ->orderBy('doc_tracking.no_po')
                 ->groupBy('detail_dooring_sisa.id_dooring')
                 ->get();                
-        $currentYear = Carbon::now()->year; // Get the current year
-        $totaldp = InvoiceDp::where('status', 2)->whereYear('invoice_date', $currentYear)->sum('total_invoice');
-        $totalpel = InvoicePelunasan::where('status',2)->whereYear('invoice_date', $currentYear)->sum('total_invoice');
+        $currentMonth = Carbon::now()->month;
+        $datagrafik = [];
+        // $totaldp = InvoiceDp::where('status', 2)->whereYear('invoice_date', $currentYear)->sum('total_invoice');
+        // $totalpel = InvoicePelunasan::whereIn('status', [2,3])->whereYear('invoice_date', $currentYear)->sum('total_invoice');
+        // $totalpo = PurchaseOrder::whereIn('status',[2])->sum('total_all');
+        $totaldp = InvoiceDp::where('status', 2)->whereMonth('invoice_date', $currentMonth)->sum('total_invoice');
+        $totalpel = InvoicePelunasan::whereIn('status', [2,3])->whereMonth('invoice_date', $currentMonth)->sum('total_invoice');
+        $totalpo = PurchaseOrder::whereIn('status',[2])->whereMonth('tgl', $currentMonth)->sum('total_all');        
+
+        for ($i = 0; $i < 10; $i++) {
+            $year = $currentYear + $i;
+            
+            $dp = InvoiceDp::where('status', 2)->whereYear('invoice_date', $year)->sum('total_invoice');
+            $pel = InvoicePelunasan::whereIn('status', [2,3])->whereYear('invoice_date', $year)->sum('total_invoice');
+            
+            $datagrafik[$year] = $dp + $pel;
+        }
+        // dd($datagrafik);
         $title = 'Adhipramana Bahari Perkasa';
         $breadcrumb = 'This Breadcrumb';
         return view('pages.dashboard.analytics', compact('title', 'breadcrumb',
-        'tbl_po','tbl_dor','totaldp','totalpel'));        
+        'tbl_po','tbl_dor','totaldp','totalpel','datagrafik','totalpo'));        
     }
 
     public function addsisatrack(Request $request, $no_po) {
