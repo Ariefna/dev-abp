@@ -32,6 +32,8 @@ class DocTrackingController extends Controller
         $pod = PortOfDestination::where('status', 1)
                 ->orderBy('id', 'desc')
                 ->get();
+        $selectpol = DocTracking::select('id_pol', 'id_track')->where('created_by',Session::get('id'))->get();
+        $selectpod = DocTracking::select('id_pod','id_track')->where('created_by',Session::get('id'))->get();
         $kapal = Kapal::select('kapals.id', 'kapals.id_company_port', 'c_ports.nama', 'c_ports.no_telp', 'c_ports.alamat', 'kapals.kode_kapal', 'kapals.nama_kapal')
                 ->join('c_ports', 'c_ports.id_company_port', '=', 'kapals.id_company_port')
                 ->where('kapals.status', 1)
@@ -80,6 +82,8 @@ class DocTrackingController extends Controller
                 ->join('detail_tracking', 'detail_tracking.id_track', '=', 'doc_tracking.id_track')
                 ->join('detail_tracking_sisa','detail_tracking_sisa.id_track','=','doc_tracking.id_track')
                 ->where('doc_tracking.status', 1)
+                ->whereNotIn('detail_tracking.status', [0])
+                ->whereNotIn('purchase_orders.status', [0])
                 ->where('created_by',Session::get('id'))
                 ->groupBy('doc_tracking.id_track')
                 ->orderBy('doc_tracking.id_track', 'desc')
@@ -107,7 +111,7 @@ class DocTrackingController extends Controller
                     ->join('detail_tracking', 'detail_tracking.id_track', '=', 'doc_tracking.id_track')
                     ->join('detail_tracking_sisa','detail_tracking_sisa.id_track','=','doc_tracking.id_track')
                     ->where('doc_tracking.status', 1)
-                    ->whereIn('detail_tracking.status', [2,3])
+                    ->whereIn('detail_tracking.status', [1,2,3])
                     ->where('created_by',Session::get('id'))
                     ->groupBy('doc_tracking.id_track')
                     ->orderBy('doc_tracking.id_track', 'desc')
@@ -130,6 +134,7 @@ class DocTrackingController extends Controller
                     ->join('detail_tracking_sisa','detail_tracking_sisa.id_track','=','doc_tracking.id_track')
                     ->where('doc_tracking.status', 1)
                     ->where('detail_tracking_sisa.tipe', 'Curah')
+                    ->where('created_by',Session::get('id'))
                     ->groupBy('doc_tracking.id_track')
                     ->orderBy('doc_tracking.id_track', 'desc')
                     ->get();
@@ -141,6 +146,7 @@ class DocTrackingController extends Controller
                     ->join('detail_tracking_sisa','detail_tracking_sisa.id_track','=','doc_tracking.id_track')
                     ->where('doc_tracking.status', 1)
                     ->where('detail_tracking_sisa.tipe', 'Container')
+                    ->where('created_by',Session::get('id'))
                     ->groupBy('doc_tracking.id_track')
                     ->orderBy('doc_tracking.id_track', 'desc')
                     ->get();                    
@@ -157,40 +163,57 @@ class DocTrackingController extends Controller
                 ->join('detail_tracking', 'detail_tracking.id_track', '=', 'doc_tracking.id_track')
                 ->where('doc_tracking.status', 1)
                 ->where('detail_tracking.status', 1)
+                ->where('created_by',Session::get('id'))
                 ->groupBy('doc_tracking.id_track')
                 ->orderBy('doc_tracking.id_track', 'desc')
                 ->count();
         $dtrack = DetailTracking::select('*')
                 ->join('gudang_muats', 'gudang_muats.id_gudang', '=', 'detail_tracking.id_gudang')
                 ->join('kapals', 'kapals.id', '=', 'detail_tracking.id_kapal')
+                ->join('doc_tracking', 'doc_tracking.id_track', '=', 'detail_tracking.id_track')
                 ->where('detail_tracking.status', 1)
+                ->where('doc_tracking.created_by',Session::get('id'))
+                // ->groupBy('doc_tracking.id_track')
                 ->orderBy('detail_tracking.id_detail_track', 'desc')
                 ->get();    
         $lastcont = DetailTracking::join('detail_tracking_sisa','detail_tracking_sisa.id_track','=','detail_tracking.id_track')
+                    ->join('doc_tracking', 'doc_tracking.id_track', '=', 'detail_tracking.id_track')
                     ->where('detail_tracking.status', 1)
+                    ->where('created_by',Session::get('id'))
                     ->whereNotNull('detail_tracking.no_container')
                     ->where('detail_tracking_sisa.tipe', 'Container')
                     ->first();
         $lastcurah = DetailTracking::join('detail_tracking_sisa', 'detail_tracking_sisa.id_track', '=', 'detail_tracking.id_track')
+                    ->join('doc_tracking', 'doc_tracking.id_track', '=', 'detail_tracking.id_track')
                     ->where('detail_tracking.status', 1)
+                    ->where('created_by',Session::get('id'))
                     ->whereNull('detail_tracking.no_container')
                     ->where('detail_tracking_sisa.tipe', 'Curah')
                     ->first();
         $zerocurah = DocTracking::select('*')
                     ->join('purchase_orders', 'purchase_orders.po_muat', '=', 'doc_tracking.no_po')
                     ->where('doc_tracking.status',1)
+          			->whereNotIn('purchase_orders.status', [0])
+                    ->where('created_by',Session::get('id'))
                     ->get();
+                    // dd($zerocurah);
         $zerocont = DocTracking::select('*')
                     ->join('purchase_orders', 'purchase_orders.po_muat', '=', 'doc_tracking.no_po')
                     ->where('doc_tracking.status',1)
+          			->whereNotIn('purchase_orders.status', [0])
+                    ->where('created_by',Session::get('id'))
                     ->get();                    
         $cek = DocTracking::where('status',1)->where('created_by',Session::get('id'))->get();
-        $tracksisa = DetailTrackingSisa::select('id_track','tipe','qty_tonase_sisa')->get();
+        $tracksisa = DetailTrackingSisa::select('detail_tracking_sisa.id_track', 'detail_tracking_sisa.tipe', 'detail_tracking_sisa.qty_tonase_sisa')
+        ->join('doc_tracking', 'doc_tracking.id_track', '=', 'detail_tracking_sisa.id_track')
+        ->where('doc_tracking.created_by', Session::get('id'))
+        ->get();
+        // dd($tracksisa);
         $title = 'Adhipramana Bahari Perkasa';
         $breadcrumb = 'This Breadcrumb';
         return view('pages.abp-page.tra', compact('title', 'breadcrumb','po','details','getcurahqty','getcontqty',
         'track','trackzero','dtrack','lastcont','lastcurah','zerocurah',
-        'zerocont','gudang','pol','pod','kapal','tracknull','cek','tracksisa'));
+        'zerocont','gudang','pol','pod','kapal','tracknull','cek','tracksisa','selectpol','selectpod'));
     }
     
 
@@ -214,6 +237,7 @@ class DocTrackingController extends Controller
             'no_po'     => $request->no_po,
             'id_pol'     => $request->id_pol,
             'id_pod'     => $request->id_pod,
+            'created_by'=> Session::get('id'),
             'status' => '1',
             'status_kapal'=> 1
         ]);
@@ -221,27 +245,99 @@ class DocTrackingController extends Controller
     }
     public function savecontainer(Request $request) {
         $request->validate([
-            'file' => 'required|mimes:jpeg,png,pdf|max:2048',
+            'file' => 'required|mimes:jpeg,png,pdf',
+            'file_tbg' => 'required|mimes:jpeg,png,pdf',
         ]);
-        
-        $file1 = $request->file('file'); // Change variable name to $file1
-        $fileName1 = time() . '_' . $file1->getClientOriginalName();
-        
-        Storage::disk('public')->putFileAs('uploads/tracking', $file1, $fileName1);
-        
-        $request->validate([
-            'file_tbg' => 'required|mimes:jpeg,png,pdf|max:2048',
-        ]);
-        
+    
+        $file = $request->file('file');
+        $fileName = time() . '_' . $file->getClientOriginalName();
+        $fileType = $file->getMimeType(); // Get the MIME type of the file
+
         $file2 = $request->file('file_tbg'); // Change variable name to $file2
         $fileName2 = time() . '_' . $file2->getClientOriginalName();
-        
-        Storage::disk('public')->putFileAs('uploads/tracking', $file2, $fileName2);
+        $fileType2 = $file2->getMimeType(); // Get the MIME type of the file
+    
+        if (in_array($fileType, ['image/jpeg', 'image/jpg', 'image/png'])) {
+            // It's an image, so perform resize and compression
+    
+            $imgInfo = getimagesize($file->getPathname());
+            $mime = $imgInfo['mime'];
+            $quality = 50;
+    
+            switch ($mime) {
+                case 'image/jpeg':
+                    $image = imagecreatefromjpeg($file->getPathname());
+                    break;
+                case 'image/png':
+                    $image = imagecreatefrompng($file->getPathname());
+                    break;
+                default:
+                    $image = imagecreatefromjpeg($file->getPathname());
+            }
+    
+            $filePath = storage_path('app/public/uploads/tracking/' . $fileName);
+    
+            switch ($mime) {
+                case 'image/jpeg':
+                    imagejpeg($image, $filePath, $quality);
+                    break;
+                case 'image/png':
+                    imagepng($image, $filePath, floor(9 * $quality / 100));
+                    break;
+                default:
+                    imagejpeg($image, $filePath, $quality);
+            }
+    
+            imagedestroy($image);
+        } else {
+            // It's not an image, so don't perform any resize or compression
+            Storage::disk('public')->putFileAs('uploads/tracking', $file, $fileName);
+        }
+    
+        if (in_array($fileType2, ['image/jpeg', 'image/jpg', 'image/png'])) {
+            // It's an image, so perform resize and compression for the second file
+    
+            $imgInfo2 = getimagesize($file2->getPathname());
+            $mime2 = $imgInfo2['mime'];
+            $quality2 = 50;
+    
+            switch ($mime2) {
+                case 'image/jpeg':
+                    $image2 = imagecreatefromjpeg($file2->getPathname());
+                    break;
+                case 'image/png':
+                    $image2 = imagecreatefrompng($file2->getPathname());
+                    break;
+                default:
+                    $image2 = imagecreatefromjpeg($file2->getPathname());
+            }
+    
+            $filePath2 = storage_path('app/public/uploads/tracking/' . $fileName2);
+    
+            switch ($mime2) {
+                case 'image/jpeg':
+                    imagejpeg($image2, $filePath2, $quality2);
+                    break;
+                case 'image/png':
+                    imagepng($image2, $filePath2, floor(9 * $quality2 / 100));
+                    break;
+                default:
+                    imagejpeg($image2, $filePath2, $quality2);
+            }
+    
+            imagedestroy($image2);
+        } else {
+            // It's not an image, so don't perform any resize or compression for the second file
+            Storage::disk('public')->putFileAs('uploads/tracking', $file2, $fileName2);
+        }
+        //batas
         
         DetailTracking::create([
             'id_track'     => $request->id_track,
             'id_gudang'     => $request->id_gudang,
             'id_kapal'     => $request->id_kapal,
+            'id_pol'   => $request->cont_pol,
+            'id_pod'   => $request->cont_pod,
             'qty_tonase'     => $request->qty_tonase,
             'qty_timbang'     => $request->qty_timbang,
             'jml_sak'     => $request->jml_sak,
@@ -255,8 +351,8 @@ class DocTrackingController extends Controller
             'ta'     => '',
             'no_sj'     => $request->no_sj,
             'harga_hpp' => $request->hpp_kpl,
-            'sj_file_name'     => $fileName1,
-            'sj_file_path'     => 'uploads/tracking' . $fileName1,
+            'sj_file_name'     => $fileName,
+            'sj_file_path'     => 'uploads/tracking' . $fileName,
             'st_file_name'     => $fileName2,
             'st_file_path'     => 'uploads/tracking' . $fileName2,                                    
             'status' => '1'
@@ -288,45 +384,102 @@ class DocTrackingController extends Controller
                 ]);
             }
         }
-        // if ($c !== $b) {
-        //     DetailTrackingSisa::where('id_track', $request->id_track)->
-        //     where('tipe','Container')->update([
-        //         'qty_tonase_sisa' => $request->qty_cont_ada,
-        //     ]);
-        // } else if($c === $b){
-        //     DetailTrackingSisa::create([
-        //         'id_track'          => $request->id_track,
-        //         'qty_tonase_sisa'   => $request->qty_cont_emp,
-        //         'qty_total_tonase'  => $request->qty_cont_total,
-        //         'status'            => 1,
-        //         'tipe'              => 'Container'
-        //     ]);
-        // }
         return redirect()->back();
     }
     public function savecurah(Request $request) {
         $request->validate([
-            'file' => 'required|mimes:jpeg,png,pdf|max:2048',
+            'file' => 'required|mimes:jpeg,png,pdf',
+            'file_tbg' => 'required|mimes:jpeg,png,pdf',
         ]);
-        
-        $file1 = $request->file('file'); // Change variable name to $file1
-        $fileName1 = time() . '_' . $file1->getClientOriginalName();
-        
-        Storage::disk('public')->putFileAs('uploads/tracking', $file1, $fileName1);
-        
-        $request->validate([
-            'file_tbg' => 'required|mimes:jpeg,png,pdf|max:2048',
-        ]);
-        
+    
+        $file = $request->file('file');
+        $fileName = time() . '_' . $file->getClientOriginalName();
+        $fileType = $file->getMimeType(); // Get the MIME type of the file
+
         $file2 = $request->file('file_tbg'); // Change variable name to $file2
         $fileName2 = time() . '_' . $file2->getClientOriginalName();
-        
-        Storage::disk('public')->putFileAs('uploads/tracking', $file2, $fileName2);
+        $fileType2 = $file2->getMimeType(); // Get the MIME type of the file
+    
+        if (in_array($fileType, ['image/jpeg', 'image/jpg', 'image/png'])) {
+            // It's an image, so perform resize and compression
+    
+            $imgInfo = getimagesize($file->getPathname());
+            $mime = $imgInfo['mime'];
+            $quality = 50;
+    
+            switch ($mime) {
+                case 'image/jpeg':
+                    $image = imagecreatefromjpeg($file->getPathname());
+                    break;
+                case 'image/png':
+                    $image = imagecreatefrompng($file->getPathname());
+                    break;
+                default:
+                    $image = imagecreatefromjpeg($file->getPathname());
+            }
+    
+            $filePath = storage_path('app/public/uploads/tracking/' . $fileName);
+    
+            switch ($mime) {
+                case 'image/jpeg':
+                    imagejpeg($image, $filePath, $quality);
+                    break;
+                case 'image/png':
+                    imagepng($image, $filePath, floor(9 * $quality / 100));
+                    break;
+                default:
+                    imagejpeg($image, $filePath, $quality);
+            }
+    
+            imagedestroy($image);
+        } else {
+            // It's not an image, so don't perform any resize or compression
+            Storage::disk('public')->putFileAs('uploads/tracking', $file, $fileName);
+        }
+    
+        if (in_array($fileType2, ['image/jpeg', 'image/jpg', 'image/png'])) {
+            // It's an image, so perform resize and compression for the second file
+    
+            $imgInfo2 = getimagesize($file2->getPathname());
+            $mime2 = $imgInfo2['mime'];
+            $quality2 = 50;
+    
+            switch ($mime2) {
+                case 'image/jpeg':
+                    $image2 = imagecreatefromjpeg($file2->getPathname());
+                    break;
+                case 'image/png':
+                    $image2 = imagecreatefrompng($file2->getPathname());
+                    break;
+                default:
+                    $image2 = imagecreatefromjpeg($file2->getPathname());
+            }
+    
+            $filePath2 = storage_path('app/public/uploads/tracking/' . $fileName2);
+    
+            switch ($mime2) {
+                case 'image/jpeg':
+                    imagejpeg($image2, $filePath2, $quality2);
+                    break;
+                case 'image/png':
+                    imagepng($image2, $filePath2, floor(9 * $quality2 / 100));
+                    break;
+                default:
+                    imagejpeg($image2, $filePath2, $quality2);
+            }
+    
+            imagedestroy($image2);
+        } else {
+            // It's not an image, so don't perform any resize or compression for the second file
+            Storage::disk('public')->putFileAs('uploads/tracking', $file2, $fileName2);
+        }
         
         DetailTracking::create([
             'id_track'     => $request->id_track,
             'id_gudang'     => $request->id_gudang,
             'id_kapal'     => $request->id_kapal,
+            'id_pol'   => $request->did_pol,
+            'id_pod'   => $request->did_pod,
             'qty_tonase'     => $request->qty_tonase,
             'qty_timbang'     => $request->qty_timbang,
             'jml_sak'     => $request->jml_sak,
@@ -340,8 +493,8 @@ class DocTrackingController extends Controller
             'ta'     => '',
             'no_sj'     => $request->no_sj,
             'harga_hpp' => $request->hpp_kpl,
-            'sj_file_name'     => $fileName1,
-            'sj_file_path'     => 'uploads/tracking' . $fileName1,
+            'sj_file_name'     => $fileName,
+            'sj_file_path'     => 'uploads/tracking' . $fileName,
             'st_file_name'     => $fileName2,
             'st_file_path'     => 'uploads/tracking' . $fileName2,                                    
             'status' => '1'
@@ -374,23 +527,9 @@ class DocTrackingController extends Controller
                 ]);
             }
         }
-        // if ($c !== $b) {
-        //     DetailTrackingSisa::where('id_track', $request->id_track)->
-        //     where('tipe','Curah')->update([
-        //         'qty_tonase_sisa' => $request->qty,
-        //     ]);
-        // } else if($c === $b){
-        //     DetailTrackingSisa::create([
-        //         'id_track'          => $request->id_track,
-        //         'qty_tonase_sisa'   => $request->qty_sisa_curah,
-        //         'qty_total_tonase'  => $request->qty_curah_total,
-        //         'status'            => 1,
-        //         'tipe'              => 'Curah'
-        //     ]);
-        // }
         
         return redirect()->back();
-    }           
+    }
     public function destroy(Request $request, $id) {
         // $idtracking = DetailTrackingSisa::select('qty_tonase_sisa')->where('id_track',$id)->get();
         $qty_sisa = $request->qty_sisa_simpan;

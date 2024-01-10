@@ -21,6 +21,7 @@ use App\Models\DetailDooringSisa;
 use App\Http\Controllers\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Session;
 
 class DooringController extends Controller
 {
@@ -35,12 +36,12 @@ class DooringController extends Controller
         $pod = PortOfDestination::where('status', 1)
                 ->orderBy('id', 'desc')
                 ->get();
-        $kapal = Kapal::select('*')
+        $kapal = Kapal::select('*','detail_tracking.id_track')
                 ->join('c_ports', 'c_ports.id_company_port', '=', 'kapals.id_company_port')
                 ->join('detail_tracking','detail_tracking.id_kapal','=','kapals.id')
                 ->where('kapals.status', 1)
                 ->whereIn('detail_tracking.status',[2,3])
-                ->groupBy('detail_tracking.voyage','detail_tracking.id_kapal')
+                ->groupBy('detail_tracking.voyage','detail_tracking.id_kapal','detail_tracking.id_track')
                 ->get();
                 // dd($kapal);
         $po = DetailTracking::select('*')
@@ -52,8 +53,22 @@ class DooringController extends Controller
                 ->join('penerimas', 'detail_p_h_s.id_penerima', '=', 'penerimas.id_penerima')
                 ->join('pt_penerima', 'pt_penerima.id_pt_penerima', '=', 'penerimas.id_pt_penerima')
                 ->join('barangs', 'purchase_orders.id', '=', 'barangs.id')
+                // ->join('doc_dooring','doc_dooring.id_track','=','doc_tracking.id_track')
+                // ->whereIn('doc_tracking.status', [2, 3])
+                // ->where('doc_tracking.created_by',Session::get('id'))
+                // ->whereNotIn('purchase_orders.status', [0])
+                // ->where('detail_tracking.ta','!=','')
+                // ->groupBy('doc_tracking.no_po')
+                // ->get();
                 ->whereIn('doc_tracking.status', [2, 3])
-                ->where('detail_tracking.ta','!=','')
+                ->whereNotIn('doc_tracking.id_track', function ($query) {
+                    $query->select('id_track')
+                        ->from('doc_dooring');
+                })
+                ->where(function($query) {
+                    $query->where('detail_tracking.ta', '!=', '')
+                          ->orWhereNull('detail_tracking.ta');
+                })
                 ->groupBy('doc_tracking.no_po')
                 ->get();
         $track = DocDooring::select('*', 'doc_dooring.status', 'doc_dooring.id_dooring','detail_dooring.qty_tonase'
@@ -126,6 +141,9 @@ class DooringController extends Controller
                 ->join('detail_tracking', 'detail_tracking.id_track', '=', 'doc_tracking.id_track')
                 ->join('detail_dooring_sisa','detail_dooring_sisa.id_dooring','=','doc_dooring.id_dooring')
                 ->where('doc_dooring.status', 1)
+                ->whereNotIn('purchase_orders.status', [0])
+                ->whereNotIn('detail_tracking.status', [0])
+                ->where('doc_dooring.created_by',Session::get('id'))
                 ->groupBy('doc_dooring.id_dooring')
                 ->orderBy('doc_dooring.id_dooring', 'desc')
                 ->get();
@@ -159,6 +177,9 @@ class DooringController extends Controller
                     ->join('port_of_destination', 'port_of_destination.id', '=', 'doc_tracking.id_pod')
                     ->join('purchase_orders', 'purchase_orders.po_muat', '=', 'doc_tracking.no_po')
                     ->where('doc_dooring.status', 1)
+                    ->whereNotIn('purchase_orders.status', [0])
+                    ->whereNotIn('detail_tracking.status', [0])
+                    ->where('doc_dooring.created_by',Session::get('id'))
                     // ->where('detail_tracking.status', [2,3])
                     ->groupBy('doc_dooring.id_dooring')
                     ->orderBy('doc_dooring.id_dooring', 'desc')
@@ -193,6 +214,9 @@ class DooringController extends Controller
                     ->join('port_of_destination', 'port_of_destination.id', '=', 'doc_tracking.id_pod')
                     ->join('purchase_orders', 'purchase_orders.po_muat', '=', 'doc_tracking.no_po')
                     ->where('doc_dooring.status', 1)
+                    ->whereNotIn('purchase_orders.status', [0])
+                    ->whereNotIn('detail_tracking.status', [0])
+                    ->where('doc_dooring.created_by',Session::get('id'))
                     ->whereIn('detail_tracking.status', [2,3])
                     ->groupBy('doc_dooring.id_dooring')
                     ->orderBy('doc_dooring.id_dooring', 'desc')
@@ -229,11 +253,17 @@ class DooringController extends Controller
                     ->join('port_of_destination', 'port_of_destination.id', '=', 'doc_tracking.id_pod')
                     ->join('purchase_orders', 'purchase_orders.po_muat', '=', 'doc_tracking.no_po')
                     ->where('doc_dooring.status', 1)
+                    ->whereNotIn('purchase_orders.status', [0])
+                    ->whereNotIn('detail_tracking.status', [0])
+                    ->where('doc_dooring.created_by',Session::get('id'))
                     // ->whereIn('detail_tracking.status', [2,3])
                     ->groupBy('doc_dooring.id_dooring')
                     ->orderBy('doc_dooring.id_dooring', 'desc')
                     ->get();
-        $doorsisa = DetailDooringSisa::select('id_dooring','tipe','qty_tonase_sisa')->get();
+        $doorsisa = DetailDooringSisa::select('detail_dooring_sisa.id_dooring','detail_dooring_sisa.tipe','detail_dooring_sisa.qty_tonase_sisa')
+                    ->join('doc_dooring','doc_dooring.id_dooring','=','doc_dooring.id_dooring')
+                    ->where('doc_dooring.created_by',Session::get('id'))
+                    ->get();
         $getcurahqty = DocDooring::select('doc_dooring.status', 'doc_dooring.id_track'
                     ,'detail_dooring_sisa.qty_tonase_sisa','detail_tracking.no_segel'
                     ,'detail_dooring.id_kapal')
@@ -245,6 +275,9 @@ class DooringController extends Controller
                     ->join('port_of_destination', 'port_of_destination.id', '=', 'doc_tracking.id_pod')
                     ->join('purchase_orders', 'purchase_orders.po_muat', '=', 'doc_tracking.no_po')
                     ->where('doc_dooring.status', 1)
+                    ->whereNotIn('purchase_orders.status', [0])
+                    ->whereNotIn('detail_tracking.status', [0])
+                    ->where('doc_dooring.created_by',Session::get('id'))
                     ->where('detail_dooring_sisa.tipe', 'Curah')
                     ->groupBy('doc_dooring.id_dooring')
                     ->orderBy('doc_dooring.id_dooring', 'desc')
@@ -261,6 +294,9 @@ class DooringController extends Controller
                     ->join('port_of_destination', 'port_of_destination.id', '=', 'doc_tracking.id_pod')
                     ->join('purchase_orders', 'purchase_orders.po_muat', '=', 'doc_tracking.no_po')
                     ->where('doc_dooring.status', 1)
+                    ->whereNotIn('purchase_orders.status', [0])
+                    ->whereNotIn('detail_tracking.status', [0])
+                    ->where('doc_dooring.created_by',Session::get('id'))
                     ->where('detail_dooring_sisa.tipe', 'Container')
                     ->groupBy('doc_dooring.id_dooring')
                     ->orderBy('doc_dooring.id_dooring', 'desc')
@@ -273,7 +309,10 @@ class DooringController extends Controller
                 ->join('purchase_orders', 'purchase_orders.po_muat', '=', 'doc_tracking.no_po')
                 ->join('detail_dooring', 'detail_dooring.id_dooring', '=', 'doc_dooring.id_dooring')
                 ->where('doc_dooring.status', 1)
+                ->whereNotIn('purchase_orders.status', [0])
+                ->whereNotIn('detail_dooring.status', [0])
                 ->where('detail_dooring.status', 1)
+                ->where('doc_dooring.created_by',Session::get('id'))
                 ->groupBy('doc_dooring.id_dooring')
                 ->orderBy('doc_dooring.id_dooring', 'desc')
                 ->count();
@@ -283,21 +322,33 @@ class DooringController extends Controller
                          'detail_dooring.qty_tonase', 'detail_dooring.jml_sak', 'detail_dooring.qty_timbang',
                          'detail_dooring.no_tiket', 'detail_dooring.no_sj', 'detail_dooring.estate', 'detail_dooring.status')
                 ->join('doc_dooring', 'doc_dooring.id_dooring', '=', 'detail_dooring.id_dooring')
+                ->where('doc_dooring.created_by',Session::get('id'))
                 ->join('detail_tracking', 'detail_tracking.id_detail_track', '=', 'detail_dooring.id_detail_track')
+                ->whereNotIn('detail_dooring.status', [0])
+                ->whereNotIn('detail_tracking.status', [0])
                 ->where('detail_dooring.status', 1)
                 ->get();    
         // $lastcont = DetailTracking::where('status', 1)->whereNotNull('no_container')->latest()->first();
         // $lastcontainer = DetailDooring::where('status', 1)->where('tipe','Container')->latest()->first();
         $lastcurah = DetailDooring::join('detail_dooring_sisa', 'detail_dooring_sisa.id_dooring', '=', 'detail_dooring.id_dooring')
+                    ->join('doc_dooring','doc_dooring.id_dooring','=','detail_dooring.id_dooring')
+                    ->select('*','detail_dooring.id_detail_track')
                     ->where('detail_dooring.status', 1)
                     ->where('detail_dooring.tipe', 'Curah')
+                    ->whereNotIn('detail_dooring.status', [0])
+                    ->where('doc_dooring.created_by',Session::get('id'))
                     ->orderBy('detail_dooring.id_detail_door','desc')
                     ->first();
         $lastcontainer = DetailDooring::join('detail_dooring_sisa', 'detail_dooring_sisa.id_dooring', '=', 'detail_dooring.id_dooring')
+                    ->join('doc_dooring','doc_dooring.id_dooring','=','detail_dooring.id_dooring')
+                    ->select('*','detail_dooring.id_detail_track')
                     ->where('detail_dooring.status', 1)
                     ->where('detail_dooring.tipe', 'Container')
+                    ->whereNotIn('detail_dooring.status', [0])
+                    ->where('doc_dooring.created_by',Session::get('id'))
                     ->orderBy('detail_dooring.id_detail_door','desc')
                     ->first();
+                    // dd($lastcontainer);
         $zerocurah = DocDooring::select('*')
                     ->selectSub(function ($query) {
                         $query->selectRaw('SUM(qty_tonase)')
@@ -311,6 +362,10 @@ class DooringController extends Controller
                     ->join('detail_tracking','detail_tracking.id_track','=','doc_dooring.id_track')
                     ->join('purchase_orders', 'purchase_orders.po_muat', '=', 'doc_tracking.no_po')
                     ->where('doc_dooring.status',1)
+                    ->whereNotIn('purchase_orders.status', [0])
+                    ->whereNotIn('detail_tracking.status', [0])
+                    ->whereNotIn('purchase_orders.status',[0])
+                    ->where('doc_dooring.created_by',Session::get('id'))
                     ->whereNull('detail_tracking.no_container')
                     ->groupBy('detail_tracking.no_container')
                     ->get();
@@ -327,6 +382,10 @@ class DooringController extends Controller
                     ->join('detail_tracking','detail_tracking.id_track','=','doc_dooring.id_track')
                     ->join('purchase_orders', 'purchase_orders.po_muat', '=', 'doc_tracking.no_po')
                     ->where('doc_dooring.status',1)
+                    ->whereNotIn('purchase_orders.status', [0])
+                    ->whereNotIn('detail_tracking.status', [0])
+                    ->whereNotIn('purchase_orders.status',[0])
+                    ->where('doc_dooring.created_by',Session::get('id'))
                     ->whereNotNull('detail_tracking.no_container')
                     ->groupBy('detail_tracking.no_container')
                     ->limit(1)
@@ -336,12 +395,14 @@ class DooringController extends Controller
                 ->join('detail_p_h_s','detail_p_h_s.id_detail_ph','=','purchase_orders.id_detail_ph')
                 ->join('penerimas','penerimas.id_penerima','=','detail_p_h_s.id_penerima')
                 ->where('doc_tracking.status',[2,3])
+                ->whereNotIn('purchase_orders.status', [0])
                 ->get();
         $getcontainer = DetailTracking::select('detail_tracking.no_container','detail_tracking.id_detail_track',
                     'detail_tracking.no_segel')
                     ->join('doc_tracking','doc_tracking.id_track','=','detail_tracking.id_track')
                     ->join('doc_dooring','doc_dooring.id_track','=','doc_tracking.id_track')
                     ->whereIn('detail_tracking.status',[2,3])
+                    ->where('doc_dooring.created_by',Session::get('id'))
                     ->whereNotNull('detail_tracking.no_container')
                     ->get();
         $nosegel = DetailTracking::select('detail_tracking.no_container','detail_dooring.id_detail_track','detail_tracking.no_segel')
@@ -349,11 +410,13 @@ class DooringController extends Controller
                 ->join('doc_tracking','doc_tracking.id_track','=','detail_tracking.id_track')
                 ->join('doc_dooring','doc_dooring.id_track','=','doc_tracking.id_track')
                 ->whereIn('detail_tracking.status',[2,3])
+                ->where('doc_dooring.created_by',Session::get('id'))
                 ->whereNotNull('detail_tracking.no_container')
                 ->groupBy('detail_tracking.no_segel')
                 ->get();
                 // dd($nosegel);
-        $cek = DocDooring::where('doc_dooring.status',1)->get();
+        $cek = DocDooring::where('doc_dooring.status',1)->where('created_by',Session::get('id'))->get();
+        // $cek = DocTracking::where('status',1)->where('created_by',Session::get('id'))->get();
         $title = 'Adhipramana Bahari Perkasa';
         $breadcrumb = 'This Breadcrumb';
 
@@ -429,6 +492,7 @@ class DooringController extends Controller
                 ->join('port_of_destination','port_of_destination.id','=','doc_tracking.id_pod')
                 ->join('port_of_loading','port_of_loading.id','=','doc_tracking.id_pol')
                 ->join('purchase_orders','purchase_orders.po_muat','=','doc_tracking.no_po')
+                ->whereNotIn('purchase_orders.status', [0])
                 ->join('detail_p_h_s', 'purchase_orders.id_detail_ph', '=', 'detail_p_h_s.id_detail_ph')
                 ->join('penawaran_hargas', 'penawaran_hargas.id_penawaran', '=', 'detail_p_h_s.id_penawaran')
                 ->join('customers', 'customers.id', '=', 'penawaran_hargas.id_customer')
@@ -460,6 +524,7 @@ class DooringController extends Controller
         // Storage::disk('public')->putFileAs('uploads/dooring', $file2, $fileName2);
         DocDooring::create([
             'id_track'     => $request->no_po,
+            'created_by'=> Session::get('id'),
             // 'sb_file_name'     => $fileName1,
             // 'sb_file_path'     => 'uploads/dooring' . $fileName1,
             // 'sr_file_name'     => $fileName2,
@@ -472,22 +537,92 @@ class DooringController extends Controller
     public function savecurah(Request $request){
         
         $request->validate([
-            'file_notiket' => 'required|mimes:jpeg,png,pdf|max:2048',
+            'file_notiket' => 'required|mimes:jpeg,png,pdf',
+            'file_nosj' => 'required|mimes:jpeg,png,pdf'
         ]);
         
-        $file1 = $request->file('file_notiket'); 
-        $fileName1 = time() . '_' . $file1->getClientOriginalName();
-        
-        Storage::disk('public')->putFileAs('uploads/dooring', $file1, $fileName1);
-        //
-        $request->validate([
-            'file_nosj' => 'required|mimes:jpeg,png,pdf|max:2048',
-        ]);
-        
+        $file = $request->file('file_notiket'); 
+        $fileName = time() . '_' . $file->getClientOriginalName();
+        $fileType = $file->getMimeType(); // Get the MIME type of the file
+
         $file2 = $request->file('file_nosj'); // Change variable name to $file2
         $fileName2 = time() . '_' . $file2->getClientOriginalName();
+        $fileType2 = $file2->getMimeType(); // Get the MIME type of the file
         
-        Storage::disk('public')->putFileAs('uploads/dooring', $file2, $fileName2);
+        if (in_array($fileType, ['image/jpeg', 'image/jpg', 'image/png'])) {
+            // It's an image, so perform resize and compression
+    
+            $imgInfo = getimagesize($file->getPathname());
+            $mime = $imgInfo['mime'];
+            $quality = 50;
+    
+            switch ($mime) {
+                case 'image/jpeg':
+                    $image = imagecreatefromjpeg($file->getPathname());
+                    break;
+                case 'image/png':
+                    $image = imagecreatefrompng($file->getPathname());
+                    break;
+                default:
+                    $image = imagecreatefromjpeg($file->getPathname());
+            }
+    
+            $filePath = storage_path('app/public/uploads/dooring/' . $fileName);
+    
+            switch ($mime) {
+                case 'image/jpeg':
+                    imagejpeg($image, $filePath, $quality);
+                    break;
+                case 'image/png':
+                    imagepng($image, $filePath, floor(9 * $quality / 100));
+                    break;
+                default:
+                    imagejpeg($image, $filePath, $quality);
+            }
+    
+            imagedestroy($image);
+        } else {
+            // It's not an image, so don't perform any resize or compression
+            Storage::disk('public')->putFileAs('uploads/dooring', $file, $fileName);
+        }
+    
+        if (in_array($fileType2, ['image/jpeg', 'image/jpg', 'image/png'])) {
+            // It's an image, so perform resize and compression for the second file
+    
+            $imgInfo2 = getimagesize($file2->getPathname());
+            $mime2 = $imgInfo2['mime'];
+            $quality2 = 50;
+    
+            switch ($mime2) {
+                case 'image/jpeg':
+                    $image2 = imagecreatefromjpeg($file2->getPathname());
+                    break;
+                case 'image/png':
+                    $image2 = imagecreatefrompng($file2->getPathname());
+                    break;
+                default:
+                    $image2 = imagecreatefromjpeg($file2->getPathname());
+            }
+    
+            $filePath2 = storage_path('app/public/uploads/dooring/' . $fileName2);
+    
+            switch ($mime2) {
+                case 'image/jpeg':
+                    imagejpeg($image2, $filePath2, $quality2);
+                    break;
+                case 'image/png':
+                    imagepng($image2, $filePath2, floor(9 * $quality2 / 100));
+                    break;
+                default:
+                    imagejpeg($image2, $filePath2, $quality2);
+            }
+    
+            imagedestroy($image2);
+        } else {
+            // It's not an image, so don't perform any resize or compression for the second file
+            Storage::disk('public')->putFileAs('uploads/dooring', $file2, $fileName2);
+        }        
+
         list($id_kapal, $id_detail_track) = explode('-', $request->input('kpl_id'));
         DetailDooring::create([
             'id_dooring'=>$request->id_door, 
@@ -499,10 +634,11 @@ class DooringController extends Controller
             'estate'=> $request->estate,
             'qty_tonase'     => $request->qty_tonase,
             'qty_timbang'     => $request->qty_timbang,
+            'qty_tonase_bap' =>$request->qty_tonase_bap,
             'jml_sak'     => $request->sak,
             'no_tiket'=>$request->notiket,
-            'st_file_name'=>$fileName1,
-            'st_file_path'=>'uploads/dooring'.$fileName1,
+            'st_file_name'=>$fileName,
+            'st_file_path'=>'uploads/dooring'.$fileName,
             'no_sj'=>$request->no_surat,
             'sj_file_name'=>$fileName2,
             'sj_file_path'=>'uploads/dooring'.$fileName2,
@@ -542,18 +678,91 @@ class DooringController extends Controller
 
     public function savecontainer(Request $request){
         $request->validate([
-            'file_notiket' => 'required|mimes:jpeg,png,pdf|max:2048',
-            'file_surat_jalan' => 'required|mimes:jpeg,png,pdf|max:2048',
+            'file_notiket' => 'required|mimes:jpeg,png,pdf',
+            'file_surat_jalan' => 'required|mimes:jpeg,png,pdf'
         ]);
-
-        $file1 = $request->file('file_notiket');
-        $fileName1 = time() . '_' . $file1->getClientOriginalName();
         
-        $file2 = $request->file('file_notiket');
-        $fileName2 = time() . '_' . $file2->getClientOriginalName();
+        $file = $request->file('file_notiket'); 
+        $fileName = time() . '_' . $file->getClientOriginalName();
+        $fileType = $file->getMimeType(); // Get the MIME type of the file
 
-        Storage::disk('public')->putFileAs('uploads/dooring', $file1, $fileName1);
-        Storage::disk('public')->putFileAs('uploads/dooring', $file2, $fileName2);
+        $file2 = $request->file('file_surat_jalan'); // Change variable name to $file2
+        $fileName2 = time() . '_' . $file2->getClientOriginalName();
+        $fileType2 = $file2->getMimeType(); // Get the MIME type of the file
+        
+        if (in_array($fileType, ['image/jpeg', 'image/jpg', 'image/png'])) {
+            // It's an image, so perform resize and compression
+    
+            $imgInfo = getimagesize($file->getPathname());
+            $mime = $imgInfo['mime'];
+            $quality = 50;
+    
+            switch ($mime) {
+                case 'image/jpeg':
+                    $image = imagecreatefromjpeg($file->getPathname());
+                    break;
+                case 'image/png':
+                    $image = imagecreatefrompng($file->getPathname());
+                    break;
+                default:
+                    $image = imagecreatefromjpeg($file->getPathname());
+            }
+    
+            $filePath = storage_path('app/public/uploads/dooring/' . $fileName);
+    
+            switch ($mime) {
+                case 'image/jpeg':
+                    imagejpeg($image, $filePath, $quality);
+                    break;
+                case 'image/png':
+                    imagepng($image, $filePath, floor(9 * $quality / 100));
+                    break;
+                default:
+                    imagejpeg($image, $filePath, $quality);
+            }
+    
+            imagedestroy($image);
+        } else {
+            // It's not an image, so don't perform any resize or compression
+            Storage::disk('public')->putFileAs('uploads/dooring', $file, $fileName);
+        }
+    
+        if (in_array($fileType2, ['image/jpeg', 'image/jpg', 'image/png'])) {
+            // It's an image, so perform resize and compression for the second file
+    
+            $imgInfo2 = getimagesize($file2->getPathname());
+            $mime2 = $imgInfo2['mime'];
+            $quality2 = 50;
+    
+            switch ($mime2) {
+                case 'image/jpeg':
+                    $image2 = imagecreatefromjpeg($file2->getPathname());
+                    break;
+                case 'image/png':
+                    $image2 = imagecreatefrompng($file2->getPathname());
+                    break;
+                default:
+                    $image2 = imagecreatefromjpeg($file2->getPathname());
+            }
+    
+            $filePath2 = storage_path('app/public/uploads/dooring/' . $fileName2);
+    
+            switch ($mime2) {
+                case 'image/jpeg':
+                    imagejpeg($image2, $filePath2, $quality2);
+                    break;
+                case 'image/png':
+                    imagepng($image2, $filePath2, floor(9 * $quality2 / 100));
+                    break;
+                default:
+                    imagejpeg($image2, $filePath2, $quality2);
+            }
+    
+            imagedestroy($image2);
+        } else {
+            // It's not an image, so don't perform any resize or compression for the second file
+            Storage::disk('public')->putFileAs('uploads/dooring', $file2, $fileName2);
+        }
 
         DetailDooring::create([
             'id_dooring'    => $request->id_door, 
@@ -565,10 +774,11 @@ class DooringController extends Controller
             'estate'=> $request->estate,            
             'qty_tonase'    => $request->qty_tonase,
             'qty_timbang'   => $request->qty_timbang,
+            'qty_tonase_bap' =>$request->qty_tonase_bap,
             'jml_sak'       => $request->simb,
             'no_tiket'      => $request->notiket,
-            'st_file_name'  => $fileName1,
-            'st_file_path'  => 'uploads/dooring'.$fileName1,
+            'st_file_name'  => $fileName,
+            'st_file_path'  => 'uploads/dooring'.$fileName,
             'no_sj'         => $request->no_surat,
             'sj_file_name'  => $fileName2,
             'sj_file_path'  => 'uploads/dooring'.$fileName2,
@@ -614,7 +824,7 @@ class DooringController extends Controller
                 'status' => '2'
             ]);
             DetailDooring::where('id_dooring', $id)
-            ->where('status',1)
+            ->whereNotIn('status', [0])
             ->update([
                 'status' => '2'
             ]);
@@ -623,7 +833,7 @@ class DooringController extends Controller
                 'status' => '3'
             ]);
             DetailDooring::where('id_dooring', $id)
-            ->where('status',1)
+            ->whereNotIn('status', [0])
             ->update([
                 'status' => '3'
             ]);

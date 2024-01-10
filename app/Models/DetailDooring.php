@@ -26,7 +26,8 @@ class DetailDooring extends Model
         'tipe',
         'status',
         'id_kapal',
-        'id_detail_track'
+        'id_detail_track',
+        'qty_tonase_bap'
     ];
     protected $table = 'detail_dooring';
 
@@ -34,6 +35,7 @@ class DetailDooring extends Model
     {
         return $this->hasOne(DetailTracking::class,'id_kapal','id_kapal');
     }
+
     public function detailTrackingCont()
     {
         return $this->belongsTo(DetailTracking::class,'id_detail_track','id_detail_track');

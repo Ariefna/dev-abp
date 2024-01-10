@@ -12,10 +12,10 @@ class PenerimaController extends Controller
 {
     public function index() {
         $pen = PTpenerima::where('status', 1)
-                    ->orderBy('id_pt_penerima', 'desc')
+                    ->orderBy('nama_penerima', 'asc')
                     ->get();
         $grup = Grup::where('status', 1)
-                    ->orderBy('id_grup', 'asc')
+                    ->orderBy('nama_grup', 'asc')
                     ->get();                    
         $penerima = Penerima::join('pt_penerima', 'penerimas.id_pt_penerima', '=', 'pt_penerima.id_pt_penerima')
                     ->join('grups', 'penerimas.id_grup', '=', 'grups.id_grup')

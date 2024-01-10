@@ -11,7 +11,7 @@ class CreateUserController extends Controller
 {
     public function index()
     {
-        $aksesgroup = AksesGroup::orderBy('akses_group_id', 'desc')
+        $aksesgroup = AksesGroup::orderBy('akses_group_id', 'asc')
         ->get();
         $users = User::select('users.*', 'akses_group.nama as nama_role')
             ->leftjoin('akses_group', 'users.role', '=', 'akses_group.akses_group_id')->orderBy('id', 'desc')->get();
@@ -21,6 +21,15 @@ class CreateUserController extends Controller
         $breadcrumb = 'This Breadcrumb';
         return view('pages.abp-page.user', compact('title', 'breadcrumb', 'users', 'aksesgroup'));
     }
+    
+    public function tambahrole(Request $request){
+        $role = new AksesGroup([
+            'nama'=>$request->input('addrole')
+        ]);
+        $role->save();
+
+        return redirect()->back();
+    }    
 
     public function store(Request $request)
     {

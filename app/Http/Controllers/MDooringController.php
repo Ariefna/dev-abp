@@ -38,44 +38,12 @@ class MDooringController extends Controller
                 ->join('doc_dooring','doc_dooring.id_track','=','doc_tracking.id_track')
                 ->whereIn('doc_dooring.status', [2,3,4])
                 ->get();
-            $monitoringDooring = DocDooring::with([
-                    'detailDooring' => function($query) {
-                        $query->whereIn('status', [2,3,4]);
-                        // $query->where('id_dooring', 23);
-                    },
-                    'detailDooring.sisa',
-                    'detailDooring.detailTrackingCont',
-                    'detailDooring.docDooring',
-                    'detailDooring.docDooring.docTracking',
-                    'detailDooring.docDooring.docTracking.detailTracking',
-                    'detailDooring.docDooring.docTracking.detailTracking.kapal',
-                    'detailDooring.docDooring.docTracking.po.detailPhs',
-                    'detailDooring.docDooring.docTracking.po.detailPhs.penawaran',
-                    'detailDooring.docDooring.docTracking.po.detailPhs.penawaran.customer',
-                    'detailDooring.docDooring.docTracking.po.detailPhs.penerima',
-                    'detailDooring.docDooring.docTracking.po.detailPhs.penerima.ptPenerima',
-                    'detailDooring.docDooring.docTracking.po.barang',
-                    'detailDooring.docDooring.docTracking.portOfLoading',
-                    'detailDooring.docDooring.docTracking.portOfDestination',
-                ])
-            ->get();
-        // $getdata = $monitoringDooring->get();
-        // return response()->json($getdata);
-        // dd($monitoringDooring);
-        return view('pages.abp-page.mondooring', 
-            compact('title', 'breadcrumb', 'monitoringDooring','tbl_po'
-            )
-        );
-    }
-
-    public function history(){
-        $title = 'Adhipramana Bahari Perkasa';
-        $breadcrumb = 'This Breadcrumb';
         $monitoringDooring = DocDooring::with([
             'detailDooring' => function($query) {
-                $query->whereIn('status', [0]);
+                $query->whereIn('detail_dooring.status', [2,3,4]);
             },
             'detailDooring.sisa',
+            'detailDooring.detailTrackingCont',
             'detailDooring.docDooring',
             'detailDooring.docDooring.docTracking',
             'detailDooring.docDooring.docTracking.detailTracking',
@@ -86,21 +54,48 @@ class MDooringController extends Controller
             'detailDooring.docDooring.docTracking.po.detailPhs.penerima',
             'detailDooring.docDooring.docTracking.po.detailPhs.penerima.ptPenerima',
             'detailDooring.docDooring.docTracking.po.barang',
-            'detailDooring.docDooring.docTracking.portOfLoading',
-            'detailDooring.docDooring.docTracking.portOfDestination',
+            'detailDooring.detailTracking.portOfLoading',
+            'detailDooring.detailTracking.portOfDestination',
         ])
         ->get();
-        return view('pages.abp-page.mondoorhistory', 
-            compact('title', 'breadcrumb', 'monitoringDooring'
+        // dd ($monitoringDooring);
+        return view('pages.abp-page.mondooring', 
+            compact('title', 'breadcrumb', 'monitoringDooring','tbl_po'
             )
         );
     }
 
+    public function history(){
+        $title = 'Adhipramana Bahari Perkasa';
+        $breadcrumb = 'This Breadcrumb';
+        
+        $monitoringDooring = DocDooring::with([
+            'detailDooring.sisa',
+            'detailDooring.docDooring',
+            'detailDooring.docDooring.docTracking.detailTracking.kapal',
+            'detailDooring.docDooring.docTracking.po.detailPhs' => function ($query) {
+                $query->with([
+                    'penawaran.customer',
+                    'penerima.ptPenerima',
+                ]);
+            },
+            'detailDooring.detailTracking.portOfLoading',
+            'detailDooring.detailTracking.portOfDestination',
+        ])
+        ->whereHas('detailDooring', function ($query) {
+            $query->whereIn('detail_dooring.status', [0]);
+        })
+        ->get();
+    
+        return view('pages.abp-page.mondoorhistory', compact('title', 'breadcrumb', 'monitoringDooring'));
+    }
+
+
     public function update(Request $request) {
         try {
                 $request->validate([
-                        'file' => 'required|mimes:jpeg,png,pdf|max:2048',
-                        'file2' => 'required|mimes:jpeg,png,pdf|max:2048',
+                        'file' => 'required|mimes:jpeg,png,pdf|max:10048',
+                        'file2' => 'required|mimes:jpeg,png,pdf|max:10048',
                     ]);
                     
                     $file = $request->file('file');
@@ -122,16 +117,18 @@ class MDooringController extends Controller
     }
 
     public function downloadfile($path) {
-        // Create the full file path
-        $filePath = 'public/uploads/dooring/' . $path;
+        $filePath = storage_path('app/public/uploads/dooring/' . $path);
+
+        if (file_exists($filePath)) {
+            $originalName = basename($path);
     
-        // Check if the file exists
-        if (Storage::exists($filePath)) {
-            // Get the file's original name (optional)
-            return Storage::download($filePath);
+            $contentType = Storage::mimeType('public/uploads/dooring/' . $path);
+    
+            return response(file_get_contents($filePath))
+                ->header('Content-Type', $contentType)
+                ->header('Content-Disposition', 'inline; filename="' . $originalName . '"');
         }
     
-        // If the file does not exist, return a 404 response
         abort(404, 'File not found');
     }
 

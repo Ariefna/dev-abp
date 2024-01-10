@@ -15,10 +15,11 @@ class InvoicePelunasan extends Model
         'id_dooring',
         'invoice_date',
         'invoice_no',
+        'tipe_invoice',
         'tipe_job',
         'rinci_tipe',
         'terms',
         'total_invoice',
-        'status',
+        'status'
     ];
 }

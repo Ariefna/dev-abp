@@ -91,9 +91,9 @@ class InvoiceDPController extends Controller
             ->whereNull('detail_tracking.no_container')
             ->whereIn('doc_tracking.status', [2, 3])
             ->whereIn('detail_tracking.status', [2, 3])
-            ->where(function ($query) use ($afterincontainer) {
-                $query->whereNotIn('detail_tracking.tgl_muat', $afterincontainer->pluck('po_muat_date'))
-                    ->orWhereNotIn('doc_tracking.id_track', $afterincontainer->pluck('id_track'));
+            ->where(function ($query) use ($afterincurah) {
+                $query->whereNotIn('detail_tracking.tgl_muat', $afterincurah->pluck('po_muat_date'))
+                    ->orWhereNotIn('doc_tracking.id_track', $afterincurah->pluck('id_track'));
             })
             ->groupBy('doc_tracking.no_po', 'detail_tracking.tgl_muat')
             ->get();
@@ -287,12 +287,12 @@ class InvoiceDPController extends Controller
         $currentMonth = date('m');
         $cekrow = InvoiceDp::where('id_track', $request->cb_po)
     ->whereYear('invoice_date', $currentYear)
+    ->whereNotIn('status',[0])
     ->count() ?? 0;
         $newCounter = 1;    
         $newStatus = 1;
         if ($cekrow == 0) {
-            $cekrow = InvoiceDp::whereYear('invoice_date', $currentYear)->count() ?? 0;
-            $newCounter = $cekrow<=1 ? $cekrow+1 : 1;
+            $newCounter++;
             $newInvoiceNumber = "ABP/{$currentYear}/{$currentMonth}/" .
                 str_pad($newCounter, 4, '0', STR_PAD_LEFT) . '-' . $newStatus;
             InvoiceDP::create([
@@ -310,6 +310,7 @@ class InvoiceDPController extends Controller
         } else {
             $latestInvoice = InvoiceDP::whereYear('invoice_date', $currentYear)
                 ->where('id_track', $request->cb_po)
+                ->whereNotIn('status',[0])
                 ->orderBy('id_invoice_dp', 'desc')
                 ->first();
 

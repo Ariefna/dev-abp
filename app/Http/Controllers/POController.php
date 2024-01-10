@@ -36,7 +36,7 @@ class POController extends Controller
                     ->get();
         $po = PurchaseOrder::select('purchase_orders.id_po','purchase_orders.po_muat', 'purchase_orders.po_kebun', 
                     'customers.nama_customer', 'purchase_orders.status','purchase_orders.qty','purchase_orders.qty2'
-                    ,'purchase_orders.total_qty')
+                    ,'purchase_orders.total_qty','purchase_orders.file_name','purchase_orders.tgl','purchase_orders.total_all')
                     ->join('detail_p_h_s', 'purchase_orders.id_detail_ph', '=', 'detail_p_h_s.id_detail_ph')
                     ->join('penawaran_hargas', 'penawaran_hargas.id_penawaran', '=', 'detail_p_h_s.id_penawaran')
                     ->join('customers', 'customers.id', '=', 'penawaran_hargas.id_customer')
@@ -111,16 +111,67 @@ class POController extends Controller
         return response()->json($getdata);
     }
 
-    public function store(Request $request) {
+    public function downloadpo($path) {
+        $filePath = storage_path('app/public/uploads/' . $path);
+
+        if (file_exists($filePath)) {
+            $originalName = basename($path);
+    
+            $contentType = Storage::mimeType('public/uploads/' . $path);
+    
+            return response(file_get_contents($filePath))
+                ->header('Content-Type', $contentType)
+                ->header('Content-Disposition', 'inline; filename="' . $originalName . '"');
+        }
+    
+        abort(404, 'File not found');
+    }
+
+    public function store(Request $request){
         $request->validate([
-            'file' => 'required|mimes:jpeg,png,pdf|max:2048',
+            'file' => 'required|mimes:jpeg,png,pdf',
         ]);
+    
         $file = $request->file('file');
         $fileName = time() . '_' . $file->getClientOriginalName();
+        $fileType = $file->getMimeType(); // Get the MIME type of the file
     
-        Storage::disk('public')->putFileAs('uploads', $file, $fileName);
-
-
+        // Check if the file is an image (JPEG or PNG)
+        if (in_array($fileType, ['image/jpeg', 'image/jpg', 'image/png'])) {
+            // It's an image, so perform resize and compression
+    
+            $imgInfo = getimagesize($file->getPathname());
+            $mime = $imgInfo['mime'];
+            $quality = 50;
+    
+            switch ($mime) {
+                case 'image/jpeg':
+                    $image = imagecreatefromjpeg($file->getPathname());
+                    break;
+                case 'image/png':
+                    $image = imagecreatefrompng($file->getPathname());
+                    break;
+                default:
+                    $image = imagecreatefromjpeg($file->getPathname());
+            }
+    
+            $filePath = storage_path('app/public/uploads/' . $fileName);
+            switch ($mime) {
+                case 'image/jpeg':
+                    imagejpeg($image, $filePath, $quality);
+                    break;
+                case 'image/png':
+                    imagepng($image, $filePath, floor(9 * $quality / 100));
+                    break;
+                default:
+                    imagejpeg($image, $filePath, $quality);
+            }
+    
+            imagedestroy($image);
+        } else {
+            // It's a PDF file, so don't perform any resize or compression
+            Storage::disk('public')->putFileAs('uploads', $file, $fileName);
+        }        
         $totalAll = (float) preg_replace("/[^0-9]/", "", $request->input('total_all'));
         $totalContainer = (float) preg_replace("/[^0-9]/", "", $request->input('total_container'));
         $priceContainer = (float) preg_replace("/[^0-9]/", "", $request->input('price_container'));
@@ -143,11 +194,12 @@ class POController extends Controller
             'total_container'   => $totalContainer,
             'total_qty'     => $request->total_qty,
             'total_all'     => $totalAll,
-            'file_name' => $fileName, // Store the file name, not the request input
-            'file_path' => 'uploads/' . $fileName, // Store the file path                           
+            'file_name' => $fileName, 
+            'file_path' => 'uploads/' . $fileName, 
             'status' => '1'
         ]);
         return redirect()->back();
+        
     }
 
     public function approve(Request $request, $po_muat) {

@@ -8,8 +8,6 @@ use App\Models\AksesGroup;
 use App\Models\AksesUserMenu;
 use App\Models\AksesUserDetail;
 use Illuminate\Http\Request;
-use App\Models\User;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class MenuUserController extends Controller
@@ -41,7 +39,7 @@ class MenuUserController extends Controller
                 ->orderBy('id', 'desc')
                 ->get();
         }
-        $aksesgroup = AksesGroup::orderBy('akses_group_id', 'desc')
+        $aksesgroup = AksesGroup::orderBy('akses_group_id', 'asc')
             ->get();
 
         $actions = ActionMenu::select('action_menu.*')
@@ -50,6 +48,7 @@ class MenuUserController extends Controller
                     ->where('akses_user_detail.akses_group_id', '=', $role);
             })
             ->selectRaw('IF(akses_user_detail.akses_user_detail_id IS NOT NULL, 1, 0) AS akses')
+            ->where('action_menu.status',1)
             ->get();
 
         $title = 'Adhipramana Bahari Perkasa';
@@ -57,14 +56,7 @@ class MenuUserController extends Controller
 
         return view('pages.abp-page.menuuser', compact('title', 'breadcrumb', 'menuuser', 'role', 'mastermenu', 'actions', 'aksesgroup'));
     }
-    public function addrole(Request $request)
-    {
-        $aksesgroup = new AksesGroup();
-        $aksesgroup->nama = $request->nama_role;
-        $aksesgroup->save();
 
-        return redirect()->back();
-    }
     public function add(Request $request)
     {
         $akses_user_menu = new AksesUserMenu();
@@ -108,7 +100,12 @@ class MenuUserController extends Controller
 
     public function destroy($id, Request $request)
     {
-        AksesUserMenu::where('akses_group_id', $request->akses_group_id)
+        // $barang = MenuHalaman::find($id);
+        // $barang->update([
+        //     'isadmin' => 0
+        // ]);
+        $aud= AksesUserDetail::where('akses_group_id', $request->akses_group_id)->delete();
+        $aum= AksesUserMenu::where('akses_group_id', $request->akses_group_id)
         ->where('menu_halaman_id', $id)
         ->delete();
         return redirect()->back();

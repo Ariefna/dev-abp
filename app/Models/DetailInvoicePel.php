@@ -21,7 +21,8 @@ class DetailInvoicePel extends Model
         'total_harga_real',
         'harga_brg',
         'prosentase_ppn',
-        'total_ppn',
+        'total_ppn_dooring',
+        'total_ppn_timbang',
         'tipe',
         'status',
     ];

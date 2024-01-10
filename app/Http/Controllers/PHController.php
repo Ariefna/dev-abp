@@ -33,6 +33,7 @@ class PHController extends Controller
                     ->get();
         $detailph = DetailPH::select('*')
                     ->join('penerimas','penerimas.id_penerima','=','detail_p_h_s.id_penerima')
+                    ->join('pt_penerima','pt_penerima.id_pt_penerima','=','penerimas.id_pt_penerima')
                     ->where('detail_p_h_s.status', 1)
                     ->orderBy('id_detail_ph', 'desc')
                     ->get();                    
@@ -58,7 +59,7 @@ class PHController extends Controller
     public function generatepdf($id)
     {
         set_time_limit(5);
-        $penawaranHargas = PenawaranHarga::select('nama_customer', 'nama_pic', 'ketentuan', 'kota', 'penawaran_hargas.updated_at')
+        $penawaranHargas = PenawaranHarga::select('nama_customer', 'nama_pic', 'ketentuan', 'kota', 'penawaran_hargas.created_at')
             ->join('customers', 'penawaran_hargas.id_customer', '=', 'customers.id')
             ->where('id_penawaran', $id)
             ->get();
@@ -72,8 +73,15 @@ class PHController extends Controller
         $dataDetailPH = DetailPH::join('penerimas', 'detail_p_h_s.id_penerima', '=', 'penerimas.id_penerima')
             ->where('id_penawaran', $id)
             ->select('detail_p_h_s.oa_container', 'detail_p_h_s.oa_kpl_kayu', 'penerimas.estate')
+            ->groupBy('detail_p_h_s.id_penerima')
             ->get()->toArray();
+
+
+        // return ['data' => $data];
         $pdf = PDF::loadView('pdf.example', ['data1' => $data, 'data2' => $dataDetailPH]);
+        $pdf->getDomPDF()->getOptions()->set('isPhpEnabled', true);
+        $pdf->getDomPDF()->setPaper('A4', 'portrait');
+        $pdf->getDomPDF()->getOptions()->setIsPhpEnabled(true);
 
         return $pdf->stream('surat_pesanawaran.pdf');
     }

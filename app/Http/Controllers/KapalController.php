@@ -19,7 +19,7 @@ class KapalController extends Controller
         // return view('pages.abp-page.mkapal', compact('title', 'breadcrumb','kapal'));
 
         $compport = CPort::where('status', 1)
-                    ->orderBy('id_company_port', 'desc')
+                    ->orderBy('nama', 'asc')
                     ->get();
         $kapal = Kapal::select('kapals.id', 'kapals.id_company_port', 'c_ports.nama', 'c_ports.no_telp', 'c_ports.alamat', 'kapals.kode_kapal', 'kapals.nama_kapal')
                     ->join('c_ports', 'c_ports.id_company_port', '=', 'kapals.id_company_port')
@@ -56,13 +56,17 @@ class KapalController extends Controller
 
     public function getDetails($id)
     {
-        $getdata = CPort::where('id_company_port', $id)->get();
+        $getdata = CPort::where('id_company_port', $id)
+                        ->orderBy('nama', 'asc')
+                        ->get();
         return response()->json($getdata);   
     }
 
     public function getEditDetails($id)
     {
-        $getdata = CPort::where('id_company_port', $id)->get();
+        $getdata = CPort::where('id_company_port', $id)
+                        ->orderBy('nama', 'asc')
+                        ->get();
         return response()->json($getdata);   
     }
 

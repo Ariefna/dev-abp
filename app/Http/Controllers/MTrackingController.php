@@ -20,6 +20,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 use Illuminate\Http\Response;
 
 class MTrackingController extends Controller
@@ -54,12 +55,13 @@ class MTrackingController extends Controller
                 'purchase_orders.po_kebun','detail_tracking.qty_tonase', 'detail_tracking.qty_timbang','detail_tracking.jml_sak',
                 'detail_tracking.nopol','detail_tracking.no_container','detail_tracking.voyage','detail_tracking.td','detail_tracking.td_jkt',
                 'detail_tracking.ta','customers.nama_customer','doc_tracking.status_kapal',
-                'doc_tracking.id_track', 'detail_tracking.id_detail_track','detail_tracking.track_file','detail_tracking.door_file')
+                'doc_tracking.id_track', 'detail_tracking.id_detail_track','detail_tracking.track_file','detail_tracking.door_file'
+                ,'detail_tracking.sj_file_name','detail_tracking.st_file_name')
                 ->join('detail_tracking','detail_tracking.id_track','=','doc_tracking.id_track')
                 ->join('gudang_muats', 'gudang_muats.id_gudang', '=', 'detail_tracking.id_gudang')
                 ->join('purchase_orders', 'purchase_orders.po_muat', '=', 'doc_tracking.no_po')
-                ->join('port_of_loading', 'port_of_loading.id', '=', 'doc_tracking.id_pol')
-                ->join('port_of_destination', 'port_of_destination.id', '=', 'doc_tracking.id_pod')
+                ->join('port_of_loading', 'port_of_loading.id', '=', 'detail_tracking.id_pol')
+                ->join('port_of_destination', 'port_of_destination.id', '=', 'detail_tracking.id_pod')
                 ->join('kapals', 'kapals.id', '=', 'detail_tracking.id_kapal')
                 ->join('detail_p_h_s', 'purchase_orders.id_detail_ph', '=', 'detail_p_h_s.id_detail_ph')
                 ->join('penawaran_hargas', 'penawaran_hargas.id_penawaran', '=', 'detail_p_h_s.id_penawaran')
@@ -68,6 +70,8 @@ class MTrackingController extends Controller
                 ->join('pt_penerima', 'pt_penerima.id_pt_penerima', '=', 'penerimas.id_pt_penerima')
                 ->join('barangs', 'purchase_orders.id', '=', 'barangs.id')
                 ->whereIn('doc_tracking.status', [2,3,4])
+                ->whereIn('detail_tracking.status', [2,3,4])
+                ->whereNotIn('purchase_orders.status',[0])
                 ->get();
         $title = 'Adhipramana Bahari Perkasa';
         $breadcrumb = 'This Breadcrumb';
@@ -147,7 +151,8 @@ class MTrackingController extends Controller
                 ->join('penerimas', 'detail_p_h_s.id_penerima', '=', 'penerimas.id_penerima')
                 ->join('pt_penerima', 'pt_penerima.id_pt_penerima', '=', 'penerimas.id_pt_penerima')
                 ->join('barangs', 'purchase_orders.id', '=', 'barangs.id')
-                ->where('doc_tracking.status', 0)
+                ->whereIn('detail_tracking.status', [0])
+                ->whereNotIn('purchase_orders.status',[0])
                 ->get();
         $title = 'Adhipramana Bahari Perkasa';
         $breadcrumb = 'This Breadcrumb';
@@ -157,8 +162,8 @@ class MTrackingController extends Controller
     public function update(Request $request) {
         try {
                 $request->validate([
-                        'file' => 'required|mimes:jpeg,png,pdf|max:2048',
-                        'file2' => 'required|mimes:jpeg,png,pdf|max:2048',
+                        'file' => 'required|mimes:jpeg,png,pdf|max:10048',
+                        'file2' => 'required|mimes:jpeg,png,pdf|max:10048',
                 ]);                    
                 $file = $request->file('file');
                 $file2 = $request->file('file2');
@@ -203,16 +208,23 @@ class MTrackingController extends Controller
     }
 
     public function downloadspktrack($path) {
-        // Create the full file path
-        $filePath = 'public/uploads/tracking/' . $path;
+        // $filePath = 'public/uploads/tracking/' . $path;
+        // if (Storage::exists($filePath)) {
+        //     return Storage::download($filePath);
+        // }
+        // abort(404, 'File not found');
+        $filePath = storage_path('app/public/uploads/tracking/' . $path);
+
+        if (file_exists($filePath)) {
+            $originalName = basename($path);
     
-        // Check if the file exists
-        if (Storage::exists($filePath)) {
-            // Get the file's original name (optional)
-            return Storage::download($filePath);
+            $contentType = Storage::mimeType('public/uploads/tracking/' . $path);
+    
+            return response(file_get_contents($filePath))
+                ->header('Content-Type', $contentType)
+                ->header('Content-Disposition', 'inline; filename="' . $originalName . '"');
         }
     
-        // If the file does not exist, return a 404 response
         abort(404, 'File not found');
     }   
     
@@ -225,6 +237,7 @@ class MTrackingController extends Controller
                 'docTracking.po.detailPhs.penerima.ptPenerima',
                 'kapal',
         ])->where('id_detail_track', $id_detail_track)
+        ->whereNotIn('status',[0])
         ->first();
 
         $tbl_po = DocTracking::select('doc_tracking.no_po', 'purchase_orders.po_kebun', 
@@ -248,6 +261,8 @@ class MTrackingController extends Controller
                 ->join('pt_penerima', 'pt_penerima.id_pt_penerima', '=', 'penerimas.id_pt_penerima')
                 ->join('barangs', 'purchase_orders.id', '=', 'barangs.id')
                 ->whereIn('doc_tracking.status', [2,3,4])
+                ->whereNotIn('detail_tracking.status',[0])
+                ->whereNotIn('purchase_orders.status',[0])                
                 ->where('doc_tracking.id_track', $DetailTracking->id_track)
                 ->where('detail_tracking.id_kapal', $DetailTracking->id_kapal)
                 ->get();

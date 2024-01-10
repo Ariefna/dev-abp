@@ -11,6 +11,7 @@ use App\Models\PurchaseOrder;
 use App\Http\Controllers\DB;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Session;
 
 class DashboardController extends Controller
 {
@@ -21,7 +22,8 @@ class DashboardController extends Controller
                 'gudang_muats.nama_gudang', 'barangs.nama_barang','purchase_orders.no_pl', 'detail_tracking.tgl_muat',
                 'purchase_orders.po_kebun','detail_tracking_sisa.qty_tonase_sisa', 'detail_tracking.qty_timbang','detail_tracking.jml_sak',
                 'detail_tracking.nopol','detail_tracking.no_container','detail_tracking.voyage','detail_tracking.td','detail_tracking.td_jkt',
-                'detail_tracking.ta','customers.nama_customer','doc_tracking.status_kapal','detail_tracking_sisa.tipe')
+                'detail_tracking.ta','customers.nama_customer','doc_tracking.status_kapal','detail_tracking_sisa.tipe','doc_tracking.status',
+                'doc_tracking.created_by','users.name')
                 ->selectSub(function ($query) {
                     $query->selectRaw('SUM(qty_tonase_sisa)')
                         ->from('detail_tracking_sisa')
@@ -41,6 +43,7 @@ class DashboardController extends Controller
                 ->join('penerimas', 'detail_p_h_s.id_penerima', '=', 'penerimas.id_penerima')
                 ->join('pt_penerima', 'pt_penerima.id_pt_penerima', '=', 'penerimas.id_pt_penerima')
                 ->join('barangs', 'purchase_orders.id', '=', 'barangs.id')
+                ->join('users','users.id','=','doc_tracking.created_by')
                 ->whereIn('doc_tracking.status', [1,2,3])
                 ->orderBy('doc_tracking.no_po')
                 ->groupBy('detail_tracking_sisa.id_track')
@@ -51,7 +54,8 @@ class DashboardController extends Controller
                 'gudang_muats.nama_gudang', 'barangs.nama_barang','purchase_orders.no_pl', 'detail_tracking.tgl_muat',
                 'purchase_orders.po_kebun','detail_dooring_sisa.qty_tonase_sisa', 'detail_tracking.qty_timbang','detail_tracking.jml_sak',
                 'detail_tracking.nopol','detail_tracking.no_container','detail_tracking.voyage','detail_tracking.td','detail_tracking.td_jkt',
-                'detail_tracking.ta','customers.nama_customer','doc_tracking.status_kapal','detail_dooring_sisa.tipe')
+                'detail_tracking.ta','customers.nama_customer','doc_tracking.status_kapal','detail_dooring_sisa.tipe','doc_dooring.status',
+                'doc_dooring.created_by','users.name')
                 ->selectSub(function ($query) {
                     $query->selectRaw('SUM(qty_tonase_sisa)')
                         ->from('detail_dooring_sisa')
@@ -72,6 +76,7 @@ class DashboardController extends Controller
                 ->join('penerimas', 'detail_p_h_s.id_penerima', '=', 'penerimas.id_penerima')
                 ->join('pt_penerima', 'pt_penerima.id_pt_penerima', '=', 'penerimas.id_pt_penerima')
                 ->join('barangs', 'purchase_orders.id', '=', 'barangs.id')
+                ->join('users','users.id','=','doc_dooring.created_by')
                 ->whereIn('doc_dooring.status', [1,2,3])
                 ->orderBy('doc_tracking.no_po')
                 ->groupBy('detail_dooring_sisa.id_dooring')
@@ -112,7 +117,8 @@ class DashboardController extends Controller
 
     public function addsisatrack(Request $request, $no_po) {
         DocTracking::where('no_po', $no_po)->update([
-            'status' => '1'
+            'status' => '1',
+            'created_by' => Session::get('id')
         ]);
         // return redirect()->back();
         return redirect()->route('tracking.index');
@@ -120,7 +126,8 @@ class DashboardController extends Controller
 
     public function addsisadoor(Request $request, $id_dooring) {
         DocDooring::where('id_dooring', $id_dooring)->update([
-            'status' => '1'
+            'status' => '1',
+            'created_by' => Session::get('id')
         ]);
         // return redirect()->back();
         return redirect()->route('dooring.index');
