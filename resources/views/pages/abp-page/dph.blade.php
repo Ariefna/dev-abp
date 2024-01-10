@@ -299,6 +299,7 @@
                                 <table id="tbl_3" class="table tbl_3 dt-table-hover">
                                     <thead>
                                         <tr>
+                                            <th>PT Penerima</th>
                                             <th>Estate</th>
                                             <th>OA Kapal Kayu</th>
                                             <th>OA Container</th>
@@ -309,9 +310,10 @@
                                     <tbody>
                                         @foreach ($detailph as $dtl)
                                         <tr>
+                                            <td>{{ $dtl->nama_penerima }}</td>
                                             <td>{{ $dtl->estate }}</td>
-                                            <td>{{ $dtl->oa_kpl_kayu }}</td>
-                                            <td>{{ $dtl->oa_container }}</td>
+                                            <td>Rp. {{ number_format((float)preg_replace("/[^0-9]/", "", $dtl->oa_kpl_kayu), 0, ',', '.') }}</td>
+                                            <td>Rp. {{ number_format((float)preg_replace("/[^0-9]/", "", $dtl->oa_container), 0, ',', '.') }}</td>
                                             <td class="text-center"><span class="shadow-none badge badge-danger">{{ $dtl->status == 1 ? 'Pending' : '' }}</span></td>
                                             <td class="text-center">
                                                 <a href="#editphd-{{ $dtl->id_detail_ph }}" class="bs-tooltip" data-bs-toggle="modal" data-bs-placement="top" title="Edit" data-original-title="Edit"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2 p-1 br-8 mb-1"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></a>

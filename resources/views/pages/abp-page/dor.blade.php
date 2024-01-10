@@ -138,8 +138,8 @@
                     <div class="row">
                         <div class="col-xl-12 col-md-12 col-sm-12 col-12">
                             <h4>Tabel Dooring</h4>
-                            <p>{{ $details }}</p>
-                            <p>{{ $doorzero1->count() }}</p>
+                            {{-- <p>{{ $details }}</p>
+                            <p>{{ $doorzero->count() }}</p> --}}
                         </div>
                     </div>
                 </div>
@@ -167,8 +167,16 @@
                                             <tr>
                                                 <td>{{ $tra->no_po }}</td>
                                                 <td>{{ $tra->nama_pol }} - {{ $tra->nama_pod }}</td>
-                                                <td>{{ number_format($tra->qty_curah_track , 0, ',', '.') }}</td>
-                                                <td>{{ number_format($tra->qty_curah_cont , 0, ',', '.') }}</td>
+                                                @if ($tra->qty_curah_track==null)
+                                                    <td>0</td>
+                                                @else
+                                                    <td>{{ number_format($tra->qty_curah_track , 0, ',', '.') }}</td>
+                                                @endif
+                                                @if ($tra->qty_curah_cont==null)
+                                                    <td>0</td>
+                                                @else
+                                                    <td>{{ number_format($tra->qty_curah_cont , 0, ',', '.') }}</td>
+                                                @endif                                                
                                                 <td>{{ number_format($tra->total_tonase_track , 0, ',', '.') }}</td>
                                                 <td>0</td>
                                                 <td class="text-center"><span class="shadow-none badge badge-danger">{{ $tra->status == 1 ? 'Pending' : '' }}</span></td>
@@ -182,62 +190,9 @@
                                                 </td>
                                             </tr>
                                             @endforeach
-                                        @elseif($doorzero1->count()>0)
+                                        @elseif($doorzero->count()>0)
                                             @if ($details==0 && $doorzero->count()==0)
-                                                @foreach ($track as $trac)
-                                                    <tr>
-                                                        <td>{{ $trac->no_po }}</td>
-                                                        <td>{{ $trac->nama_pol }} - {{ $trac->nama_pod }}</td>
-                                                        {{-- <td>{{ $track->where('tipe', 'Curah')->isEmpty() 
-                                                        ? number_format($track->first()->muat_curah_track , 0, ',', '.') 
-                                                        : number_format($track->first()->qty_tonase_sisa , 0, ',', '.') }}</td> --}}
-                                                        {{-- <td>{{ $track->where('tipe', 'Container')->isEmpty() 
-                                                        ? number_format($track->first()->muat_container_track , 0, ',', '.')
-                                                        : number_format($track->first()->qty_tonase_sisa , 0, ',', '.') }}</td> --}}
-                                                        <td>{{ number_format($trac->muat_curah_track - $trac->door_curah, 0, ',', '.') }}</td>
-                                                        <td>{{ number_format($trac->muat_container_track - $trac->door_container, 0, ',', '.') }}</td>
-                                                        {{-- <td>{{ number_format($trac->total_tonase_track , 0, ',', '.') }}</td> --}}
-                                                        <td>
-                                                            {{ 
-                                                            $total_track = 
-                                                                number_format(
-                                                                    (
-                                                                        $trac->muat_curah_track - $trac->door_curah
-                                                                    ) +
-                                                                    (
-                                                                        $trac->muat_container_track - $trac->door_container
-                                                                    ),
-                                                                    0, 
-                                                                    ',', 
-                                                                    '.'  
-                                                                )
-                                                            }}
-                                                        </td>
-                                                        <td>{{ number_format($trac->total_tonase_dooring , 0, ',', '.') }}</td>
-                                                        <td class="text-center"><span class="shadow-none badge badge-danger">{{ $trac->status == 1 ? 'Pending' : '' }}</span></td>
-                                                        <td class="text-center">
-                                                            @if($trac->qty != 0)
-                                                                @if(count($doorzero) > 0)
-                                                                    <a href="#detailcur" class="btn btn-outline-primary bs-tooltip me-2" data-bs-toggle="modal" data-placement="top" title="Add Curah">Curah</a>
-                                                                @else                                            
-                                                                    <button class="btn btn-outline-primary bs-tooltip me-2" data-placement="top" title="Add Curah" disabled>Curah</button>
-                                                                @endif                                            
-                                                            @endif                                            
-                                                            @if($trac->qty2 != 0)
-                                                                @if(count($doorzero) > 0)
-                                                                    <a href="#detailcont" class="btn btn-outline-primary bs-tooltip me-2" data-bs-toggle="modal" data-placement="top" title="Add Container">Container</a>
-                                                                @else
-                                                                    <button type="button" class="btn btn-outline-primary bs-tooltip me-2" data-toggle="tooltip" data-placement="top" title="Add Container" disabled>Container</button>
-                                                                @endif
-                                                                {{-- @if(count($doorzero) > 0 && $doorsisa->where('tipe','Container')->where('id_dooring',$trac->id_dooring)->value('qty_tonase_sisa') > 0)
-                                                                    <a href="#detailcont" class="btn btn-outline-primary bs-tooltip me-2" data-bs-toggle="modal" data-placement="top" title="Add Container">Container</a>
-                                                                @elseif($doorsisa->where('tipe','Container')->where('id_dooring',$trac->id_dooring)->value('qty_tonase_sisa') == 0)
-                                                                    <button type="button" class="btn btn-outline-primary bs-tooltip me-2" data-toggle="tooltip" data-placement="top" title="Add Container" disabled>Container</button>
-                                                                @endif                                                                 --}}
-                                                            @endif
-                                                        </td>
-                                                    </tr>
-                                                @endforeach
+                                                
                                             @elseif($details && $doorzero->count())
                                                 @foreach ($track as $trac)
                                                     <tr>
@@ -281,8 +236,8 @@
                                                             @if($trac->qty2 != 0)
                                                                 @if(count($doorzero) > 0)
                                                                     <a href="#detailcont" class="btn btn-outline-primary bs-tooltip me-2" data-bs-toggle="modal" data-placement="top" title="Add Container">Container</a>
-                                                                @else
-                                                                    <button type="button" class="btn btn-outline-primary bs-tooltip me-2" data-toggle="tooltip" data-placement="top" title="Add Container" disabled>Containers</button>
+                                                                    @else
+                                                                    <button type="button" class="btn btn-outline-primary bs-tooltip me-2" data-toggle="tooltip" data-placement="top" title="Add Container" disabled>Container</button>
                                                                 @endif
                                                             @endif
                                                         </td>
@@ -402,7 +357,9 @@
                                             <td>{{ $dd->estate }}</td>
                                             <td class="text-center"><span class="shadow-none badge badge-danger">{{ $dd->status == 1 ? 'Pending' : '' }}</span></td>
                                             <td class="text-center">
-                                                <a href="#delete-{{ $dd->id_detail_door }}" class="bs-tooltip" data-bs-toggle="modal" data-bs-placement="top" title="Delete" data-original-title="Delete"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash p-1 br-8 mb-1"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></a>
+                                                @if(in_array('document-dooring-DELETE', Session::get('nama_action')) || Session::get('role') == 'superadmin')
+                                                    <a href="#delete-{{ $dd->id_detail_door }}" class="bs-tooltip" data-bs-toggle="modal" data-bs-placement="top" title="Delete" data-original-title="Delete"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash p-1 br-8 mb-1"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></a>
+                                                @endif
                                             </td>
                                         </tr>
                                         @endforeach
@@ -462,13 +419,13 @@
                                             $susut = 0;
                                         @endphp
 
-                                        @foreach ($monitoringDooring[0]->detailDooring as $md)
+                                        @foreach ($monitoringDooring[1]->detailDooring as $md)
                                             @php
                                                 $totalTimbang += $md->qty_timbang;
                                             @endphp
                                         @endforeach                                        
 
-                                        @foreach ($monitoringDooring[0]->detailDooring as $md)
+                                        @foreach ($monitoringDooring[1]->detailDooring as $md)
                                             @if (!isset($totalQty))
                                                 @php
                                                     $totalQty = $md->docDooring->docTracking->po->total_qty;
@@ -500,35 +457,35 @@
                                                     @endif
                                                 @endfor
                                             @endif
-                                            <tr>
-                                                <td>{{ $md->docDooring->docTracking->po->detailPhs->penawaran->customer->nama_customer ?? '' }}</td>
-                                                <td>{{ $md->docDooring->docTracking->no_po ?? '' }}</td>
-                                                <td>{{ $md->docDooring->docTracking->portOfLoading->nama_pol ?? '' }} - {{ $md->docDooring->docTracking->portOfDestination->nama_pod ?? '' }}</td>
-                                                <td>{{ $md->docDooring->docTracking->po->po_kebun ?? '' }}</td>
-                                                <td>{{ $md->docDooring->docTracking->po->detailPhs->penerima->ptPenerima->nama_penerima ?? '' }}</td>
-                                                <td>{{ $md->estate }}</td>
-                                                <td>{{ $md->docDooring->docTracking->po->barang->nama_barang ?? '' }}</td>
-                                                <td>{{ number_format($md->qty_tonase , 0, ',', '.') ?? '' }}</td>
-                                                <td>KG</td>
-                                                <td>{{ number_format($md->jml_sak , 0, ',', '.') }}</td>
-                                                <td>{{ $md->tgl_muat }}</td>
-                                                <td>{{ $md->tgl_tiba }}</td>
-                                                <td>{{ $md->no_tiket }}</td>
-                                                <td>{{ $noContainer }}</td>
-                                                <td>{{ $md->nopol }}</td>
-                                                <td>{{ number_format($md->qty_timbang , 0, ',', '.') }}</td>                                            
-                                                <td>{{ number_format($susut , 0, ',', '.') }}</td>
-                                                <td>{{ $namaKapal }}</td>
-                                                <td>{{ $md->docDooring->docTracking->detailTracking->td }}</td>
-                                                <td class="text-center">{!! $md->status == 1 ? '<span class="shadow-none badge badge-success">Proses Muat</span>' : ($md->status == 2 ? '<span class="shadow-none badge badge-warning">Selesai Muat</span>' : '') !!}</td>
-                                                {{-- <td>
-                                                    <a href="{{route('monitoring.dooring.spk', $md->id_detail_door)}}" class="btn btn-outline-primary mb-1">SPK Dooring</a>
-                                                </td> --}}
-                                            </tr>
+                                        <tr>
+                                            <td>{{ $md->docDooring->docTracking->po->detailPhs->penawaran->customer->nama_customer ?? '' }}</td>
+                                            <td>{{ $md->docDooring->docTracking->no_po ?? '' }}</td>
+                                            <td>{{ $md->docDooring->docTracking->portOfLoading->nama_pol ?? '' }} - {{ $md->docDooring->docTracking->portOfDestination->nama_pod ?? '' }}</td>
+                                            <td>{{ $md->docDooring->docTracking->po->po_kebun ?? '' }}</td>
+                                            <td>{{ $md->docDooring->docTracking->po->detailPhs->penerima->ptPenerima->nama_penerima ?? '' }}</td>
+                                            <td>{{ $md->estate }}</td>
+                                            <td>{{ $md->docDooring->docTracking->po->barang->nama_barang ?? '' }}</td>
+                                            <td>{{ number_format($md->qty_tonase , 0, ',', '.') ?? '' }}</td>
+                                            <td>KG</td>
+                                            <td>{{ number_format($md->jml_sak , 0, ',', '.') }}</td>
+                                            <td>{{ $md->tgl_muat }}</td>
+                                            <td>{{ $md->tgl_tiba }}</td>
+                                            <td>{{ $md->no_tiket }}</td>
+                                            <td>{{ $noContainer }}</td>
+                                            <td>{{ $md->nopol }}</td>
+                                            <td>{{ number_format($md->qty_timbang , 0, ',', '.') }}</td>                                            
+                                            <td>{{ number_format($susut , 0, ',', '.') }}</td>
+                                            <td>{{ $namaKapal }}</td>
+                                            <td>{{ $md->docDooring->docTracking->detailTracking->td }}</td>
+                                            <td class="text-center">{!! $md->status == 1 ? '<span class="shadow-none badge badge-success">Proses Muat</span>' : ($md->status == 2 ? '<span class="shadow-none badge badge-warning">Selesai Muat</span>' : '') !!}</td>
+                                            {{-- <td>
+                                                <a href="{{route('monitoring.dooring.spk', $md->id_detail_door)}}" class="btn btn-outline-primary mb-1">SPK Dooring</a>
+                                            </td> --}}
+                                        </tr>
 
-                                            @php
-                                                $totalQty = $md->docDooring->docTracking->po->total_qty;
-                                            @endphp
+                                        @php
+                                            $totalQty = $md->docDooring->docTracking->po->total_qty;
+                                        @endphp
                                         @endforeach
                                         @endif
                                     </tbody>
@@ -564,16 +521,20 @@
                                         <label for="validationCustom03" class="form-label">Kapal</label>
                                         <select class="form-select" name="kpl_id" id="cb_kpl" required>
                                             <option selected disabled value="">Pilih...</option>                                
-                                                @foreach ($kapal->where('id_track',$tra->id_track)->whereNull('no_container') as $kp)
-                                                    <option {{ $lastcurah->id_dooring == $tra->id_dooring ? 'selected' : '' }} value="{{ $kp->id_kapal.'-'.$kp->id_detail_track }}">{{ $kp->nama_kapal }}</option>
+                                                @foreach ($kapal as $kp)
+                                                    @if ($kp->id_track === $tra->id_track && $kp->no_container === null)
+                                                        <option {{ $lastcurah->id_dooring == $tra->id_dooring ? 'selected' : '' }} value="{{ $kp->id_kapal.'-'.$kp->id_detail_track }}">{{ $kp->nama_kapal }}</option>
+                                                    @endif
                                                 @endforeach
                                         </select>                                
                                     @elseif($lastcurah==0)
                                         <label for="validationCustom03" class="form-label">Kapal</label>
                                         <select class="form-select" name="kpl_id" id="cb_kpl" required>
                                             <option selected disabled value="">Pilih...</option>                                
-                                            @foreach ($kapal->where('id_track',$tra->id_track)->whereNull('no_container') as $kp)
-                                                <option value="{{ $kp->id_kapal.'-'.$kp->id_detail_track }}">{{ $kp->nama_kapal }}</option>
+                                            @foreach ($kapal as $kp)
+                                                @if ($kp->id_track === $tra->id_track && $kp->no_container === null)
+                                                    <option value="{{ $kp->id_kapal.'-'.$kp->id_detail_track }}">{{ $kp->nama_kapal }}</option>
+                                                @endif
                                             @endforeach
                                         </select>                                
                                         {{-- <input type="text" name="" id="" value="{{ $tra->id_dooring }}"> --}}
@@ -584,7 +545,7 @@
                                 <label for="validationCustom03" class="form-label">Estate</label>
                                 <input name="estate" type="text" value="" class="form-control" id="validationCustom01" placeholder="Masukkan estate" required>
                             </div>                            
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <label for="validationCustom03" class="form-label">Nopol Dooring</label>
                                 <input name="nopol" type="text" class="form-control" id="validationCustom01" placeholder="Nopol">
                             </div>
@@ -620,10 +581,6 @@
                                         @endforeach
                                     @endif
                                 @endforeach
-                            </div>           
-                            <div class="col-md-3">
-                                <label for="validationCustom01" class="form-label">SAK</label>
-                                <input name="sak" type="number" class="form-control" id="brg" placeholder="Sak">
                             </div>
                             <div class="col-md-3">
                                 <label for="validationCustom01" class="form-label">QTY Timbang Dooring</label>
@@ -632,6 +589,17 @@
                                     <span class="input-group-text" id="inputGroupPrepend">KG</span>
                                 </div>
                             </div>                            
+                            <div class="col-md-2">
+                                <label for="validationCustom01" class="form-label">QTY Tonase BAP</label>
+                                <div class="input-group">
+                                    <input type="number" name="qty_tonase_bap" class="form-control" placeholder="QTY BAP">
+                                    <span class="input-group-text" id="inputGroupPrepend">KG</span>
+                                </div>
+                            </div>                            
+                            <div class="col-md-2">
+                                <label for="validationCustom01" class="form-label">SAK</label>
+                                <input name="sak" type="number" class="form-control" id="brg" placeholder="Sak">
+                            </div>
                             <div class="col-md-6">
                                 <label for="validationCustom03" class="form-label">No Tiket Timbang</label>
                                 <input name="notiket" type="text" class="form-control" id="validationCustom01" placeholder="No Tiket">
@@ -730,19 +698,20 @@
                             </div>
                             <div class="col-md-3">
                                 <label for="validationCustom04" class="form-label">No Segel</label>
-                                @if($lastcontainer)
-                                    @foreach($nosegel->where('id_detail_track',$lastcontainer->id_detail_track) as $tra)
-                                        <input disabled name="no_segel" id="no_segel" value="{{ $lastcontainer->id_detail_track == $tra->id_detail_track ? $tra->no_segel : ''  }}" class="form-control" type="text" placeholder="No Segel">
-                                    @endforeach
-                                @elseif($lastcontainer==0)
-                                    <input disabled name="no_segel" id="no_segel" class="form-control" type="text" placeholder="No Segel">
-                                @endif
+                                <input disabled name="no_segel" id="no_segel" class="form-control" type="text" placeholder="No Segel">
+                                <!--@if($lastcontainer)-->
+                                <!--    @foreach($nosegel->where('id_detail_track',$lastcontainer->id_detail_track) as $tra)-->
+                                <!--        <input disabled name="no_segel" id="no_segel" value="{{ $lastcontainer->id_detail_track == $tra->id_detail_track ? $tra->no_segel : ''  }}" class="form-control" type="text" placeholder="No Segel">-->
+                                <!--    @endforeach-->
+                                <!--@elseif($lastcontainer==0)-->
+                                <!--        <input disabled name="no_segel" id="no_segel" class="form-control" type="text" placeholder="No Segel">-->
+                                <!--@endif-->
                             </div>
                             <div class="col-lg-3 col-md-6 col-sm-12">                       
                                 <label for="validationCustom03" class="form-label">Estate</label>
                                 <input name="estate" type="text" value="" class="form-control" id="validationCustom01" placeholder="Masukkan estate" required>
                             </div>                            
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <label for="validationCustom03" class="form-label">Nopol Dooring</label>
                                 <input name="nopol" type="text" class="form-control" id="validationCustom01" placeholder="Nopol">
                             </div>
@@ -777,18 +746,26 @@
                                         @endforeach
                                     @endif
                                 @endforeach
-                            </div>           
-                            <div class="col-md-3">
-                                <label for="validationCustom01" class="form-label">SAK</label>
-                                <input name="simb" type="number" class="form-control" id="brg" placeholder="Sak">
-                            </div>
+                            </div>         
                             <div class="col-md-3">
                                 <label for="validationCustom01" class="form-label">QTY Timbang Dooring</label>
                                 <div class="input-group">
                                     <input type="number" name="qty_timbang" class="form-control" placeholder="QTY Timbang">
                                     <span class="input-group-text" id="inputGroupPrepend">KG</span>
                                 </div>
+                            </div>
+                            <div class="col-md-2">
+                                <label for="validationCustom01" class="form-label">QTY Tonase BAP</label>
+                                <div class="input-group">
+                                    <input type="number" name="qty_tonase_bap" class="form-control" placeholder="QTY BAP">
+                                    <span class="input-group-text" id="inputGroupPrepend">KG</span>
+                                </div>
                             </div>                            
+                            <div class="col-md-2">
+                                <label for="validationCustom01" class="form-label">SAK</label>
+                                <input name="simb" type="number" class="form-control" id="brg" placeholder="Sak">
+                            </div>
+                            
                             <div class="col-md-6">
                                 <label for="validationCustom03" class="form-label">No Tiket Timbang</label>
                                 <input name="notiket" type="text" class="form-control" id="validationCustom01" placeholder="No Tiket">

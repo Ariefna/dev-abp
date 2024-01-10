@@ -18,7 +18,12 @@
         table#display th {
             border: 1px solid black;
         }
-
+        @page {
+        margin-top: 20px;    /* Adjust the top margin as needed */
+        margin-left: 20px;   /* Adjust the left margin as needed */
+        margin-right: 20px;  /* Adjust the right margin as needed */
+        margin-bottom: 20px; /* Adjust the bottom margin as needed */
+    }
     </style>
 </head>
 <body>
@@ -85,9 +90,9 @@
         </tr>
         @foreach ($tbl_po as $item)
         <tr>
-            <td>{{$loop->iteration}}</td>
+            <td style="text-align: center;">{{$loop->iteration}}</td>
             <td>{{$item->nopol}}</td>
-            <td>{{$item->tgl_muat}}</td>
+            <td>{{date("d-m-Y", strtotime($item->tgl_muat))}}</td>
             <td>{{$item->nama_barang}}</td>
             @if($item->no_container !== null)
                 <td>{{ $item->no_container }}</td>

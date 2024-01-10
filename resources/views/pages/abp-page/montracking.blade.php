@@ -51,6 +51,7 @@
     </div>
     <!-- /BREADCRUMB -->        
     <div class="row layout-top-spacing">
+        @if(in_array('monitoring-mon-tracking-UPDATE', Session::get('nama_action')) || Session::get('role') == 'superadmin')
         <div id="basic" class="col-lg-12 col-sm-12 col-12 layout-spacing">
             <div class="statbox widget box box-shadow">
                 <div class="widget-header">                                
@@ -122,6 +123,7 @@
                 </div>
             </div>
         </div>
+        @endif
 
         <div id="basic" class="col-lg-12 col-sm-12 col-12 layout-spacing">
             <div class="statbox widget box box-shadow">
@@ -186,10 +188,10 @@
                                                 <td>-</td>
                                             @endif
                                             <td>{{ $tra->kode_kapal }} {{ $tra->nama_kapal }} {{ $tra->voyage }}</td>
-                                            <td>{{ $tra->tgl_muat ? date('d-M-Y', strtotime($tra->tgl_muat)) : '' }}</td>
-                                            <td>{{ $tra->td ? date('d-M-Y', strtotime($tra->td)) : '' }}</td>
-                                            <td>{{ $tra->td_jkt ? date('d-M-Y', strtotime($tra->td_jkt)) : '' }}</td>
-                                            <td>{{ $tra->ta ? date('d-M-Y', strtotime($tra->ta)) : '' }}</td>
+                                            <td data-order="{{ $tra->tgl_muat }}">{{ $tra->tgl_muat ? date('d-M-Y', strtotime($tra->tgl_muat)) : '' }}</td>
+                                            <td data-order="{{ $tra->td }}">{{ $tra->td ? date('d-M-Y', strtotime($tra->td)) : '' }}</td>
+                                            <td data-order="{{ $tra->td_jkt }}">{{ $tra->td_jkt ? date('d-M-Y', strtotime($tra->td_jkt)) : '' }}</td>
+                                            <td data-order="{{ $tra->ta }}">{{ $tra->ta ? date('d-M-Y', strtotime($tra->ta)) : '' }}</td>
                                             <td class="text-center">
                                                 @if ($tra->status_kapal == 1)
                                                     <span class="shadow-none badge badge-success">Proses Muat</span>
@@ -209,7 +211,7 @@
                                                 </a>
                                                 {!! $tra->track_file != null
                                                     ?
-                                                        '<a href="'.route('downloadspktrack', ['path' => $tra->track_file]).'" 
+                                                        '<a href="'.route('downloadspktrack', ['path' => $tra->track_file]).'" target="_blank"
                                                             class="bs-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Download Spk Tracking" data-original-title="Print">
                                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-download">
                                                             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></a>'     
@@ -217,7 +219,19 @@
                                                 !!}
                                                 {!! $tra->door_file != null
                                                     ?
-                                                        '<a href="'.route('downloadspktrack', ['path' => $tra->door_file]).'" class="bs-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Download Spk Dooring" data-original-title="Print"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-download"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                                                        '<a href="'.route('downloadspktrack', ['path' => $tra->door_file]).'" target="_blank" class="bs-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Download Spk Dooring" data-original-title="Print"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-download"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                                                        </svg></a>'     
+                                                    : ''
+                                                !!}
+                                                {!! $tra->st_file_name != null
+                                                    ?
+                                                        '<a href="'.route('downloadspktrack', ['path' => $tra->st_file_name]).'" target="_blank" class="bs-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Surat Timbang Tracking" data-original-title="Print"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-download"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                                                        </svg></a>'     
+                                                    : ''
+                                                !!}
+                                                {!! $tra->sj_file_name != null
+                                                    ?
+                                                        '<a href="'.route('downloadspktrack', ['path' => $tra->sj_file_name]).'" target="_blank" class="bs-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Surat Jalan Tracking" data-original-title="Print"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-download"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                                                         </svg></a>'     
                                                     : ''
                                                 !!}

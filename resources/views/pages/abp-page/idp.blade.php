@@ -185,10 +185,14 @@
                                                         <td class="text-center">
                                                             {!! $tdp->status == 1 ? '<a href="#modalIDPcur-'. $tdp->id_invoice_dp .'" class="btn btn-outline-primary bs-tooltip me-2" data-bs-toggle="modal" data-placement="top" title="Invoice Curah">Curah</a>' : ($tdp->status == 1 ? '':'') !!}
                                                             {!! $tdp->status == 1 ? '<a href="#modalIDPcont-'. $tdp->id_invoice_dp.'" class="btn btn-outline-primary bs-tooltip me-2" data-bs-toggle="modal" data-placement="top" title="Invoice Container">Container</a>' : ($tdp->status == 1 ? '':'') !!}
+                                                            @if(in_array('finance-invoice-dp-APPROVE', Session::get('nama_action')) || Session::get('role') == 'superadmin')
                                                             {!! $tdp->status == 1 ? '<a href="'. route('invoice-dp.approve', ['id_invoice_dp' => $tdp->id_invoice_dp]) .'" class="btn btn-outline-primary bs-tooltip me-2" id="approve-link" data-bs-toggle="tooltip" data-bs-placement="top" title="Approve" data-original-title="Approve">Approve</a>' : ($tdp->status == 2 ? '':'') !!}
+                                                            @endif
                                                             {!! $tdp->status == 2 ? '<a href="'. route('invoice-dp.print',['id_invoice_dp'=>$tdp->id_invoice_dp]).'" class="btn btn-outline-primary bs-tooltip me-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Print" data-original-title="Print">Print</a>' : ($tdp->status == 1 ? '':'') !!}
                                                             <a href="#modalIDPdetail-{{ $tdp->id_invoice_dp }}" class="btn btn-outline-primary bs-tooltip me-2" data-bs-toggle="modal" data-bs-toggle="tooltip" data-bs-placement="top" title="Detail" data-original-title="Detail">Detail</a>
+                                                            @if(in_array('finance-invoice-dp-DELETE', Session::get('nama_action')) || Session::get('role') == 'superadmin')
                                                             <a href="{!!route('invoice-dp.delete',['id_invoice_dp'=>$tdp->id_invoice_dp])!!}" class="btn btn-outline-primary bs-tooltip me-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete" data-original-title="Delete">Delete</a>
+                                                            @endif                                                            
                                                             {{-- <a href="#modalInvDP-{{ $tdp->id_track }}" class="bs-tooltip" data-bs-toggle="modal" data-bs-placement="top" title="Tambah Detail" data-original-title="Tambah Detail"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus-circle">
                                                                 <circle cx="12" cy="12" r="10"></circle>
                                                                 <line x1="12" y1="8" x2="12" y2="16"></line>
@@ -240,15 +244,17 @@
                                             <tr>
                                                 <td>{{$item->invoice_no}}</td>
                                                 <td>{{$item->no_po}}</td>
-                                                <td>{{number_format($item->total_tonase , 0, ',', '.')}}</td>
-                                                <td>{{number_format($item->total_harga , 0, ',', '.')}}</td>
-                                                <td>{{number_format($item->total_dp , 0, ',', '.')}}</td>
-                                                <td>{{number_format($item->total_ppn , 0, ',', '.')}}</td>
+                                                <td>{{number_format($item->total_tonase , 0, ',', '.')}} KG</td>
+                                                <td>Rp. {{number_format($item->total_harga , 0, ',', '.')}}</td>
+                                                <td>Rp. {{number_format($item->total_dp , 0, ',', '.')}}</td>
+                                                <td>Rp. {{number_format($item->total_ppn , 0, ',', '.')}}</td>
                                                 <td class="text-center">
+                                                    @if(in_array('finance-invoice-dp-DELETE', Session::get('nama_action')) || Session::get('role') == 'superadmin')
                                                     <a href="{{route('invoice-dp.deletedetail',['id_detail_dp'=>$item->id_detail_dp])}}" class="bs-tooltip" data-bs-placement="top" title="Delete" data-original-title="Delete"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash p-1 br-8 mb-1">
                                                             <polyline points="3 6 5 6 21 6"></polyline>
                                                             <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
                                                         </svg></a>
+                                                    @endif
                                                 </td>
                                             </tr>
                                             @endif

@@ -108,6 +108,7 @@
                                     </div>
                                     <div class="col-md-12">
                                         <button class="btn btn-primary" type="submit">Simpan</button>
+                                        <a href="#addRole" data-bs-toggle="modal" class="btn btn-success">Tambah Role User</a>
                                     </div>
                                 </form>
                             </div>
@@ -227,6 +228,25 @@
                                                 </div>
                                             </div>
                                             @endforeach
+                                            <div class="modal fade" id="addRole" tabindex="-1" role="dialog" aria-labelledby="addRole" aria-hidden="true">
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="addRole">Tambah Role User</h5>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <form action="{{ route('createuser.addrole') }}" method="POST">
+                                                                @csrf
+                                                                <div class="mb-3">
+                                                                    <label for="editNama" class="form-label">Nama role</label>
+                                                                    <input type="text" class="form-control" id="editNama" name="addrole" required placeholder="Masukkan nama role">
+                                                                </div>
+                                                                <button type="submit" class="btn btn-primary">Simpan</button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>                                            
                                         </div>
                                     </div>
                                 </div>

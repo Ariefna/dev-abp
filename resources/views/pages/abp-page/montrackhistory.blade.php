@@ -141,7 +141,6 @@
                                             <th>TD JKT</th>
                                             <th>TA</th>
                                             <th class="text-center">Status</th>
-                                            <th class="text-center">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -171,23 +170,15 @@
                                             <td>{{ $tra->td_jkt }}</td>
                                             <td>{{ $tra->ta }}</td>
                                             <td class="text-center">
-                                                @if ($tra->status_kapal == 1)
-                                                    <span class="shadow-none badge badge-success">Proses Muat</span>
-                                                @elseif ($tra->status_kapal == 2)
-                                                    <span class="shadow-none badge badge-warning">Selesai Muat</span>
-                                                @elseif ($tra->status_kapal == 3)
-                                                    <span class="shadow-none badge badge-info">Kapal Berangkat</span>
-                                                @elseif ($tra->status_kapal == 4)
-                                                    <span class="shadow-none badge badge-primary">Kapal Tiba di Port Dooring</span>
-                                                @else
-                                                    <span class="shadow-none badge badge-danger">Kapal TD Jakarta</span>
+                                                @if ($tra->status == 0)
+                                                    <span class="shadow-none badge badge-danger">Terhapus</span>
                                                 @endif
                                             </td>
-                                            <td>
-                                                <a href="{{route('monitoring.tracking.print', $tra->id_detail_track)}}" class="btn btn-outline-primary mb-1">Loading Report</a>
-                                                <br>
-                                                <a href="{{route('monitoring.tracking.spk', $tra->id_detail_track)}}" class="btn btn-outline-primary mb-1">SPK Tracking</a>
-                                            </td>
+                                            <!--<td>-->
+                                            <!--    <a href="{{route('monitoring.tracking.print', $tra->id_detail_track)}}" class="btn btn-outline-primary mb-1">Loading Report</a>-->
+                                            <!--    <br>-->
+                                            <!--    <a href="{{route('monitoring.tracking.spk', $tra->id_detail_track)}}" class="btn btn-outline-primary mb-1">SPK Tracking</a>-->
+                                            <!--</td>-->
                                         </tr>
                                         @endforeach                                                                    
                                     </tbody>

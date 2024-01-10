@@ -177,21 +177,29 @@
                     </a>
                     <ul class="dropdown-menu submenu list-unstyled" id="document"
                         data-bs-parent="#accordionExample">
-                        <li class="{{ Request::routeIs('penawaran-harga.index') ? 'active' : '' }}">
-                            <a href="{{ getRouterValue() }}/document/penawaran-harga"> Penawaran Harga </a>
-                        </li>
-                        <li class="{{ Request::routeIs('purchase-order.index') ? 'active' : '' }}">
-                            <a href="{{ getRouterValue() }}/document/purchase-order"> Purchase Order </a>
-                        </li>
-                        <li class="{{ Request::routeIs('tracking.index') ? 'active' : '' }}">
-                            <a href="{{ getRouterValue() }}/document/tracking"> Tracking </a>
-                        </li>
+                        @if (in_array('document-penawaran-harga', Session::get('admin_menus')) || Session::get('role') == 'superadmin')
+                            <li class="{{ Request::routeIs('penawaran-harga.index') ? 'active' : '' }}">
+                                <a href="{{ getRouterValue() }}/document/penawaran-harga"> Penawaran Harga </a>
+                            </li>
+                        @endif
+                        @if (in_array('document-purchase-order', Session::get('admin_menus')) || Session::get('role') == 'superadmin')
+                            <li class="{{ Request::routeIs('purchase-order.index') ? 'active' : '' }}">
+                                <a href="{{ getRouterValue() }}/document/purchase-order"> Purchase Order </a>
+                            </li>
+                        @endif
+                        @if (in_array('document-tracking', Session::get('admin_menus')) || Session::get('role') == 'superadmin')
+                            <li class="{{ Request::routeIs('tracking.index') ? 'active' : '' }}">
+                                <a href="{{ getRouterValue() }}/document/tracking"> Tracking </a>
+                            </li>
+                        @endif
                         {{-- <li class="{{ Request::routeIs('surat-perintah-kerja') ? 'active' : '' }}">
                                 <a href="{{getRouterValue();}}/document/surat-perintah-kerja"> Surat Perintah Kerja </a>
                             </li> --}}
-                        <li class="{{ Request::routeIs('dooring.index') ? 'active' : '' }}">
-                            <a href="{{ getRouterValue() }}/document/dooring"> Dooring </a>
-                        </li>
+                        @if (in_array('document-dooring', Session::get('admin_menus')) || Session::get('role') == 'superadmin')                            
+                            <li class="{{ Request::routeIs('dooring.index') ? 'active' : '' }}">
+                                <a href="{{ getRouterValue() }}/document/dooring"> Dooring </a>
+                            </li>
+                        @endif                            
                     </ul>
                 </li>
             @endif
@@ -228,7 +236,7 @@
 
                         @if (in_array('monitoring-mon-dooring', Session::get('admin_menus')) || Session::get('role') == 'superadmin')
                             <li class="{{ Request::routeIs('mon-dooring.index') ? 'active' : '' }}">
-                                <a href="{{ getRouterValue() }}/monitoring/mon-dooring"> Monitoring Doring </a>
+                                <a href="{{ getRouterValue() }}/monitoring/mon-dooring"> Monitoring Dooring </a>
                             </li>
                         @endif
                     </ul>
@@ -254,12 +262,16 @@
                     </a>
                     <ul class="dropdown-menu submenu list-unstyled" id="finance"
                         data-bs-parent="#accordionExample">
-                        <li class="{{ Request::routeIs('invoice-dp.index') ? 'active' : '' }}">
-                            <a href="{{ getRouterValue() }}/finance/invoice-dp"> Invoice DP </a>
-                        </li>
-                        <li class="{{ Request::routeIs('invoice-pelunasan.index') ? 'active' : '' }}">
-                            <a href="{{ getRouterValue() }}/finance/invoice-pelunasan"> Invoice Pelunasan </a>
-                        </li>
+                        @if (in_array('finance-invoice-dp', Session::get('admin_menus')) || Session::get('role') == 'superadmin')
+                            <li class="{{ Request::routeIs('invoice-dp.index') ? 'active' : '' }}">
+                                <a href="{{ getRouterValue() }}/finance/invoice-dp"> Invoice DP </a>
+                            </li>
+                        @endif
+                        @if (in_array('finance-invoice-pelunasan', Session::get('admin_menus')) || Session::get('role') == 'superadmin')
+                            <li class="{{ Request::routeIs('invoice-pelunasan.index') ? 'active' : '' }}">
+                                <a href="{{ getRouterValue() }}/finance/invoice-pelunasan"> Invoice Pelunasan </a>
+                            </li>
+                        @endif
                         {{-- <li class="{{ Request::routeIs('alerts') ? 'active' : '' }}">
                             <a href="{{ getRouterValue() }}*alerts"> Laporan Keuangan </a>
                         </li> --}}
@@ -299,7 +311,7 @@
 
                         @if (in_array('monitoring-mon-dooring', Session::get('admin_menus')) || Session::get('role') == 'superadmin')
                             <li class="{{ Request::routeIs('mon-dooring-h.index') ? 'active' : '' }}">
-                                <a href="{{ getRouterValue() }}/report/mon-dooring"> Monitoring Doring </a>
+                                <a href="{{ getRouterValue() }}/report/mon-dooring"> Monitoring Dooring </a>
                             </li>
                         @endif
                     </ul>
@@ -339,7 +351,7 @@
 
                         @if (in_array('monitoring-mon-dooring', Session::get('admin_menus')) || Session::get('role') == 'superadmin')
                             <li class="{{ Request::routeIs('purchase-order.index') ? 'active' : '' }}">
-                                <a href="{{ getRouterValue() }}/report/b"> Monitoring Doring </a>
+                                <a href="{{ getRouterValue() }}/report/b"> Monitoring Dooring </a>
                             </li>
                         @endif
                     </ul>

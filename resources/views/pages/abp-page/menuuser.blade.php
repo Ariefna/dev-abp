@@ -43,34 +43,7 @@
             <x-slot:scrollspyConfig>
                 data-bs-spy="scroll" data-bs-target="#navSection" data-bs-offset="100"
                 </x-slot>
-                
-                <div class="modal fade" id="tambahroleModal" tabindex="-1" role="dialog" aria-labelledby="tambahModalLabel" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="tambahModalLabel">Tambah Data Role</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <form action="{{ route('menuuser.addrole') }}" method="POST">
-                                    @csrf
-                                    <div class="form-group">
-                                        <label for="nama_menu_halaman">Nama Role</label>
-                                       <input type="text" name="nama_role" class="form-control" id="nama_role" placeholder="Masukkan nama role" required>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn btn-light-dark" data-bs-dismiss="modal"><i class="flaticon-cancel-12"></i>Batal</button>
-                                        <button type="submit" class="btn btn-primary">Simpan</button>
-                                    </div>
-                                </form>
 
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
                 <!-- Modal Tambah Data -->
                 <div class="modal fade" id="tambahModal" tabindex="-1" role="dialog" aria-labelledby="tambahModalLabel" aria-hidden="true">
                     <div class="modal-dialog" role="document">
@@ -145,7 +118,6 @@
                                     <div class="col-md-12">
                                         <button class="btn btn-primary" type="submit">Cari</button>
                                         <a href="#tambahModal" class="btn btn-primary" data-bs-toggle="modal" data-bs-placement="top" title="Tambah Akses Halaman">Tambah Akses Halaman</a>
-                                        <a href="#tambahroleModal" class="btn btn-primary" data-bs-toggle="modal" data-bs-placement="top" title="Tambah Role Akses">Tambah Role Akses</a>
                                     </div>
                                 </form>
                             </div>
@@ -252,7 +224,7 @@
                                                         <div class="modal-body text-center">
                                                             <h5>Apakah anda yakin ingin hapus data ini?</h5>
                                                             <form class="row g-3 needs-validation" action="{{ route('menuuser.destroy', ['menuuser' => $mnuser->id]) }}" method="POST">
-                                                            <input type="hidden" value="{{$role}}" name="akses_group_id">
+                                                                <input type="hidden" value="{{$role}}" name="akses_group_id">
                                                                 @method('DELETE')
                                                                 @csrf
                                                                 <div class="modal-footer justify-content-center">

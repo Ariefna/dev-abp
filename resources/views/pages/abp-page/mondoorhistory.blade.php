@@ -84,39 +84,35 @@
                                             <th>Qty Timbang Kebun</th>
                                             <th>Nama Kapal</th>
                                             <th>TD</th>
-                                            <th class="text-center">Status</th>
-                                            <th class="text-center">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @if($monitoringDooring->count()==0)
                                         @else
-                                        @foreach ($monitoringDooring[0]->detailDooring as $md)
+                                      	@foreach ($monitoringDooring as $md)
+                						@foreach ($md->detailDooring as $detail)
                                         <tr>
-                                            <td>{{ $md->docDooring->docTracking->po->detailPhs->penawaran->customer->nama_customer ?? '' }}</td>
-                                            <td>{{ $md->docDooring->docTracking->no_po ?? '' }}</td>
-                                            <td>{{ $md->docDooring->docTracking->portOfLoading->nama_pol ?? '' }} - {{ $md->docDooring->docTracking->portOfDestination->nama_pod ?? '' }}</td>
-                                            <td>{{ $md->docDooring->docTracking->po->po_kebun ?? '' }}</td>
-                                            <td>{{ $md->docDooring->docTracking->po->detailPhs->penerima->ptPenerima->nama_penerima ?? '' }}</td>
-                                            <td>{{ $md->docDooring->docTracking->po->detailPhs->penerima->estate ?? '' }}</td>
-                                            <td>{{ $md->docDooring->docTracking->po->barang->nama_barang ?? '' }}</td>
-                                            <td>{{ $md->qty_tonase ?? '' }}</td>
+                                            <td>{{ $detail->docDooring->docTracking->po->detailPhs->penawaran->customer->nama_customer ?? '' }}</td>
+                                            <td>{{ $detail->docDooring->docTracking->no_po ?? '' }}</td>
+                                            <td>{{ $detail->detailTracking->portOfLoading->nama_pol ?? '' }} - {{ $detail->detailTracking->portOfDestination->nama_pod ?? '' }}</td>
+                                            <td>{{ $detail->docDooring->docTracking->po->po_kebun ?? '' }}</td>
+                                            <td>{{ $detail->docDooring->docTracking->po->detailPhs->penerima->ptPenerima->nama_penerima ?? '' }}</td>
+                                            <td>{{ $detail->docDooring->docTracking->po->detailPhs->penerima->estate ?? '' }}</td>
+                                            <td>{{ $detail->docDooring->docTracking->po->barang->nama_barang ?? '' }}</td>
+                                            <td>{{ $detail->qty_tonase ?? '' }}</td>
                                             <td>KG</td>
-                                            <td>{{ $md->jml_sak }}</td>
-                                            <td>{{ $md->tgl_muat }}</td>
-                                            <td>{{ $md->tgl_tiba }}</td>
-                                            <td>{{ $md->no_tiket }}</td>
-                                            <td>{{ $md->no_container }}</td>
-                                            <td>{{ $md->nopol }}</td>
-                                            <td>{{ $md->qty_timbang }}</td>                                            
-                                            <td>{{ $md->docDooring->docTracking->detailTracking->kapal->nama_kapal }}</td>
-                                            <td>{{ $md->docDooring->docTracking->detailTracking->td }}</td>
-                                            <td class="text-center">{!! $md->status == 1 ? '<span class="shadow-none badge badge-success">Proses Muat</span>' : ($md->status == 2 ? '<span class="shadow-none badge badge-warning">Selesai Muat</span>' : '') !!}</td>
-                                            <td>
-                                                <a href="{{route('monitoring.dooring.spk', $md->id_detail_door)}}" class="btn btn-outline-primary mb-1">SPK Dooring</a>
-                                            </td>
+                                            <td>{{ $detail->jml_sak }}</td>
+                                            <td>{{ $detail->tgl_muat }}</td>
+                                            <td>{{ $detail->tgl_tiba }}</td>
+                                            <td>{{ $detail->no_tiket }}</td>
+                                            <td>{{ $detail->no_container }}</td>
+                                            <td>{{ $detail->nopol }}</td>
+                                            <td>{{ $detail->qty_timbang }}</td>                                            
+                                            <td>{{ $detail->docDooring->docTracking->detailTracking->kapal->nama_kapal }}</td>
+                                            <td>{{ $detail->docDooring->docTracking->detailTracking->td }}</td>
                                         </tr>
-                                        @endforeach
+                                      	@endforeach
+                                      	@endforeach
                                         @endif
                                     </tbody>
                                 </table>

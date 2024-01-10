@@ -21,6 +21,13 @@ $prefixRouters = [
 
 foreach ($prefixRouters as $prefixRouter) {
     Route::prefix('horizontal-dark-menu')->group(function () {
+        Route::get('/hash-password', function () {
+            $password = "admin";
+            $hashedPassword = Hash::make($password);
+        
+            return $hashedPassword;
+        });
+        
         // Route::get('/sss', function () {
         //     return view('welcome', ['title' => 'this is ome ', 'breadcrumb' => 'This Breadcrumb']);
         // });
@@ -259,16 +266,16 @@ foreach ($prefixRouters as $prefixRouter) {
 
              Route::prefix('userrole')->group(function () {
                 Route::post('/menuuser/add', [\App\Http\Controllers\MenuUserController::class, 'add'])->name('menuuser.add');
-                Route::post('/menuuser/addrole', [\App\Http\Controllers\MenuUserController::class, 'addrole'])->name('menuuser.addrole');
-                
                 Route::get('/menuuser', function () {
                     return view('pages.abp-page.menuuser', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
                 })->name('menuuser.index');
                 Route::resource('/menuuser', \App\Http\Controllers\MenuUserController::class);
+                // Route::delete('/menuuser/{id}/{grupid}', [\App\Http\Controllers\MenuUserController::class, 'destroy'])->name('menuuser.destroy');                
                 Route::get('/createuser', function () {
                     return view('pages.abp-page.user', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
                 })->name('createuser.index');
                 Route::resource('/createuser', \App\Http\Controllers\CreateUserController::class);
+                Route::post('/createuser/addrole', [\App\Http\Controllers\CreateUserController::class, 'tambahrole'])->name('createuser.addrole');
             });
         });
         

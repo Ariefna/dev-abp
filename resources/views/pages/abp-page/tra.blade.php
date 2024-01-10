@@ -159,8 +159,8 @@
                     <div class="row">
                         <div class="col-xl-12 col-md-12 col-sm-12 col-12">
                             <h4>Tabel Tracking</h4>
-                            {{-- <p>detail{{ $details }}</p>
-                            <p>trackzero{{ $trackzero->count() }}</p> --}}
+                            <!--<p>detail{{ $details }}</p>-->
+                            <!--<p>trackzero{{ $trackzero->count() }}</p>-->
                         </div>
                     </div>
                 </div>
@@ -330,7 +330,9 @@
                                             <td>{{ $tra->no_sj }}</td>
                                             <td class="text-center"><span class="shadow-none badge badge-danger">{{ $tra->status == 1 ? 'Pending' : '' }}</span></td>
                                             <td class="text-center">
-                                                <a href="#delete-{{ $tra->id_detail_track }}" class="bs-tooltip" data-bs-toggle="modal" data-bs-placement="top" title="Delete" data-original-title="Delete"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash p-1 br-8 mb-1"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></a>
+                                                @if(in_array('document-tracking-DELETE', Session::get('nama_action')) || Session::get('role') == 'superadmin')
+                                                    <a href="#delete-{{ $tra->id_detail_track }}" class="bs-tooltip" data-bs-toggle="modal" data-bs-placement="top" title="Delete" data-original-title="Delete"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash p-1 br-8 mb-1"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></a>
+                                                @endif
                                             </td>
                                         </tr>
                                         @endforeach
@@ -479,6 +481,26 @@
                                     <input name="no_segel" value="" type="text" class="form-control" id="validationCustom01" placeholder="Masukkan No Segel" required>
                                 </div>
                             @endif
+                            @if(isset($tra))
+                                <div class="col-md-6">
+                                    <label for="validationCustom03" class="form-label">Port Of Loading</label>
+                                    <select class="form-select" name="cont_pol" id="validationDefault01" required>
+                                        <option selected disabled value="">Pilih...</option>                                
+                                        @foreach ($pol as $pl)
+                                            <option {{ $selectpol->where('id_track',$tra->id_track)->contains('id_pol', $pl->id) ? 'selected' : '' }} value="{{ $pl->id }}">{{ $pl->nama_pol }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="validationCustom03" class="form-label">Port Of Destination</label>
+                                    <select class="form-select" name="cont_pod" id="validationDefault01" required>
+                                        <option selected disabled value="">Pilih...</option>
+                                        @foreach ($pod as $pd)
+                                            <option {{ $selectpod->where('id_track',$tra->id_track)->contains('id_pod', $pd->id) ? 'selected' : '' }} value="{{ $pd->id }}">{{ $pd->nama_pod }}</option>
+                                        @endforeach                                
+                                    </select>
+                                </div>
+                            @endif
                             <div class="col-md-3">
                                 @foreach($tracknull as $tra)
                                     @php
@@ -486,7 +508,7 @@
                                     @endphp
                                     @if ($lastcont || $match)
                                         @foreach ($getcontqty as $tra)
-                                            <label for="notAllowCont" class="form-label">Quantity Tonase</label>
+                                            <label for="notAllowCont" class="form-label">Quantity Tonases</label>
                                             <div class="input-group">
                                                 <input name="qty_tonase" step="any" min="0" id="qty_cont" type="number" class="form-control qty_cont" placeholder="QTY Tonase" required>
                                                 <span class="input-group-text" id="inputGroupPrepend">KG</span>
@@ -497,7 +519,7 @@
                                         @endforeach
                                     @elseif($lastcont==0 || $match->count()==0)
                                         @foreach ($zerocont as $tra)
-                                            <label for="notAllowCont" class="form-label">Quantity Tonase</label>
+                                            <label for="notAllowCont" class="form-label">Quantity Tonase2</label>
                                             <div class="input-group">
                                                 <input name="qty_tonase" step="any" min="0" id="qty_cont" type="number" class="form-control qty_cont" placeholder="QTY Tonase" required>
                                                 <span class="input-group-text" id="inputGroupPrepend">KG</span>
@@ -572,7 +594,7 @@
                                 <div class="mb-3">
                                     <input name="file_tbg" accept=".jpg, .png, .pdf" class="form-control file-upload-input" style="height: 48px; padding: 0.75rem 1.25rem;" type="file" id="formFile">
                                 </div>
-                            </div>                            
+                            </div>                                                        
                             <div class="col-md-4">
                                 <label for="validationCustom04" class="form-label">Harga HPP Kapal</label>
                                 <div class="input-group has-validation">
@@ -582,7 +604,7 @@
                             <div class="col-md-4">
                                 <label for="validationCustom04" class="form-label">No Surat Jalan</label>
                                 <div class="input-group has-validation">
-                                    <input name="no_sj" type="text" value="" class="form-control" id="validationCustom01" placeholder="Masukkan Nomor Container" required>
+                                    <input name="no_sj" type="text" value="" class="form-control" id="validationCustom01" placeholder="Masukkan Nomor Surat Jalan" required>
                                 </div>
                             </div>                            
                             <div class="col-md-4">
@@ -686,7 +708,27 @@
                             <div class="col-lg-3 col-md-6 col-sm-12">
                                 <label for="validationCustom03" class="form-label">Nopol</label>
                                 <input name="nopol" type="text" class="form-control" id="validationCustom01" placeholder="Masukkan Nopol" required>
-                            </div>                            
+                            </div>
+                            @if(isset($tra))
+                                <div class="col-md-6">
+                                    <label for="validationCustom03" class="form-label">Port Of Loading</label>
+                                    <select class="form-select" name="did_pol" id="validationDefault01" required>
+                                        <option selected disabled value="">Pilih...</option>                                
+                                        @foreach ($pol as $pol)
+                                            <option {{ $selectpol->where('id_track',$tra->id_track)->contains('id_pol', $pol->id) ? 'selected' : '' }} value="{{ $pol->id }}">{{ $pol->nama_pol }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="validationCustom03" class="form-label">Port Of Destination</label>
+                                    <select class="form-select" name="did_pod" id="validationDefault01" required>
+                                        <option selected disabled value="">Pilih...</option>
+                                        @foreach ($pod as $pod)
+                                            <option {{ $selectpod->where('id_track',$tra->id_track)->contains('id_pod', $pod->id) ? 'selected' : '' }} value="{{ $pod->id }}">{{ $pod->nama_pod }}</option>
+                                        @endforeach                                
+                                    </select>
+                                </div>
+                            @endif                                                        
                             <div class="col-lg-3 col-md-6 col-sm-12">
                                 @foreach($tracknull as $tra)
                                     @php
@@ -793,7 +835,7 @@
                             <div class="col-md-4">
                                 <label for="validationCustom04" class="form-label">No Surat Jalan</label>
                                 <div class="input-group has-validation">
-                                    <input name="no_sj" type="text" value="" class="form-control" id="validationCustom01" placeholder="Masukkan Nomor Container" required>
+                                    <input name="no_sj" type="text" value="" class="form-control" id="validationCustom01" placeholder="Masukkan Nomor Surat Jalan" required>
                                 </div>
                             </div>                            
                             <div class="col-md-4">

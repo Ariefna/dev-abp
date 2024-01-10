@@ -59,7 +59,7 @@
                 <td class="tg-r1gl" style="border: none; font-family: Calibri, sans-serif; font-size: 11pt !important;" colspan="7">Pergudangan Pakal Indah, Jl Raya Pakal no 16 Blok A7<br>Surabaya, Indonesia<br>Telp +6231 7433099</td>
               </tr>
               <tr>
-                <td class="tg-7btt" style="font-family:'Arial Black'; font-size:11pt !important;" colspan="3">Bill To</td>
+                <td class="tg-7btt" style="font-size: 18px; !important;" colspan="3">Bill To</td>
                 <td class="tg-n6ju" style="font-size: 18px;" colspan="4">Invoice</td>
               </tr>
               <tr>
@@ -88,7 +88,7 @@
                     :
                     @endif
                 </td>
-                <td class="tg-0pky" style="border-right: none; border-bottom: none; border-left:none; border-top:none;">
+                <td class="tg-0pky" style="border-right: none; border-bottom: none; border-left:none; border-top:none; text-align:left;">
                     @if ($key == 0)
                         {{ $data['no_po'] ?? '-'}}
                     @endif
@@ -145,7 +145,7 @@
               <tr>
                 <td class="tg-0pky" style="border-right: none;border-top:none;">Total</td>
                 <td class="tg-c3ow" style="border-right: none;border-top:none; border-left: none;">:</td>
-                <td class="tg-0pky" style="border-right: none;border-top:none; border-left: none;">{{ $data['total-cont'] }} KG</td>
+                <td class="tg-0pky" style="border-right: none;border-top:none; border-left: none;">{{ number_format($data['total-cont'], 0, '.', ',') }} KG</td>
                 <td class="tg-0pky" style="border-right: none;border-top:none; border-left: none;" colspan="2">Stuff Date</td>
                 <td class="tg-c3ow" style="border-right: none;border-top:none; border-left: none;">:</td>
                 <td class="tg-0pky" style="border-left: none;border-top:none; border-left: none;"></td>

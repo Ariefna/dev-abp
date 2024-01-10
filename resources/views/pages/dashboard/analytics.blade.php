@@ -126,11 +126,11 @@
                         </div>
                         <div class="col-md-3">
                             <form id="filterForm" action="{{ route('analytics.index') }}" method="get">
-                                <label for="yearFilter" class="form-label">Filter by Year:</label>
+                                <label for="yearFilter" class="form-label">Pilih Tahun:</label>
                                 <select class="form-select" id="yearFilter" name="yearFilter" onchange="filterByYear()">
                                     <?php
-                                    $currentYear = date("Y");
-                                    for ($year = $currentYear; $year >= $currentYear - 10; $year--) {
+                                    $currentYear = 2023;
+                                    for ($year = $currentYear; $year < $currentYear + 10; $year++) {
                                         $selected = ($year == ($_GET['yearFilter'] ?? $currentYear)) ? 'selected' : '';
                                         echo "<option value=\"$year\" $selected>$year</option>";
                                     }
@@ -195,6 +195,12 @@
                                             <th>
                                                 <div class="th-content">Status</div>
                                             </th>
+                                            <th>
+                                                <div class="th-content">Status PO</div>
+                                            </th>                
+                                            <th>
+                                                <div class="th-content">User</div>
+                                            </th>                                                                       
                                         </tr>
                                     </thead>
                                     @if(in_array('dashboard-analytics-READ', Session::get('nama_action')) || Session::get('role') == 'superadmin')
@@ -210,6 +216,16 @@
                                             <td>
                                                 <div class="td-content"><span class="badge badge-danger">Sisa Muat</span></div>
                                             </td>
+                                            <td>
+                                                @if($trab->status == 1)
+                                                <div class="td-content"><span class="badge badge-danger">PO belum disimpan</span></div>
+                                                @else
+                                                <div class="td-content"><span class="badge badge-success">PO sudah disimpan</span></div>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                <div class="td-content">{{ $trab->name }}</div>
+                                            </td>                                            
                                         </tr>
                                         @endforeach
                                     </tbody>
@@ -244,6 +260,12 @@
                                             <th>
                                                 <div class="th-content">Status</div>
                                             </th>
+                                            <th>
+                                                <div class="th-content">Status PO</div>
+                                            </th>
+                                            <th>
+                                                <div class="th-content">User</div>
+                                            </th>                                            
                                         </tr>
                                     </thead>
                                     @if(in_array('dashboard-analytics-READ', Session::get('nama_action')) || Session::get('role') == 'superadmin')
@@ -259,6 +281,16 @@
                                             <td>
                                                 <div class="td-content"><span class="badge badge-danger">Sisa Dooring</span></div>
                                             </td>
+                                            <td>
+                                                @if($trab->status == 1)
+                                                <div class="td-content"><span class="badge badge-danger">PO belum disimpan</span></div>
+                                                @else
+                                                <div class="td-content"><span class="badge badge-success">PO sudah disimpan</span></div>
+                                                @endif
+                                            </td>                                            
+                                            <td>
+                                                <div class="td-content">{{ $trab->name }}</div>
+                                            </td>                                            
                                         </tr>
                                         @endforeach
                                     </tbody>
@@ -313,6 +345,12 @@
                                             <th>
                                                 <div class="th-content">Status</div>
                                             </th>
+                                            <th>
+                                                <div class="th-content">Status PO</div>
+                                            </th>                                            
+                                            <th>
+                                                <div class="th-content">User</div>
+                                            </th>                                            
                                         </tr>
                                     </thead>
                                     @if(in_array('dashboard-analytics-READ', Session::get('nama_action')) || Session::get('role') == 'superadmin')
@@ -327,6 +365,16 @@
                                                 </a></td>
                                             <td>
                                                 <div class="td-content"><span class="badge badge-danger">Sisa Muat</span></div>
+                                            </td>
+                                            <td>
+                                                @if($trab->status == 1)
+                                                <div class="td-content"><span class="badge badge-danger">PO belum disimpan</span></div>
+                                                @else
+                                                <div class="td-content"><span class="badge badge-success">PO sudah disimpan</span></div>
+                                                @endif
+                                            </td>                           
+                                            <td>
+                                                <div class="td-content">{{ $trab->name }}</div>
                                             </td>
                                         </tr>
                                         @endforeach
@@ -362,6 +410,12 @@
                                             <th>
                                                 <div class="th-content">Status</div>
                                             </th>
+                                            <th>
+                                                <div class="th-content">Status PO</div>
+                                            </th>                                            
+                                            <th>
+                                                <div class="th-content">User</div>
+                                            </th>                                                                                        
                                         </tr>
                                     </thead>
                                     @if(in_array('dashboard-analytics-READ', Session::get('nama_action')) || Session::get('role') == 'superadmin')
@@ -377,6 +431,16 @@
                                             <td>
                                                 <div class="td-content"><span class="badge badge-danger">Sisa Dooring</span></div>
                                             </td>
+                                            <td>
+                                                @if($trab->status == 1)
+                                                <div class="td-content"><span class="badge badge-danger">PO belum disimpan</span></div>
+                                                @else
+                                                <div class="td-content"><span class="badge badge-success">PO sudah disimpan</span></div>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                <div class="td-content">{{ $trab->name }}</div>
+                                            </td>                                            
                                         </tr>
                                         @endforeach
                                     </tbody>

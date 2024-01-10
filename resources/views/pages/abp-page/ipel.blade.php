@@ -207,11 +207,12 @@
                                                                     <polyline points="10 9 9 9 8 9"></polyline>
                                                                 </svg>
                                                             </a>
-
+                                                            @if(in_array('finance-invoice-pelunasan-DELETE', Session::get('nama_action')) || Session::get('role') == 'superadmin')
                                                             <a href="/horizontal-dark-menu/finance/invoice-pelunasan/delete/{{ $tdp->id_invoice_pel }}" class="bs-tooltip" data-bs-placement="top" title="Delete" data-original-title="Delete"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash">
                                                                     <polyline points="3 6 5 6 21 6"></polyline>
                                                                     <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
                                                                 </svg></a>
+                                                            @endif
                                                             <div class="p-1"></div>
                                                             @if ($tdp->status == 3)
                                                             <a href="/horizontal-dark-menu/finance/invoice-pelunasan/print/{{ $tdp->id_invoice_pel }}" class="bs-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Print Tonase Dooring" data-original-title="Print"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-printer">
@@ -266,12 +267,13 @@
                                             <tr>
                                                 <td>{{$tdp->invoice_no}}</td>
                                                 <td>{{$item->estate}}</td>
-                                                <td>{{number_format($item->total_tonase_dooring , 2, ',', '.')}}</td>
-                                                <td>{{number_format($item->total_harga_dooring , 2, ',', '.')}}</td>
-                                                <td>{{number_format($item->total_tonase_timbang , 2, ',', '.')}}</td>
-                                                <td>{{number_format($item->total_harga_timbang , 2, ',', '.')}}</td>
-                                                <td>{{number_format($item->total_invoice_adjusted , 2, ',', '.') ?? 0}}</td>
+                                                <td>{{number_format($item->total_tonase_dooring , 0, ',', '.')}} KG</td>
+                                                <td>Rp. {{number_format($item->total_harga_dooring , 0, ',', '.')}}</td>
+                                                <td>{{number_format($item->total_tonase_timbang , 0, ',', '.')}} KG</td>
+                                                <td>Rp. {{number_format($item->total_harga_timbang , 0, ',', '.')}}</td>
+                                                <td>Rp. {{number_format($item->total_invoice_adjusted , 0, ',', '.') ?? 0}}</td>
                                                 <td class="text-center">
+                                                    @if(in_array('finance-invoice-pelunasan-DELETE', Session::get('nama_action')) || Session::get('role') == 'superadmin')
                                                     @if ($tdp->status == 1 && $item->status == 1)
                                                     <a href="{{route('invoice-pelunasan.deletedetail',['id'=>$item->id_detail_pel])}}" class="bs-tooltip" data-bs-placement="top" title="Delete" data-original-title="Delete">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash p-1 br-8 mb-1">
@@ -279,6 +281,7 @@
                                                             <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
                                                         </svg>
                                                     </a>
+                                                    @endif
                                                     @endif
                                                 </td>
                                             </tr>
@@ -289,9 +292,11 @@
 
                                 </div>
                                 <div class="modal-footer">
+                                    @if(in_array('finance-invoice-pelunasan-APPROVE', Session::get('nama_action')) || Session::get('role') == 'superadmin')
                                     @if ($tdp->status == 1)
                                     <a class="btn btn-success" href="{{ route('invoice-pelunasan.approvetimbang', ['id_invoice_pel' => $tdp->id_invoice_pel]) }}">Approve Timbang Dooring</a>
                                     <a class="btn btn-success" href="{{ route('invoice-pelunasan.approvedooring', ['id_invoice_pel' => $tdp->id_invoice_pel]) }}">Approve Dooring</a>
+                                    @endif
                                     @endif
                                 </div>
                             </div>
@@ -340,7 +345,7 @@
                                         <div class="col-md-6">
                                             <label for="notAllowCont" class="form-label">Total Tonase Timbang Dooring</label>
                                             <div class="input-group">
-                                                <input name="tttd" step="any" min="0" id="tttd" type="number" class="form-control qty_cont" required readonly>
+                                                <input name="tttd" step="any" min="0" id="tttd" type="number" class="form-control qty_cont" required>
                                                 <span class="input-group-text" id="inputGroupPrepend">KG</span>
                                             </div>
                                         </div>

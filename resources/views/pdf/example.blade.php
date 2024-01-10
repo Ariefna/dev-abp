@@ -107,7 +107,7 @@
             </tr>
         </table>
         <?php
-        $updated_at = date("Y-m-d"); // Gantilah ini dengan nilai tanggal yang sesuai
+        $updated_at = $data1['created_at']; // Gantilah ini dengan nilai tanggal yang sesuai
 
         $timestamp = strtotime($updated_at);
 
@@ -160,7 +160,9 @@
             @endforeach
         </table>
     </table>
-    @if (count($data2) > 5)
+    @if (count($data2) > 0 && count($data2) < 10) {
+    <p style="padding-top: 15pt"></p>
+    @elseif(count($data2) >10 && count($data2) < 50)
     <p style="padding-top: 165pt"></p>
     @endif
     @if (count($data2) > 26)

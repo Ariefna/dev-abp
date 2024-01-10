@@ -20,7 +20,6 @@
             @vite(['resources/scss/dark/plugins/table/datatable/dt-global_style.scss'])
             @vite(['resources/scss/dark/plugins/table/datatable/custom_dt_custom.scss'])
             @vite(['resources/scss/light/assets/components/timeline.scss'])
-            @vite(['resources/scss/dark/assets/components/modal.scss'])
 
             <!--  END CUSTOM STYLE FILE  -->
 
@@ -235,8 +234,11 @@
                                     <thead>
                                         <tr>
                                             <th> No PO </th>
+                                            <th> Tanggal PO </th>
                                             <th>No PO Kebun</th>
                                             <th>Nama Customer</th>
+                                            <th>Total Quantity</th>
+                                            <th>Total Amount</th>
                                             <th class="text-center dt-no-sorting">Status</th>
                                             <th class="text-center dt-no-sorting">Action</th>
                                         </tr>
@@ -245,8 +247,11 @@
                                         @foreach ($po as $p)
                                         <tr>
                                             <td>{{ $p->po_muat }}</td>
+                                            <td data-order="{{ $p->tgl }}">{{ date('d-F-Y', strtotime($p->tgl)) }}</td>
                                             <td>{{ $p->po_kebun }}</td>
                                             <td>{{ $p->nama_customer }}</td>
+                                            <td>{{ number_format($p->total_qty, 0, ',', '.') }} KG</td>
+                                            <td>Rp. {{ number_format($p->total_all, 0, ',', '.') }}</td>
                                             <td class="text-center">{!! $p->status == 2 ? '<span class="shadow-none badge badge-success">Approved</span>' : ($p->status == 1 ? '<span class="shadow-none badge badge-warning">Not Approved</span>' : '') !!}</td>
                                             <td class="text-center">
                                                 <ul class="table-controls">
@@ -267,6 +272,13 @@
                                                     @if (in_array('document-purchase-order-DELETE', Session::get('nama_action')) || Session::get('role') == 'superadmin')
                                                         <li><a href="#exampleModalHps-{{ $p->id_po }}" class="bs-tooltip" data-bs-toggle="modal" data-bs-placement="top" title="Delete" data-original-title="Delete"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash p-1 br-8 mb-1"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></a></li>
                                                     @endif
+                                                    {!! $p->file_name != null
+                                                        ?
+                                                            '<li><a href="'.route('downloadpo', ['path' => $p->file_name]).'" 
+                                                                class="bs-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Download PO" data-original-title="Print"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-download"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                                                            </svg></a></li>'     
+                                                        : ''
+                                                    !!}                                                    
                                                 </ul>
                                             </td>
                                         </tr>
@@ -582,33 +594,25 @@
                             function updateValues() {
                                 var qty = parseFloat($('#t_qty').val()) || 0;
                                 var qty2 = parseFloat($('#t_qty2').val()) || 0;
-                                // var eqty = parseFloat($('#qty_curah').val()) || 0;
-                                // var eqty2 = parseFloat($('#qty_cont').val()) || 0;
+                                var eqty = parseFloat($('#qty_curah').val()) || 0;
+                                var eqty2 = parseFloat($('#qty_cont').val()) || 0;
                                 var oa_kpl_kayu = parseFloat($('#oa_kpl_kayu').val().replace(/\D/g, '')) || 0;
                                 var oa_container = parseFloat($('#oa_container').val().replace(/\D/g, '')) || 0;
                                 var am_container = qty2 * oa_container;
                                 var am_kayu = qty * oa_kpl_kayu;
                                 var total_qty = qty + qty2;
-                                // var etotal_qty = eqty + eqty2;
+                                var etotal_qty = eqty + eqty2;
                                 var total_all = am_container + am_kayu;
 
                                 $('#total_qty').val(total_qty);
                                 $('#am_kayu').val(formatter.format(am_kayu));
                                 $('#am_container').val(formatter.format(am_container));
                                 $('#total_all').val(formatter.format(total_all));
-                                // $('#qty_new').val(etotal_qty);
-                            }
-                            function editvalues(){
-                                var eqty = parseFloat($('#qty_curah').val()) || 0;
-                                var eqty2 = parseFloat($('#qty_cont').val()) || 0;
-                                var etotal_qty = eqty + eqty2;
-                                // $('#qty_new').val(etotal_qty);
+                                $('#qty_new').val(etotal_qty);
                             }
 
-                            $('#t_qty, #t_qty2, #oa_kpl_kayu, #oa_container').on('input', updateValues);
-                            $('#qty_curah, #qty_cont').on('input', editvalues);
+                            $('#t_qty, #t_qty2, #oa_kpl_kayu, #oa_container, #qty_curah,#qty_cont').on('input', updateValues);
                             updateValues();
-                            editvalues();
                             $('#approve-link').click(function() {
 
                                 // Get the link's href attribute
