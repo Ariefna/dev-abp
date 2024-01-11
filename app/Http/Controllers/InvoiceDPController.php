@@ -212,8 +212,6 @@ class InvoiceDPController extends Controller
         return response()->json($getdata);
     }
 
-
-
     public function generate()
     {
         $currentYear = date('Y');
@@ -262,7 +260,6 @@ class InvoiceDPController extends Controller
         return redirect()->back();
     }
 
-    
     public function deletedetail(Request $request, $id_detail_dp)
     {
         DetailInvoiceDP::where('id_detail_dp', $id_detail_dp)->update([
@@ -281,6 +278,46 @@ class InvoiceDPController extends Controller
         ]);
         return redirect()->back();
     }
+
+    public function getInvoiceNumber($id)
+    {
+        $currentYear = date('Y');
+        $currentMonth = date('m');
+        $id_track = $id;
+        $cekrow = InvoiceDp::where('id_track', $id_track)
+    ->whereYear('invoice_date', $currentYear)
+    ->whereNotIn('status',[0])
+    ->count() ?? 0;
+        $newCounter = 1;    
+        $newStatus = 1;
+        if ($cekrow == 0) {
+            $newCounter++;
+            $newInvoiceNumber = "ABP/{$currentYear}/{$currentMonth}/" .
+                str_pad($newCounter, 4, '0', STR_PAD_LEFT) . '-' . $newStatus;
+           
+        } else {
+            $latestInvoice = InvoiceDP::whereYear('invoice_date', $currentYear)
+                ->where('id_track', $id_track)
+                ->whereNotIn('status',[0])
+                ->orderBy('id_invoice_dp', 'desc')
+                ->first();
+
+            if ($latestInvoice) {
+                $parts = preg_split('/[-\/]/', $latestInvoice->invoice_no);
+                $existingCounter = intval($parts[3]);
+                $existingStatus = intval($parts[4]);
+                $newCounter = $existingCounter;
+                $a = 1;
+                $newStatus = $existingStatus + 1;
+            }
+            $newInvoiceNumber = "ABP/{$currentYear}/{$currentMonth}/" .
+                str_pad($newCounter, 4, '0', STR_PAD_LEFT) . '-' . $newStatus;
+           
+        }
+        $data["invoice_number"] = $newInvoiceNumber;
+        return response()->json($data);
+    }
+    
     public function store(Request $request)
     {
         $currentYear = date('Y');

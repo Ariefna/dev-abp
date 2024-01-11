@@ -103,7 +103,7 @@ class InvoiceLunasController extends Controller
         'detail_invoice_pel.estate',
         'purchase_orders.id_po',
         'detail_invoice_pel.prosentase_ppn',
-    'detail_invoice_pel.total_ppn_timbang',
+        'detail_invoice_pel.total_ppn_timbang',
         'invoice_pelunasan.id_invoice_dp'
     )
     ->leftJoin('doc_dooring', 'doc_dooring.id_dooring', '=', 'invoice_pelunasan.id_dooring')
@@ -113,7 +113,6 @@ class InvoiceLunasController extends Controller
     ->leftJoin('invoice_dp', 'invoice_pelunasan.id_invoice_dp', '=', 'invoice_dp.id_invoice_dp')
     ->where('invoice_pelunasan.id_invoice_pel', $id)
     ->whereNotIn('detail_invoice_pel.status',[0])
-    // ->groupBy('invoice_pelunasan.id_invoice_pel') //dihapus
     ->get();
 
         if (!is_null($invoicePelunasanData)) {
@@ -408,8 +407,6 @@ class InvoiceLunasController extends Controller
                 'detail_dooring.tipe',
                 DB::raw("SUM(detail_dooring.qty_tonase) as total_qty_tonase"),
                 DB::raw("SUM(detail_dooring.qty_timbang) as total_qty_timbang"),
-                // DB::raw("(SUM(detail_dooring.qty_tonase) / 2) as total_qty_tonase"),
-                // DB::raw("(SUM(detail_dooring.qty_timbang) /2) as total_qty_timbang"),
                 'detail_p_h_s.oa_container as susut',
                 DB::raw("(detail_p_h_s.oa_container * SUM(detail_dooring.qty_tonase)) as hrg_tonase"),
                 DB::raw("(detail_p_h_s.oa_container * SUM(detail_dooring.qty_timbang)) as hrg_timbang"),
@@ -427,8 +424,6 @@ class InvoiceLunasController extends Controller
             ->groupBy('detail_dooring.estate', 'doc_tracking.no_po', 'detail_dooring.tipe')
             ->first();
 
-
-        // Access the calculated values with default 0
         $details->total_qty_tonase ?? 0;
         $details->total_qty_timbang ?? 0;
         $details->susut ?? 0;
@@ -467,9 +462,6 @@ class InvoiceLunasController extends Controller
                 ->whereIn('a.id_track', function ($query) {
                     $query->select('id_track')->from('invoice_dp');
                 })
-                // ->whereNotIn('doc_dooring.id_dooring', function ($query) {
-                //     $query->select('id_dooring')->from('invoice_pelunasan')->where('doc_dooring.status', 1);
-                // })
                 ->get();
         } else {
             $data = DocTracking::select('id_dooring', 'no_po')
@@ -492,20 +484,72 @@ class InvoiceLunasController extends Controller
         $query = DocTracking::select('*', 'invoice_dp.id_track', 'doc_tracking.no_po')
             ->selectRaw('SUM(detail_tracking.qty_tonase) as total_muat')
             ->selectRaw("DATE_FORMAT(detail_tracking.tgl_muat, '%e-%M-%Y') as formatted_tgl_muat")
-            // ->select('detail_tracking.tgl_muat')
             ->join('detail_tracking', 'doc_tracking.id_track', '=', 'detail_tracking.id_track')
             ->join('purchase_orders', 'purchase_orders.po_muat', '=', 'doc_tracking.no_po')
             ->join('detail_p_h_s', 'purchase_orders.id_detail_ph', '=', 'detail_p_h_s.id_detail_ph')
             ->join('invoice_dp', 'invoice_dp.id_track', '=', 'doc_tracking.id_track')
             ->whereIn('doc_tracking.status', [2, 3])
-            // ->whereRaw('CONCAT(doc_tracking.no_po, "-", DATE_FORMAT(detail_tracking.tgl_muat, "%e-%M-%Y")) = ?', [$id_track])
             ->whereRaw('CONCAT(doc_tracking.no_po, "(", DATE_FORMAT(detail_tracking.tgl_muat, "%e %M %Y"), ")") = ?', [$id_track])
             ->groupBy('doc_tracking.id_track', 'doc_tracking.no_po', 'formatted_tgl_muat');
-        // ->havingRaw("formatted_tgl_muat = ?", [$tgl]);
         $getdata = $query->get();
         return response()->json($getdata);
     }
+    public function getInvoiceNumber($id)
+    {
+       $param = explode("-", $id);
 
+        $invoices = InvoiceDp::join('doc_dooring', 'doc_dooring.id_track', '=', 'invoice_dp.id_track')
+        ->where('id_dooring', $id)->where('invoice_dp.status', '=', '2')
+        ->select('invoice_dp.id_invoice_dp', 'invoice_dp.id_track')
+        ->first();
+    $iddooring = $param[0];
+    $currentYear = date('Y');
+    $currentMonth = date('m');
+    $cekrow = InvoiceDp::join('doc_dooring', 'doc_dooring.id_track', '=', 'invoice_dp.id_track')->where('id_dooring', $id)->where('invoice_dp.status', '=', 2)->whereYear('invoice_date', $currentYear)->count();
+    $cektipe= $param[1];
+    $newCounter = 1;
+    $newStatus = 1;
+    if($cektipe == 1){
+        if ($cekrow == 0) {
+            $cekrow = InvoiceDp::whereYear('invoice_date', $currentYear)->where('status', '=', '2')->count() ?? 0;
+            $newCounter = $cekrow <= 1 ? $cekrow + 1 : 1;
+            $newInvoiceNumber = "ABP/{$currentYear}/{$currentMonth}/" .
+                str_pad($newCounter, 4, '0', STR_PAD_LEFT) . '-' . $newStatus;
+        } else {
+            $latestInvoice = InvoiceDP::whereYear('invoice_date', $currentYear)
+                ->where('id_track', $invoices->id_track)
+                ->where('status', '=', '2')
+                ->orderBy('id_invoice_dp', 'desc')
+                ->first();
+            if ($latestInvoice) {
+                $parts = preg_split('/[-\/]/', $latestInvoice->invoice_no);
+                $existingCounter = intval($parts[3]);
+                $existingStatus = intval($parts[4]);
+                $newCounter = $existingCounter;
+                $a = 1;
+                $newStatus = $existingStatus + 1;
+            }
+            $newInvoiceNumber = "ABP/{$currentYear}/{$currentMonth}/" .
+                str_pad($newCounter, 4, '0', STR_PAD_LEFT) . '-' . $newStatus;
+        }
+    }elseif($cektipe == 2){
+        $lastes = InvoicePelunasan::whereYear('invoice_date', $currentYear)
+        ->whereIn('status',[1,2,3])
+        ->where('tipe_invoice','=','2')
+        ->orderBy('id_invoice_pel', 'desc')
+        ->first();
+        if ($lastes) {
+            $parts = preg_split('/[-\/]/', $lastes->invoice_no);
+            $existingCounter = intval($parts[3]);
+            $newCounter = $existingCounter + 1; 
+            $a = 1;
+        }
+        $newInvoiceNumber = "ABP/{$currentYear}/{$currentMonth}/" .
+            str_pad($newCounter, 4, '0', STR_PAD_LEFT);         
+    }        
+    $data["invoice_number"] = $newInvoiceNumber;
+    return response()->json($data);
+    }
     public function store(Request $request)
     {
         $invoices = InvoiceDp::join('doc_dooring', 'doc_dooring.id_track', '=', 'invoice_dp.id_track')

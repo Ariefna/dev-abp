@@ -20,24 +20,24 @@
             <!--  END CUSTOM STYLE FILE  -->
 
             <style>
-                .toggle-code-snippet {
-                    margin-bottom: 0px;
-                }
+            .toggle-code-snippet {
+                margin-bottom: 0px;
+            }
 
-                body.dark .toggle-code-snippet {
-                    margin-bottom: 0px;
-                }
+            body.dark .toggle-code-snippet {
+                margin-bottom: 0px;
+            }
 
-                input::-webkit-outer-spin-button,
-                input::-webkit-inner-spin-button {
-                    -webkit-appearance: none;
-                    margin: 0;
-                }
+            input::-webkit-outer-spin-button,
+            input::-webkit-inner-spin-button {
+                -webkit-appearance: none;
+                margin: 0;
+            }
 
-                /* Firefox */
-                input[type=number] {
-                    -moz-appearance: textfield;
-                }
+            /* Firefox */
+            input[type=number] {
+                -moz-appearance: textfield;
+            }
             </style>
             </x-slot>
             <!-- END GLOBAL MANDATORY STYLES -->
@@ -68,11 +68,14 @@
                                 </div>
                             </div>
                             <div class="widget-content widget-content-area" style="padding: 1.5%;">
-                                <form class="row g-3 needs-validation" action="{{ route('invoice-pelunasan.store') }}" method="POST" enctype="multipart/form-data" novalidate>
+                                <form class="row g-3 needs-validation" action="{{ route('invoice-pelunasan.store') }}"
+                                    method="POST" enctype="multipart/form-data" novalidate>
                                     @csrf
                                     <div class="col-md-3">
                                         <label for="validationCustom01" class="form-label">Invoice Date</label>
-                                        <input name="tgl_inv_dp" id="basicFlatpickr" value="2022-09-04" class="form-control flatpickr flatpickr-input active" type="text" placeholder="Select Date..">
+                                        <input name="tgl_inv_dp" id="basicFlatpickr" value="2022-09-04"
+                                            class="form-control flatpickr flatpickr-input active" type="text"
+                                            placeholder="Select Date..">
                                     </div>
                                     <div class="col-md-3">
                                         <label for="validationCustom01" class="form-label">Tipe Invoice</label>
@@ -96,7 +99,8 @@
                                     </div>
                                     <div class="col-md-3">
                                         <label for="validationCustom01" class="form-label">Invoice No</label>
-                                        <input name="invoice_no" type="text" class="form-control" id="invoice_no" placeholder="Autofill no invoice dp terakhir dari po + 1" readonly>
+                                        <input name="invoice_no" type="text" class="form-control" id="invoice_no"
+                                            placeholder="Autofill no invoice dp terakhir dari po + 1" readonly>
                                         <div class="invalid-feedback">
                                             Invoice No tidak boleh kosong
                                         </div>
@@ -139,7 +143,8 @@
                                     </div>
                                     <div class="col-md-3">
                                         <label for="validationCustom01" class="form-label">Terms</label>
-                                        <input name="terms" type="text" class="form-control" id="terms" placeholder="Masukkan terms" required>
+                                        <input name="terms" type="text" class="form-control" id="terms"
+                                            placeholder="Masukkan terms" required>
                                         <div class="invalid-feedback">
                                             Terms tidak boleh kosong
                                         </div>
@@ -164,7 +169,8 @@
                                 <div class="col-lg-12">
                                     <div class="statbox widget box box-shadow">
                                         <div class="widget-content widget-content-area">
-                                            <table id="style-3" class="table style-3 dt-table-hover" style="width:100%;">
+                                            <table id="style-3" class="table style-3 dt-table-hover"
+                                                style="width:100%;">
                                                 <thead style="border-bottom: none;">
                                                     <tr>
                                                         <th>Invoice No</th>
@@ -183,52 +189,107 @@
                                                         <td>{{ $tdp->tipe_job }}</td>
                                                         <td>{{ $tdp->rinci_tipe }}</td>
                                                         @if ($tdp->status == 1)
-                                                        <td class="text-center"><span class="shadow-none badge badge-danger">Pending</span></td>
+                                                        <td class="text-center"><span
+                                                                class="shadow-none badge badge-danger">Pending</span>
+                                                        </td>
                                                         @elseif($tdp->status == 3)
-                                                        <td class="text-center"><span class="shadow-none badge badge-success">Approved Dooring</span></td>
+                                                        <td class="text-center"><span
+                                                                class="shadow-none badge badge-success">Approved
+                                                                Dooring</span></td>
                                                         @elseif($tdp->status == 2)
-                                                        <td class="text-center"><span class="shadow-none badge badge-success">Approved Timbang Dooring</span></td>
+                                                        <td class="text-center"><span
+                                                                class="shadow-none badge badge-success">Approved Timbang
+                                                                Dooring</span></td>
                                                         @endif
                                                         <td class="text-center">
                                                             @if ($tdp->status == 1)
-                                                            <a href="#modalIPLcur" data-id-track="{{$tdp->id_track }}" data-id-invoice-pel="{{$tdp->id_invoice_pel }}" class="bs-tooltip" data-bs-toggle="modal" data-bs-placement="top" title="Tambah Detail" data-original-title="Tambah Detail"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus-circle">
+                                                            <a href="#modalIPLcur" data-id-track="{{$tdp->id_track }}"
+                                                                data-id-invoice-pel="{{$tdp->id_invoice_pel }}"
+                                                                class="bs-tooltip" data-bs-toggle="modal"
+                                                                data-bs-placement="top" title="Tambah Detail"
+                                                                data-original-title="Tambah Detail"><svg
+                                                                    xmlns="http://www.w3.org/2000/svg" width="24"
+                                                                    height="24" viewBox="0 0 24 24" fill="none"
+                                                                    stroke="currentColor" stroke-width="2"
+                                                                    stroke-linecap="round" stroke-linejoin="round"
+                                                                    class="feather feather-plus-circle">
                                                                     <circle cx="12" cy="12" r="10"></circle>
                                                                     <line x1="12" y1="8" x2="12" y2="16"></line>
                                                                     <line x1="8" y1="12" x2="16" y2="12"></line>
                                                                 </svg></a>
                                                             @endif
                                                             <!-- <a href="#modalDetailInvoice" data-id-track="{{$tdp->id_track }}" data-id-invoice-pel="{{$tdp->id_invoice_pel }}" class="bs-tooltip" data-bs-toggle="modal" data-bs-placement="top" title="Detail" data-original-title="Print"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg></a> -->
-                                                            <a href="#modalDetailInvoice{{ $tdp->id_invoice_pel }}" class="bs-tooltip" data-bs-toggle="modal" data-bs-placement="top" title="Detail" data-original-title="Print">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text">
-                                                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                                            <a href="#modalDetailInvoice{{ $tdp->id_invoice_pel }}"
+                                                                class="bs-tooltip" data-bs-toggle="modal"
+                                                                data-bs-placement="top" title="Detail"
+                                                                data-original-title="Print">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                                    height="24" viewBox="0 0 24 24" fill="none"
+                                                                    stroke="currentColor" stroke-width="2"
+                                                                    stroke-linecap="round" stroke-linejoin="round"
+                                                                    class="feather feather-file-text">
+                                                                    <path
+                                                                        d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z">
+                                                                    </path>
                                                                     <polyline points="14 2 14 8 20 8"></polyline>
                                                                     <line x1="16" y1="13" x2="8" y2="13"></line>
                                                                     <line x1="16" y1="17" x2="8" y2="17"></line>
                                                                     <polyline points="10 9 9 9 8 9"></polyline>
                                                                 </svg>
                                                             </a>
-                                                            @if(in_array('finance-invoice-pelunasan-DELETE', Session::get('nama_action')) || Session::get('role') == 'superadmin')
-                                                            <a href="/horizontal-dark-menu/finance/invoice-pelunasan/delete/{{ $tdp->id_invoice_pel }}" class="bs-tooltip" data-bs-placement="top" title="Delete" data-original-title="Delete"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash">
+                                                            @if(in_array('finance-invoice-pelunasan-DELETE',
+                                                            Session::get('nama_action')) || Session::get('role') ==
+                                                            'superadmin')
+                                                            <a href="/horizontal-dark-menu/finance/invoice-pelunasan/delete/{{ $tdp->id_invoice_pel }}"
+                                                                class="bs-tooltip" data-bs-placement="top"
+                                                                title="Delete" data-original-title="Delete"><svg
+                                                                    xmlns="http://www.w3.org/2000/svg" width="24"
+                                                                    height="24" viewBox="0 0 24 24" fill="none"
+                                                                    stroke="currentColor" stroke-width="2"
+                                                                    stroke-linecap="round" stroke-linejoin="round"
+                                                                    class="feather feather-trash">
                                                                     <polyline points="3 6 5 6 21 6"></polyline>
-                                                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                                                    <path
+                                                                        d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
+                                                                    </path>
                                                                 </svg></a>
                                                             @endif
                                                             <div class="p-1"></div>
                                                             @if ($tdp->status == 3)
-                                                            <a href="/horizontal-dark-menu/finance/invoice-pelunasan/print/{{ $tdp->id_invoice_pel }}" class="bs-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Print Tonase Dooring" data-original-title="Print"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-printer">
+                                                            <a href="/horizontal-dark-menu/finance/invoice-pelunasan/print/{{ $tdp->id_invoice_pel }}"
+                                                                class="bs-tooltip" data-bs-toggle="tooltip"
+                                                                data-bs-placement="top" title="Print Tonase Dooring"
+                                                                data-original-title="Print"><svg
+                                                                    xmlns="http://www.w3.org/2000/svg" width="24"
+                                                                    height="24" viewBox="0 0 24 24" fill="none"
+                                                                    stroke="currentColor" stroke-width="2"
+                                                                    stroke-linecap="round" stroke-linejoin="round"
+                                                                    class="feather feather-printer">
                                                                     <polyline points="6 9 6 2 18 2 18 9"></polyline>
-                                                                    <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                                                                    <path
+                                                                        d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2">
+                                                                    </path>
                                                                     <rect x="6" y="14" width="12" height="8"></rect>
                                                                 </svg></a>
                                                             @elseif ($tdp->status == 2)
-                                                            <a href="/horizontal-dark-menu/finance/invoice-pelunasan/print/{{ $tdp->id_invoice_pel }}" class="bs-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Print Timbang Dooring" data-original-title="Print"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-printer">
+                                                            <a href="/horizontal-dark-menu/finance/invoice-pelunasan/print/{{ $tdp->id_invoice_pel }}"
+                                                                class="bs-tooltip" data-bs-toggle="tooltip"
+                                                                data-bs-placement="top" title="Print Timbang Dooring"
+                                                                data-original-title="Print"><svg
+                                                                    xmlns="http://www.w3.org/2000/svg" width="24"
+                                                                    height="24" viewBox="0 0 24 24" fill="none"
+                                                                    stroke="currentColor" stroke-width="2"
+                                                                    stroke-linecap="round" stroke-linejoin="round"
+                                                                    class="feather feather-printer">
                                                                     <polyline points="6 9 6 2 18 2 18 9"></polyline>
-                                                                    <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                                                                    <path
+                                                                        d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2">
+                                                                    </path>
                                                                     <rect x="6" y="14" width="12" height="8"></rect>
                                                                 </svg></a>
                                                             @endif
-                                                           
-                                                           
+
+
                                                         </td>
                                                     </tr>
                                                     @endforeach
@@ -241,7 +302,8 @@
                         </div>
                     </div>
                     @foreach($invdp as $tdp)
-                    <div class="modal fade bd-example-modal-xl" id="modalDetailInvoice{{ $tdp->id_invoice_pel }}" tabindex="-1" role="dialog" aria-labelledby="modalIDPdetail" aria-hidden="true">
+                    <div class="modal fade bd-example-modal-xl" id="modalDetailInvoice{{ $tdp->id_invoice_pel }}"
+                        tabindex="-1" role="dialog" aria-labelledby="modalIDPdetail" aria-hidden="true">
                         <div class="modal-dialog modal-xl" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
@@ -271,14 +333,26 @@
                                                 <td>Rp. {{number_format($item->total_harga_dooring , 0, ',', '.')}}</td>
                                                 <td>{{number_format($item->total_tonase_timbang , 0, ',', '.')}} KG</td>
                                                 <td>Rp. {{number_format($item->total_harga_timbang , 0, ',', '.')}}</td>
-                                                <td>Rp. {{number_format($item->total_invoice_adjusted , 0, ',', '.') ?? 0}}</td>
+                                                <td>Rp.
+                                                    {{number_format($item->total_invoice_adjusted , 0, ',', '.') ?? 0}}
+                                                </td>
                                                 <td class="text-center">
-                                                    @if(in_array('finance-invoice-pelunasan-DELETE', Session::get('nama_action')) || Session::get('role') == 'superadmin')
+                                                    @if(in_array('finance-invoice-pelunasan-DELETE',
+                                                    Session::get('nama_action')) || Session::get('role') ==
+                                                    'superadmin')
                                                     @if ($tdp->status == 1 && $item->status == 1)
-                                                    <a href="{{route('invoice-pelunasan.deletedetail',['id'=>$item->id_detail_pel])}}" class="bs-tooltip" data-bs-placement="top" title="Delete" data-original-title="Delete">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash p-1 br-8 mb-1">
+                                                    <a href="{{route('invoice-pelunasan.deletedetail',['id'=>$item->id_detail_pel])}}"
+                                                        class="bs-tooltip" data-bs-placement="top" title="Delete"
+                                                        data-original-title="Delete">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                            stroke-width="2" stroke-linecap="round"
+                                                            stroke-linejoin="round"
+                                                            class="feather feather-trash p-1 br-8 mb-1">
                                                             <polyline points="3 6 5 6 21 6"></polyline>
-                                                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                                            <path
+                                                                d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
+                                                            </path>
                                                         </svg>
                                                     </a>
                                                     @endif
@@ -292,10 +366,15 @@
 
                                 </div>
                                 <div class="modal-footer">
-                                    @if(in_array('finance-invoice-pelunasan-APPROVE', Session::get('nama_action')) || Session::get('role') == 'superadmin')
+                                    @if(in_array('finance-invoice-pelunasan-APPROVE', Session::get('nama_action')) ||
+                                    Session::get('role') == 'superadmin')
                                     @if ($tdp->status == 1)
-                                    <a class="btn btn-success" href="{{ route('invoice-pelunasan.approvetimbang', ['id_invoice_pel' => $tdp->id_invoice_pel]) }}">Approve Timbang Dooring</a>
-                                    <a class="btn btn-success" href="{{ route('invoice-pelunasan.approvedooring', ['id_invoice_pel' => $tdp->id_invoice_pel]) }}">Approve Dooring</a>
+                                    <a class="btn btn-success"
+                                        href="{{ route('invoice-pelunasan.approvetimbang', ['id_invoice_pel' => $tdp->id_invoice_pel]) }}">Approve
+                                        Timbang Dooring</a>
+                                    <a class="btn btn-success"
+                                        href="{{ route('invoice-pelunasan.approvedooring', ['id_invoice_pel' => $tdp->id_invoice_pel]) }}">Approve
+                                        Dooring</a>
                                     @endif
                                     @endif
                                 </div>
@@ -303,14 +382,17 @@
                         </div>
                     </div>
                     @endforeach
-                    <div class="modal fade bd-example-modal-xl" id="modalIPLcur" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal fade bd-example-modal-xl" id="modalIPLcur" tabindex="-1" role="dialog"
+                        aria-labelledby="exampleModalLabel" aria-hidden="true">
                         <div class="modal-dialog modal-xl" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="exampleModalLabel">Tambah Detail Invoice Pelunasan</h5>
                                 </div>
                                 <div class="modal-body">
-                                    <form name="modal-tracking-ada" class="row g-3 needs-validation" action="{{ route('invoice-pelunasan-detail.detailstore') }}" method="POST" enctype="multipart/form-data" novalidate>
+                                    <form name="modal-tracking-ada" class="row g-3 needs-validation"
+                                        action="{{ route('invoice-pelunasan-detail.detailstore') }}" method="POST"
+                                        enctype="multipart/form-data" novalidate>
                                         @csrf
                                         <input type="hidden" name="id_track_i" id="id_track_i" value="">
                                         <input type="hidden" name="idInvoicePel" id="idInvoicePel" value="">
@@ -338,14 +420,17 @@
                                         <div class="col-md-6">
                                             <label for="notAllowCont" class="form-label">Total Tonase Dooring</label>
                                             <div class="input-group">
-                                                <input name="ttdb" step="any" min="0" id="ttdb" type="number" class="form-control qty_cont" required readonly>
+                                                <input name="ttdb" step="any" min="0" id="ttdb" type="number"
+                                                    class="form-control qty_cont" required readonly>
                                                 <span class="input-group-text" id="inputGroupPrepend">KG</span>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
-                                            <label for="notAllowCont" class="form-label">Total Tonase Timbang Dooring</label>
+                                            <label for="notAllowCont" class="form-label">Total Tonase Timbang
+                                                Dooring</label>
                                             <div class="input-group">
-                                                <input name="tttd" step="any" min="0" id="tttd" type="number" class="form-control qty_cont" required>
+                                                <input name="tttd" step="any" min="0" id="tttd" type="number"
+                                                    class="form-control qty_cont" required>
                                                 <span class="input-group-text" id="inputGroupPrepend">KG</span>
                                             </div>
                                         </div>
@@ -353,14 +438,18 @@
                                             <label for="notAllowCont" class="form-label">Total Harga Dooring</label>
                                             <div class="input-group">
                                                 <span class="input-group-text" id="inputGroupPrepend">Rp</span>
-                                                <input name="TotalHargaDooring" min="0" id="TotalHargaDooring" type="text" class="form-control" required readonly>
+                                                <input name="TotalHargaDooring" min="0" id="TotalHargaDooring"
+                                                    type="text" class="form-control" required readonly>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
-                                            <label for="notAllowCont" class="form-label">Total Harga Timbang Dooring</label>
+                                            <label for="notAllowCont" class="form-label">Total Harga Timbang
+                                                Dooring</label>
                                             <div class="input-group">
                                                 <span class="input-group-text" id="inputGroupPrepend">Rp</span>
-                                                <input name="TotalHargaTimbangDooring" min="0" id="TotalHargaTimbangDooring" type="text" class="form-control" required readonly>
+                                                <input name="TotalHargaTimbangDooring" min="0"
+                                                    id="TotalHargaTimbangDooring" type="text" class="form-control"
+                                                    required readonly>
                                             </div>
                                         </div>
 
@@ -368,33 +457,42 @@
                                             <label for="notAllowCont" class="form-label">Harga Freight</label>
                                             <div class="input-group">
                                                 <span class="input-group-text" id="inputGroupPrepend">Rp</span>
-                                                <input name="hrg_freight" step="any" min="0" id="hrg_freight" type="number" class="form-control qty_cont" required readonly>
+                                                <input name="hrg_freight" step="any" min="0" id="hrg_freight"
+                                                    type="number" class="form-control qty_cont" required readonly>
                                             </div>
                                         </div>
                                         <div class="col-md-3">
                                             <label for="notAllowCont" class="form-label">Prosentase PPn</label>
                                             <div class="input-group">
                                                 <span class="input-group-text" id="inputGroupPrepend">%</span>
-                                                <input name="prosentaseppn" step="any" min="0" value="0" id="prosentaseppn" type="number" class="form-control qty_cont" required>
+                                                <input name="prosentaseppn" step="any" min="0" value="0"
+                                                    id="prosentaseppn" type="number" class="form-control qty_cont"
+                                                    required>
                                             </div>
                                         </div>
                                         <div class="col-md-3">
                                             <label for="notAllowCont" class="form-label">Total PPn Dooring</label>
                                             <div class="input-group">
                                                 <span class="input-group-text" id="inputGroupPrepend">Rp</span>
-                                                <input name="totalppndoring" step="any" min="0" value="0" id="totalppndoring" type="number" class="form-control qty_cont" required>
+                                                <input name="totalppndoring" step="any" min="0" value="0"
+                                                    id="totalppndoring" type="number" class="form-control qty_cont"
+                                                    required>
                                             </div>
                                         </div>
                                         <div class="col-md-3">
                                             <label for="notAllowCont" class="form-label">Total PPn Timbang</label>
                                             <div class="input-group">
                                                 <span class="input-group-text" id="inputGroupPrepend">Rp</span>
-                                                <input name="totalppntimbang" step="any" min="0" value="0" id="totalppntimbang" type="number" class="form-control qty_cont" required>
+                                                <input name="totalppntimbang" step="any" min="0" value="0"
+                                                    id="totalppntimbang" type="number" class="form-control qty_cont"
+                                                    required>
                                             </div>
                                         </div>
                                         <div class="modal-footer justify-content-center">
-                                            <button id="btn-modal-curah" type="submit" class="btn btn-primary">Tambah</button>
-                                            <button type="button" class="btn btn btn-light-dark" data-bs-dismiss="modal"><i class="flaticon-cancel-12"></i>Batal</button>
+                                            <button id="btn-modal-curah" type="submit"
+                                                class="btn btn-primary">Tambah</button>
+                                            <button type="button" class="btn btn btn-light-dark"
+                                                data-bs-dismiss="modal"><i class="flaticon-cancel-12"></i>Batal</button>
                                         </div>
                                     </form>
                                 </div>
@@ -423,152 +521,188 @@
                     {{-- <script src="{{asset('plugins/table/datatable/custom_miscellaneous.js')}}"></script> --}}
 
                     <script>
-                        var f1 = flatpickr(document.getElementById('basicFlatpickr'), {
-                            defaultDate: new Date()
-                        });
+                    var f1 = flatpickr(document.getElementById('basicFlatpickr'), {
+                        defaultDate: new Date()
+                    });
                     </script>
                     <script>
-                        const dataTableConfig = {
-                            "dom": "<'dt--top-section'<'row'<'col-12 col-sm-6 d-flex justify-content-sm-start justify-content-center'l><'col-12 col-sm-6 d-flex justify-content-sm-end justify-content-center mt-sm-0 mt-3'f>>>" +
+                    const dataTableConfig = {
+                        "dom": "<'dt--top-section'<'row'<'col-12 col-sm-6 d-flex justify-content-sm-start justify-content-center'l><'col-12 col-sm-6 d-flex justify-content-sm-end justify-content-center mt-sm-0 mt-3'f>>>" +
                             "<'table-responsive'tr>" +
                             "<'dt--bottom-section d-sm-flex justify-content-sm-between text-center'<'dt--pages-count  mb-sm-0 mb-3'i><'dt--pagination'p>>",
-                            "oLanguage": {
-                                "oPaginate": {
-                                    "sPrevious": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>',
-                                    "sNext": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>'
-                                },
-                                "sInfo": "Showing page _PAGE_ of _PAGES_",
-                                "sSearch": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>',
-                                "sSearchPlaceholder": "Search...",
-                                "sLengthMenu": "Results :  _MENU_",
+                        "oLanguage": {
+                            "oPaginate": {
+                                "sPrevious": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>',
+                                "sNext": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>'
                             },
-                            "stripeClasses": [],
-                            "lengthMenu": [5, 10, 20, 50],
-                            "pageLength": 10,
-                            "responsive": true
-                        };
+                            "sInfo": "Showing page _PAGE_ of _PAGES_",
+                            "sSearch": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>',
+                            "sSearchPlaceholder": "Search...",
+                            "sLengthMenu": "Results :  _MENU_",
+                        },
+                        "stripeClasses": [],
+                        "lengthMenu": [5, 10, 20, 50],
+                        "pageLength": 10,
+                        "responsive": true
+                    };
 
-                        // Initialize DataTables using the configuration
-                        $('#style-3, #style-4').DataTable(dataTableConfig);            
-                    </script>                    
+                    // Initialize DataTables using the configuration
+                    $('#style-3, #style-4').DataTable(dataTableConfig);
+                    </script>
                     <script>
-                            $(document).ready(function() {
-                                var formatter = new Intl.NumberFormat('id-ID', {
-                                    style: 'currency',
-                                    currency: 'IDR',
-                                    minimumFractionDigits: 0
-                                });
-                                $('#modalIPLcur').on('show.bs.modal', function(event) {
-                                    var button = $(event.relatedTarget); // Button that triggered the modal
-                                    var idTrack = button.data('id-track'); // Get the data-id-track attribute from the button
-                                    var idInvoicePel = button.data('id-invoice-pel'); // Get the data-id-track attribute from the button
+                    $(document).ready(function() {
+                        var formatter = new Intl.NumberFormat('id-ID', {
+                            style: 'currency',
+                            currency: 'IDR',
+                            minimumFractionDigits: 0
+                        });
+                        $('#modalIPLcur').on('show.bs.modal', function(event) {
+                            var button = $(event.relatedTarget); // Button that triggered the modal
+                            var idTrack = button.data(
+                                'id-track'); // Get the data-id-track attribute from the button
+                            var idInvoicePel = button.data(
+                                'id-invoice-pel'); // Get the data-id-track attribute from the button
 
 
-                                    // Set the value of the hidden input
-                                    $('#id_track_i').val(idTrack);
-                                    $('#idInvoicePel').val(idInvoicePel);
+                            // Set the value of the hidden input
+                            $('#id_track_i').val(idTrack);
+                            $('#idInvoicePel').val(idInvoicePel);
 
-                                });
-                                $('#prosentaseppn').on('input', function() {
-                                    var ppn = $(this).val();
-                                    var TotalHargaDooring = $('#TotalHargaDooring').val();
-                                    var TotalHargaTimbangDooring = $('#TotalHargaTimbangDooring').val();
-                                    $('#totalppndoring').val(((ppn * TotalHargaDooring) / 100).toFixed(2));
-                                    $('#totalppntimbang').val(((ppn * TotalHargaTimbangDooring) / 100).toFixed(2));
-                                });
-                                $('#cb_bypo').change(function() {
-                                    var selectedValue = $(this).val();
-                                    var valuecbkapal = $('#cb_kapal').val();
-                                    var parts = selectedValue.split('-');
-                                    // Make an AJAX request to fetch data based on the selected value
-                                    $.ajax({
-                                        url: '/horizontal-dark-menu/finance/invoice-pelunasan/calculate/' + parts[0], // Replace with your actual route URL
-                                        type: 'GET',
-                                        data: {
-                                            cbkapal: valuecbkapal,
-                                            estate: parts[1]
-                                        },
-                                        success: function(data) {
-                                            // Update the input fields with the received data
-                                            $('#ttdb').val(data.total_qty_tonase);
-                                            $('#hrg_freight').val(data.hrg_frg);
-                                            $('#tttd').val(data.total_qty_timbang);
-                                            $('#ttrd').val(data.qty_tonase_real);
-                                            $('#TotalHargaDooring').val(data.total_qty_tonase * data.hrg_frg);
-                                            $('#TotalHargaTimbangDooring').val(data.total_qty_timbang * data.hrg_frg);
-                                            $('#TotalHargaRealDooring').val(data.qty_tonase_real * data.hrg_frg);
+                        });
+                        $('#prosentaseppn').on('input', function() {
+                            var ppn = $(this).val();
+                            var TotalHargaDooring = $('#TotalHargaDooring').val();
+                            var TotalHargaTimbangDooring = $('#TotalHargaTimbangDooring').val();
+                            $('#totalppndoring').val(((ppn * TotalHargaDooring) / 100).toFixed(2));
+                            $('#totalppntimbang').val(((ppn * TotalHargaTimbangDooring) / 100).toFixed(
+                                2));
+                        });
+                        $('#cb_bypo').change(function() {
+                            var selectedValue = $(this).val();
+                            var valuecbkapal = $('#cb_kapal').val();
+                            var parts = selectedValue.split('-');
+                            // Make an AJAX request to fetch data based on the selected value
+                            $.ajax({
+                                url: '/horizontal-dark-menu/finance/invoice-pelunasan/calculate/' +
+                                    parts[0], // Replace with your actual route URL
+                                type: 'GET',
+                                data: {
+                                    cbkapal: valuecbkapal,
+                                    estate: parts[1]
+                                },
+                                success: function(data) {
+                                    // Update the input fields with the received data
+                                    $('#ttdb').val(data.total_qty_tonase);
+                                    $('#hrg_freight').val(data.hrg_frg);
+                                    $('#tttd').val(data.total_qty_timbang);
+                                    $('#ttrd').val(data.qty_tonase_real);
+                                    $('#TotalHargaDooring').val(data.total_qty_tonase * data
+                                        .hrg_frg);
+                                    $('#TotalHargaTimbangDooring').val(data
+                                        .total_qty_timbang * data.hrg_frg);
+                                    $('#TotalHargaRealDooring').val(data.qty_tonase_real *
+                                        data.hrg_frg);
 
 
 
 
-                                            // Add similar lines for other input fields
-                                        },
-                                        error: function() {
-                                            console.log('Error fetching data');
-                                        }
-                                    });
-                                });
-                                $('#cb_kapal').change(function() {
-                                    var selectedValue = $(this).val();
-                                    var idTrack = $('#id_track_i').val(); // Get the value from the hidden input field
-                                    if (selectedValue) {
-                                        // Send an Ajax request to get data for cb_bypo
-                                        $.ajax({
-                                            type: 'GET',
-                                            url: '/horizontal-dark-menu/finance/invoice-pelunasan/cb-kapal/' + selectedValue, // Replace with your actual endpoint URL
-                                            data: {
-                                                'idtrack': idTrack
-                                            },
-                                            success: function(response) {
-                                                // Populate the cb_bypo select field with the received data
-                                                // console.log(response);
-                                                // Populate the 'cb_po' dropdown with the response data
-                                                var cbbypo = $('#cb_bypo');
-                                                cbbypo.empty(); // Clear existing options
+                                    // Add similar lines for other input fields
+                                },
+                                error: function() {
+                                    console.log('Error fetching data');
+                                }
+                            });
+                        });
+                        $('#cb_kapal').change(function() {
+                            var selectedValue = $(this).val();
+                            var idTrack = $('#id_track_i')
+                                .val(); // Get the value from the hidden input field
+                            if (selectedValue) {
+                                // Send an Ajax request to get data for cb_bypo
+                                $.ajax({
+                                    type: 'GET',
+                                    url: '/horizontal-dark-menu/finance/invoice-pelunasan/cb-kapal/' +
+                                        selectedValue, // Replace with your actual endpoint URL
+                                    data: {
+                                        'idtrack': idTrack
+                                    },
+                                    success: function(response) {
+                                        // Populate the cb_bypo select field with the received data
+                                        // console.log(response);
+                                        // Populate the 'cb_po' dropdown with the response data
+                                        var cbbypo = $('#cb_bypo');
+                                        cbbypo.empty(); // Clear existing options
 
-                                                // Add new options from the response
-                                                cbbypo.append('<option selected disabled value="">Pilih...</option>');
-                                                $.each(response, function(index, value) {
-                                                    cbbypo.append('<option value="' + value.id_dooring + '-' + value.estate + '">' + value.no_po + '</option>');
-                                                });
-                                            },
-                                            error: function() {
-                                                console.log('Error fetching data');
-                                            }
+                                        // Add new options from the response
+                                        cbbypo.append(
+                                            '<option selected disabled value="">Pilih...</option>'
+                                        );
+                                        $.each(response, function(index, value) {
+                                            cbbypo.append('<option value="' + value
+                                                .id_dooring + '-' + value
+                                                .estate + '">' + value.no_po +
+                                                '</option>');
                                         });
-                                    } else {
-                                        // Clear the cb_bypo select field when nothing is selected in cb_kapal
-                                        $('#cb_bypo').html('<option selected disabled value="">Pilih...</option>');
+                                    },
+                                    error: function() {
+                                        console.log('Error fetching data');
                                     }
                                 });
-                                $('#cb_tipe_inv').change(function() {
-                                    var selectedValue = $(this).val();
-
-                                    // Make an AJAX request
-                                    $.ajax({
-                                        type: 'GET',
-                                        url: '/horizontal-dark-menu/finance/invoice-pelunasan/cb-tipe-inv/' + selectedValue, // Replace with your actual endpoint URL
-                                        // data: { cb_tipe_inv: selectedValue },
-                                        success: function(response) {
-                                            // Populate the 'cb_po' dropdown with the response data
-                                            var cbPo = $('#cb_po');
-                                            cbPo.empty(); // Clear existing options
-
-                                            // Add new options from the response
-                                            cbPo.append('<option selected disabled value="">Pilih...</option>');
-                                            $.each(response, function(index, value) {
-                                                cbPo.append('<option value="' + value.id_dooring + '">' + value.no_po + '</option>');
-                                                console.log(value.id_dooring)
-                                            });
-                                        },
-                                        error: function(error) {
-                                            console.log('Error:', error);
-                                        }
-                                    });
-                                });
+                            } else {
+                                // Clear the cb_bypo select field when nothing is selected in cb_kapal
+                                $('#cb_bypo').html(
+                                    '<option selected disabled value="">Pilih...</option>');
+                            }
+                        });
+                        $('#cb_po').change(function() {
+                            var selectedValue = $(this).val();
+                            var type_invoice = $('#cb_tipe_inv').val();
+                            var id = selectedValue + "-" + type_invoice;
+                            $.ajax({
+                                type: 'GET',
+                                url: '/horizontal-dark-menu/finance/invoice-pelunasan/get-invoice-number/' +
+                                    id,
+                                success: function(response) {
+                                    $('#invoice_no').val(response.invoice_number);
+                                },
+                                error: function(error) {
+                                    console.log('Error:', error);
+                                }
                             });
-                        </script>
+                        });
+                        $('#cb_tipe_inv').change(function() {
+                            var selectedValue = $(this).val();
 
-                        </x-slot>
-                        <!--  END CUSTOM SCRIPTS FILE  -->
+                            // Make an AJAX request
+                            $.ajax({
+                                type: 'GET',
+                                url: '/horizontal-dark-menu/finance/invoice-pelunasan/cb-tipe-inv/' +
+                                    selectedValue, // Replace with your actual endpoint URL
+                                // data: { cb_tipe_inv: selectedValue },
+                                success: function(response) {
+                                    // Populate the 'cb_po' dropdown with the response data
+                                    var cbPo = $('#cb_po');
+                                    cbPo.empty(); // Clear existing options
+
+                                    // Add new options from the response
+                                    cbPo.append(
+                                        '<option selected disabled value="">Pilih...</option>'
+                                    );
+                                    $.each(response, function(index, value) {
+                                        cbPo.append('<option value="' + value
+                                            .id_dooring + '">' + value.no_po +
+                                            '</option>');
+                                        console.log(value.id_dooring)
+                                    });
+                                },
+                                error: function(error) {
+                                    console.log('Error:', error);
+                                }
+                            });
+                        });
+                    });
+                    </script>
+
+                    </x-slot>
+                    <!--  END CUSTOM SCRIPTS FILE  -->
 </x-base-layout>
