@@ -169,6 +169,12 @@
                                 <div class="col-lg-12">
                                     <div class="statbox widget box box-shadow">
                                         <div class="widget-content widget-content-area">
+                                            <div class="widget-header" style="padding: 1.5%;">
+                                                <div class="row">
+                                                    <button id="exportButton"
+                                                        class="col-md-1 btn btn-primary _effect--ripple waves-effect waves-light"><span>Excel</span></button>
+                                                </div>
+                                            </div>
                                             <table id="style-3" class="table style-3 dt-table-hover"
                                                 style="width:100%;">
                                                 <thead style="border-bottom: none;">
@@ -288,6 +294,20 @@
                                                                     <rect x="6" y="14" width="12" height="8"></rect>
                                                                 </svg></a>
                                                             @endif
+                                                            <a href="#style-3" class="bs-tooltip exportButtonRow"
+                                                                title="Export Excel" data-original-title="Export Excel"
+                                                                data-row="{{ $tdp->id_invoice_pel }}"><svg
+                                                                    xmlns="http://www.w3.org/2000/svg" width="20"
+                                                                    height="20" viewBox="0 0 24 24" fill="none"
+                                                                    stroke="currentColor" stroke-width="2"
+                                                                    stroke-linecap="round" stroke-linejoin="round"
+                                                                    class="feather feather-download">
+                                                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4">
+                                                                    </path>
+                                                                    <polyline points="7 10 12 15 17 10"></polyline>
+                                                                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                                                                </svg>
+                                                                </svg></a>
 
 
                                                         </td>
@@ -511,6 +531,9 @@
                     @vite(['resources/assets/js/custom.js'])
                     {{-- <script type="module" src="{{asset('plugins/table/datatable/datatables.js')}}"></script> --}}
                     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"
+                        integrity="sha512-r22gChDnGvBylk90+2e/ycr3RVrDi8DIOkIGNhJlKfuyQM4tIRAI062MaV8sfjQKYVGjOBaZBOA87z+IhZE9DA=="
+                        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
                     <script src="{{asset('plugins/flatpickr/flatpickr.js')}}"></script>
                     <script src="{{asset('plugins/global/vendors.min.js')}}"></script>
                     <script src="{{asset('plugins/table/datatable/datatables.js')}}"></script>
@@ -521,9 +544,156 @@
                     {{-- <script src="{{asset('plugins/table/datatable/custom_miscellaneous.js')}}"></script> --}}
 
                     <script>
+                    let jsonInvdp = @json($invdp);
+                    let jsonInvDpDetail = @json($datadetailInvoicePel);
+
                     var f1 = flatpickr(document.getElementById('basicFlatpickr'), {
                         defaultDate: new Date()
                     });
+                    $('#exportButton').on('click', function() {
+                        exportTableToExcel('style-3', 'Adhipramana Bahari Perkasa.xlsx');
+                    });
+                    $('.exportButtonRow').on('click', function() {
+                        // Get the data-row attribute value from the element
+                        var id_invoice_pel = $(this).data('row');
+
+                        // Call the exportTableToExcel function with the specified row index
+                        exportTableToExcelByRow('style-3', 'Adhipramana Bahari Perkasa.xlsx',
+                            id_invoice_pel);
+                    });
+
+
+                    function exportTableToExcelByRow(tableId, filename, id_invoice_pel_selected) {
+
+                        var formattedInvoices = jsonInvdp.map(item => {
+                            var matchingDetail = jsonInvDpDetail.find(itemdetail => item.id_invoice_pel ==
+                                itemdetail.id_invoice_pel && id_invoice_pel_selected == item.id_invoice_pel);
+                            if (matchingDetail) {
+                                return {
+                                    "No Invoice": item.invoice_no,
+                                    "Estate": matchingDetail.estate,
+                                    "Total Tonase Dooring": `${Number(matchingDetail.total_tonase_dooring || 0).toLocaleString()} KG`,
+                                    "Total Harga Dooring": `Rp. ${Number(matchingDetail.total_harga_dooring || 0).toLocaleString()}`,
+                                    "Total Tonase Timbang Dooring": `${Number(matchingDetail.total_tonase_timbang || 0).toLocaleString()} KG`,
+                                    "Total Harga Timbang Dooring": `Rp. ${Number(matchingDetail.total_harga_timbang || 0).toLocaleString()}`,
+                                    "Total DP": `Rp. ${Number(matchingDetail.total_invoice_adjusted || 0).toLocaleString()}`,
+                                };
+                            }
+
+                            return null; // handle the case when there is no matching detail
+                        }).filter(item => item !== null); // remove null entries from the array
+
+                        if (formattedInvoices === null) {
+                            window.alert("Data Detail Tidak Tersedia");
+                        }
+
+                        // Convert JSON back to worksheet
+                        ws = XLSX.utils.json_to_sheet(formattedInvoices);
+
+                        // Calculate maximum column widths
+                        var columnWidths = Array.from({
+                            length: ws["!ref"].split(":")[1].charCodeAt(0) - 'A'.charCodeAt(0) + 1
+                        }, () => 0);
+
+                        // Set header row style
+                        ws["!rows"] = [{
+                            hpx: 20,
+                            level: 1,
+                            hidden: false
+                        }];
+                        ws["!cols"] = [];
+
+                        // Iterate through all cells to measure column widths
+                        XLSX.utils.sheet_to_json(ws, {
+                            header: 1
+                        }).forEach(row => {
+                            row.forEach((value, columnIndex) => {
+                                var textLength = value.toString().length;
+                                if (textLength > columnWidths[columnIndex]) {
+                                    columnWidths[columnIndex] = textLength;
+                                }
+                            });
+                        });
+
+                        // Set column widths in the worksheet object
+                        columnWidths.forEach((width, index) => {
+                            ws["!cols"].push({
+                                wch: width + 2
+                            }); // Add padding 2 for extra space
+                        });
+
+                        // Create workbook and save to file
+                        var wb = XLSX.utils.book_new();
+                        XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+                        // Add an additional column to ensure the last column is also exported
+                        ws['!cols'].push({
+                            wch: 10
+                        });
+
+                        XLSX.writeFile(wb, filename);
+                    }
+
+                    function exportTableToExcel(tableId, filename) {
+
+                        // Convert HTML table to worksheet
+                        var ws = XLSX.utils.table_to_sheet(document.getElementById(tableId));
+
+                        // Convert worksheet to JSON and remove 'Action' column
+                        var jsonSheet = XLSX.utils.sheet_to_json(ws, {
+                            raw: false
+                        }).map(item => {
+
+                            delete item.Action;
+                            return item;
+                        });
+
+                        // Convert JSON back to worksheet
+                        ws = XLSX.utils.json_to_sheet(jsonSheet);
+
+                        // Calculate maximum column widths
+                        var columnWidths = Array.from({
+                            length: ws["!ref"].split(":")[1].charCodeAt(0) - 'A'.charCodeAt(0) + 1
+                        }, () => 0);
+
+                        // Set header row style
+                        ws["!rows"] = [{
+                            hpx: 20,
+                            level: 1,
+                            hidden: false
+                        }];
+                        ws["!cols"] = [];
+
+                        // Iterate through all cells to measure column widths
+                        XLSX.utils.sheet_to_json(ws, {
+                            header: 1
+                        }).forEach(row => {
+                            row.forEach((value, columnIndex) => {
+                                var textLength = value.toString().length;
+                                if (textLength > columnWidths[columnIndex]) {
+                                    columnWidths[columnIndex] = textLength;
+                                }
+                            });
+                        });
+
+                        // Set column widths in the worksheet object
+                        columnWidths.forEach((width, index) => {
+                            ws["!cols"].push({
+                                wch: width + 2
+                            }); // Add padding 2 for extra space
+                        });
+
+                        // Create workbook and save to file
+                        var wb = XLSX.utils.book_new();
+                        XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+                        // Add an additional column to ensure the last column is also exported
+                        ws['!cols'].push({
+                            wch: 10
+                        });
+
+                        XLSX.writeFile(wb, filename);
+                    }
                     </script>
                     <script>
                     const dataTableConfig = {

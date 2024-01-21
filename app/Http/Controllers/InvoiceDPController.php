@@ -285,9 +285,9 @@ class InvoiceDPController extends Controller
         $currentMonth = date('m');
         $id_track = $id;
         $cekrow = InvoiceDp::where('id_track', $id_track)
-    ->whereYear('invoice_date', $currentYear)
-    ->whereNotIn('status',[0])
-    ->count() ?? 0;
+            ->whereYear('invoice_date', $currentYear)
+            ->whereNotIn('status',[0])
+            ->count() ?? 0;
         $newCounter = 1;    
         $newStatus = 1;
         if ($cekrow == 0) {
