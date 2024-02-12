@@ -208,7 +208,6 @@ class DocTrackingController extends Controller
         ->join('doc_tracking', 'doc_tracking.id_track', '=', 'detail_tracking_sisa.id_track')
         ->where('doc_tracking.created_by', Session::get('id'))
         ->get();
-        // dd($tracksisa);
         $title = 'Adhipramana Bahari Perkasa';
         $breadcrumb = 'This Breadcrumb';
         return view('pages.abp-page.tra', compact('title', 'breadcrumb','po','details','getcurahqty','getcontqty',
@@ -243,6 +242,131 @@ class DocTrackingController extends Controller
         ]);
         return redirect()->back();
     }
+    public function updateContainer(Request $request) {
+        
+        $request->validate([
+            'file' => 'nullable|mimes:jpeg,png,pdf',
+            'file_tbg' => 'nullable|mimes:jpeg,png,pdf',
+        ]);
+        
+        $id = $request->id_edit;
+    
+        // Find the existing record by its ID
+        $detailTracking = DetailTracking::where('id_detail_track', $id)->firstOrFail();
+    
+        // Update the record with the new values
+        $detailTracking->update([
+            'id_gudang'     => $request->id_gudang,
+            'id_kapal'     => $request->id_kapal,
+            'id_pol'   => $request->cont_pol,
+            'id_pod'   => $request->cont_pod,
+            'qty_tonase'     => $request->qty_tonase,
+            'qty_timbang'     => $request->qty_timbang,
+            'jml_sak'     => $request->jml_sak,
+            'nopol'     => $request->nopol,
+            'no_container'     => $request->no_container,
+            'voyage'     => $request->voyage,
+            'no_segel'     => $request->no_segel,
+            'tgl_muat'     => $request->tgl_muat,
+            'no_sj'     => $request->no_sj,
+            'harga_hpp' => $request->hpp_kpl,   
+        ]);
+    
+        // // Handle file uploads if provided
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $fileType = $file->getMimeType(); // Get the MIME type of the file
+            
+            // Handle file upload logic similar to your saveContainer function
+            $imgInfo = getimagesize($file->getPathname());
+            $mime = $imgInfo['mime'];
+            $quality = 50;
+    
+            switch ($mime) {
+                case 'image/jpeg':
+                    $image = imagecreatefromjpeg($file->getPathname());
+                    break;
+                case 'image/png':
+                    $image = imagecreatefrompng($file->getPathname());
+                    break;
+                default:
+                    $image = imagecreatefromjpeg($file->getPathname());
+            }
+    
+            $filePath = storage_path('app/public/uploads/tracking/' . $fileName);
+    
+            switch ($mime) {
+                case 'image/jpeg':
+                    imagejpeg($image, $filePath, $quality);
+                    break;
+                case 'image/png':
+                    imagepng($image, $filePath, floor(9 * $quality / 100));
+                    break;
+                default:
+                    imagejpeg($image, $filePath, $quality);
+            }
+    
+            imagedestroy($image);
+    
+            // Update file information in the database
+            $detailTracking->update([
+                'sj_file_name'     => $fileName,
+                'sj_file_path'     => 'uploads/tracking' . $fileName,
+            ]);
+        }
+    
+        if ($request->hasFile('file_tbg')) {
+            $file2 = $request->file('file_tbg'); // Change variable name to $file2
+            $fileName2 = time() . '_' . $file2->getClientOriginalName();
+            $fileType2 = $file2->getMimeType(); // Get the MIME type of the file
+            
+            // Handle file_tbg upload logic similar to your saveContainer function
+            $imgInfo2 = getimagesize($file2->getPathname());
+            $mime2 = $imgInfo2['mime'];
+            $quality2 = 50;
+    
+            switch ($mime2) {
+                case 'image/jpeg':
+                    $image2 = imagecreatefromjpeg($file2->getPathname());
+                    break;
+                case 'image/png':
+                    $image2 = imagecreatefrompng($file2->getPathname());
+                    break;
+                default:
+                    $image2 = imagecreatefromjpeg($file2->getPathname());
+            }
+    
+            $filePath2 = storage_path('app/public/uploads/tracking/' . $fileName2);
+    
+            switch ($mime2) {
+                case 'image/jpeg':
+                    imagejpeg($image2, $filePath2, $quality2);
+                    break;
+                case 'image/png':
+                    imagepng($image2, $filePath2, floor(9 * $quality2 / 100));
+                    break;
+                default:
+                    imagejpeg($image2, $filePath2, $quality2);
+            }
+    
+            imagedestroy($image2);
+    
+            // Update file_tbg information in the database
+            $detailTracking->update([
+                'st_file_name'     => $fileName2,
+                'st_file_path'     => 'uploads/tracking' . $fileName2,
+            ]);
+        }
+    
+        // // Save the changes to the database
+        $detailTracking->save();
+    
+        // // Redirect back or to a specific route
+        return redirect()->back();
+    }
+    
+
     public function savecontainer(Request $request) {
         $request->validate([
             'file' => 'required|mimes:jpeg,png,pdf',

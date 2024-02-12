@@ -363,6 +363,23 @@
                                                                 </svg></a>'
                                                             : ''
                                                             !!}
+                                                            <a href="#detailcur" id="editcurah"
+                                                                class="btn btn-outline-primary bs-tooltip me-2"
+                                                                data-bs-toggle="modal" data-placement="top"
+                                                                data-id="{{$tra->id_detail_track}}"
+                                                                data-tanggal_muat="{{ $tra->tgl_muat }}"
+                                                                data-gudang_muat="{{ $tra->id_gudang }}"
+                                                                data-kapal="{{ $tra->id_kapal }}"
+                                                                data-nopol="{{ $tra->nopol }}"
+                                                                data-port_of_loading="{{ $tra->id_pol }}"
+                                                                data-port_of_destination="{{ $tra->id_pod }}"
+                                                                data-quantity_tonase="{{ $tra->qty_tonase }}"
+                                                                data-jumlah_sak="{{ $tra->jml_sak }}"
+                                                                data-quantity_timbangan="{{ $tra->qty_timbang }}"
+                                                                data-file_surat_timbang="{{ route('downloadspktrack', ['path' => $tra->st_file_name]) }}"
+                                                                data-harga_hpp_kapal="{{ $tra->harga_hpp }}"
+                                                                data-no_surat_jalan="{{ $tra->no_sj }}"
+                                                                data-file_surat_jalan title="Edit Curah">Curah</a>
                                                         </td>
                                                     </tr>
                                                     @endforeach
@@ -375,6 +392,229 @@
                         </div>
                     </div>
                 </div>
+                <div class="modal fade bd-example-modal-xl" id="detailcur" tabindex="-1" role="dialog"
+                    aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-xl" role="document">
+                        <div class="modal-content">
+                            <div class="modal-body">
+                                <h5>Edit Detail Tracking Kapal Curah</h5>
+                                <form name="modal-tracking-ada" class="row g-3 needs-validation"
+                                    action="{{ route('tracking.updatecontainer') }}" method="POST"
+                                    enctype="multipart/form-data" novalidate>
+                                    @csrf
+                                    @method('put')
+                                    <input type="hidden" id="id_edit" name="id_edit">
+                                    <div class="col-lg-3 col-md-6 col-sm-12">
+                                        <label for="validationCustom04" class="form-label">Tanggal Muat</label>
+                                        <div class="input-group has-validation">
+                                            <input name="tgl_muat" id="tanggalMuat" value=""
+                                                class="form-control flatpickr flatpickr-input active" type="date"
+                                                placeholder="Select Date..">
+                                        </div>
+                                    </div>
+                                    @if ($details || $trackzero->count())
+                                    @if ($lastcurah)
+                                    <div class="col-lg-3 col-md-6 col-sm-12">
+                                        <label for="validationCustom03" class="form-label">Gudang Muat</label>
+                                        <select class="form-select" name="id_gudang" id="gudangMuat" required>
+                                            <option selected disabled value="">Pilih...</option>
+                                            @foreach ($gudang as $gd)
+                                            <option {{ $lastcurah->id_gudang == $gd->id_gudang ? 'selected' : '' }}
+                                                value="{{ $gd->id_gudang }}">{{ $gd->nama_gudang }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-3 col-md-6 col-sm-12">
+                                        <label for="validationCustom03" class="form-label">Kapal</label>
+                                        <select class="form-select" name="id_kapal" id="kapal" required>
+                                            <option selected disabled value="">Pilih...</option>
+                                            @foreach ($kapal as $kpl)
+                                            <option {{ $lastcurah->id_kapal == $kpl->id ? 'selected' : '' }}
+                                                value="{{ $kpl->id }}">{{ $kpl->kode_kapal }} {{ $kpl->nama_kapal }}
+                                            </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    @elseif($lastcurah == 0)
+                                    <div class="col-lg-3 col-md-6 col-sm-12">
+                                        <label for="validationCustom03" class="form-label">Gudang Muat</label>
+                                        <select class="form-select" name="id_gudang" id="gudangMuat" required>
+                                            <option selected disabled value="">Pilih...</option>
+                                            @foreach ($gudang as $gd)
+                                            <option value="{{ $gd->id_gudang }}">{{ $gd->nama_gudang }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-3 col-md-6 col-sm-12">
+                                        <label for="validationCustom03" class="form-label">Kapal</label>
+                                        <select class="form-select" name="id_kapal" id="kapal" required>
+                                            <option selected disabled value="">Pilih...</option>
+                                            @foreach ($kapal as $kpl)
+                                            <option value="{{ $kpl->id }}">{{ $kpl->kode_kapal }} {{ $kpl->nama_kapal }}
+                                            </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    @endif
+                                    @elseif($details==0 && $trackzero->count()==0)
+                                    <div class="col-lg-3 col-md-6 col-sm-12">
+                                        <label for="validationCustom03" class="form-label">Gudang Muat</label>
+                                        <select class="form-select" name="id_gudang" id="gudangMuat" required>
+                                            <option selected disabled value="">Pilih...</option>
+                                            @foreach ($gudang as $gd)
+                                            <option value="{{ $gd->id_gudang }}">{{ $gd->nama_gudang }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-3 col-md-6 col-sm-12">
+                                        <label for="validationCustom03" class="form-label">Kapal</label>
+                                        <select class="form-select" name="id_kapal" id="kapal" required>
+                                            <option selected disabled value="">Pilih...</option>
+                                            @foreach ($kapal as $kpl)
+                                            <option value="{{ $kpl->id }}">{{ $kpl->kode_kapal }} {{ $kpl->nama_kapal }}
+                                            </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    @endif
+                                    <div class="col-lg-3 col-md-6 col-sm-12">
+                                        <label for="validationCustom03" class="form-label">Nopol</label>
+                                        <input name="nopol" type="text" class="form-control" id="nopol"
+                                            placeholder="Masukkan Nopol" required>
+                                    </div>
+                                    @if(isset($tra))
+                                    <div class="col-md-6">
+                                        <label for="validationCustom03" class="form-label">Port Of Loading</label>
+                                        <select class="form-select" name="did_pol" id="portOfLoading" required>
+                                            <option selected disabled value="">Pilih...</option>
+                                            @foreach ($pol as $pol)
+                                            <option
+                                                {{ $selectpol->where('id_track',$tra->id_track)->contains('id_pol', $pol->id) ? 'selected' : '' }}
+                                                value="{{ $pol->id }}">{{ $pol->nama_pol }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="validationCustom03" class="form-label">Port Of Destination</label>
+                                        <select class="form-select" name="did_pod" id="portOfDestination" required>
+                                            <option selected disabled value="">Pilih...</option>
+                                            @foreach ($pod as $pod)
+                                            <option
+                                                {{ $selectpod->where('id_track',$tra->id_track)->contains('id_pod', $pod->id) ? 'selected' : '' }}
+                                                value="{{ $pod->id }}">{{ $pod->nama_pod }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    @endif
+
+                                    <div class="col-lg-3 col-md-6 col-sm-12">
+                                        @foreach($tracknull as $tra)
+                                        @php
+                                        $match = $tracksisa->where('id_track',
+                                        $tra->id_track)->where('tipe','Curah')->count() > 0;
+                                        @endphp
+                                        @if ($lastcurah || $match)
+                                        @foreach ($getcurahqty as $tra)
+                                        <label for="validationMessage" class="form-label">Quantity Tonase </label>
+                                        <div class="input-group">
+                                            <input name="qty_tonase" id="quantityTonase" type="number" step="any"
+                                                min="0" class="form-control qty_curah" placeholder="QTY Tonase"
+                                                required>
+                                            <span class="input-group-text" id="inputGroupPrepend">KG</span>
+                                        </div>
+                                        <span class="shadow-none badge badge-danger mt-2">Sisa:
+                                            {{ number_format($tra->qty_tonase_sisa , 0, ',', '.') }}</span>
+                                        <div class="validationMessage"></div>
+                                        <input name="qty_curah_total" id="qty_curah_total"
+                                            value="{{ $tra->qty_tonase_sisa }}" type="hidden" step="any" min="0">
+                                        <input type="hidden" name="qty" id="qty_sisa_curah" step="any" min="0">
+                                        @endforeach
+                                        @elseif($lastcurah==0 || $match->count()==0)
+                                        @foreach ($zerocurah as $tra)
+                                        <label for="validationMessage" class="form-label">Quantity Tonase</label>
+                                        <div class="input-group">
+                                            <input name="qty_tonase" id="quantityTonase" type="number" value="0"
+                                                step="any" min="0" class="form-control qty_curah"
+                                                placeholder="QTY Tonase" required>
+                                            <span class="input-group-text" id="inputGroupPrepend">KG</span>
+                                        </div>
+                                        <span class="shadow-none badge badge-danger mt-2">Sisa:
+                                            {{ number_format($tra->qty , 0, ',', '.') }}</span>
+                                        <input name="qty_curah_total" id="qty_curah_total" value="{{ $tra->qty }}"
+                                            type="hidden" step="any" min="0">
+                                        <input name="qty_sisa_curah" id="qty_sisa_curah" value="0" type="hidden"
+                                            step="any" min="0">
+                                        <div class="validationMessage"></div>
+                                        @endforeach
+                                        @endif
+                                        @endforeach
+                                    </div>
+                                    <div class="col-lg-3 col-md-6 col-sm-12">
+                                        <label for="validationCustom03" class="form-label">Jumlah Sak</label>
+                                        <input name="jml_sak" type="number" class="form-control" id="jumlahSak"
+                                            placeholder="Jumlah Sak" required>
+                                    </div>
+
+                                    <div class="col-lg-3 col-md-6 col-sm-12">
+                                        <label for="validationCustom03" class="form-label">Quantity Timbangan</label>
+                                        <div class="input-group">
+                                            <input name="qty_timbang" step="any" min="0" type="number"
+                                                class="form-control" placeholder="QTY Timbang" id="quantityTimbangan"
+                                                required>
+                                            <span class="input-group-text" id="inputGroupPrepend">KG</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-3 col-md-6 col-sm-12">
+                                        <label for="validationCustom03" class="form-label">Upload File Surat
+                                            Timbang <a href="" id="fileSuratTimbang" target="_blank"
+                                                class="shadow-none badge badge-success text-white">Lihat</a></label>
+                                        <div class="mb-3">
+                                            <input name="file_tbg" accept=".jpg, .png, .pdf"
+                                                class="form-control file-upload-input"
+                                                style="height: 48px; padding: 0.75rem 1.25rem;" type="file"
+                                                id="upload_file_surat_timbang">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label for="validationCustom04" class="form-label">Harga HPP Kapal</label>
+                                        <div class="input-group has-validation">
+                                            <input name="hpp_kpl" type="number" value="" class="form-control"
+                                                id="hargaHppKapal" placeholder="Masukkan HPP Kapal" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="validationCustom04" class="form-label">No Surat Jalan</label>
+                                        <div class="input-group has-validation">
+                                            <input name="no_sj" type="text" value="" class="form-control"
+                                                id="noSuratJalan" placeholder="Masukkan Nomor Surat Jalan" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="validationCustom03" class="form-label">Upload File Surat
+                                            Jalan <a href="" class="shadow-none badge badge-success text-white"
+                                                id="fileSuratJalan" target="_blank">Lihat</a></label>
+                                        <div class="mb-3">
+                                            <input name="file" accept=".jpg, .png, .pdf"
+                                                class="form-control file-upload-input"
+                                                style="height: 48px; padding: 0.75rem 1.25rem;" type="file"
+                                                id="upload_file_surat_jalan">
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer justify-content-center">
+                                        <button id="btn-modal-curah" type="submit"
+                                            class="btn btn-primary">Submit</button>
+                                        <button type="button" class="btn btn btn-light-dark" data-bs-dismiss="modal"><i
+                                                class="flaticon-cancel-12"></i>Batal</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
 
                 <!--  BEGIN CUSTOM SCRIPTS FILE  -->
                 <x-slot:footerFiles>
@@ -417,6 +657,44 @@
                     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
                     <script type='text/javascript'>
                     $(document).ready(function() {
+                        $('#editcurah').on('click', function() {
+                            // Get data attributes
+                            var id = $(this).data('id');
+                            var tanggalMuat = $(this).data('tanggal_muat');
+                            var kapal = $(this).data('kapal');
+                            var nopol = $(this).data('nopol');
+                            var portOfLoading = $(this).data('port_of_loading');
+                            var portOfDestination = $(this).data('port_of_destination');
+                            var quantityTonase = $(this).data('quantity_tonase');
+                            var jumlahSak = $(this).data('jumlah_sak');
+                            var quantityTimbangan = $(this).data('quantity_timbangan');
+                            var fileSuratTimbang = $(this).data('file_surat_timbang');
+                            var hargaHppKapal = $(this).data('harga_hpp_kapal');
+                            var noSuratJalan = $(this).data('no_surat_jalan');
+                            var fileSuratJalan = $(this).data('file_surat_jalan');
+
+                            // Retrieve other data attributes in a similar manner
+
+                            // Set form field values
+                            $('#id_edit').val(id);
+                            $('#kapal').val(kapal);
+                            $('#nopol').val(nopol);
+                            $('#tanggalMuat').val(tanggalMuat);
+                            $('#portOfLoading').val(portOfLoading);
+                            $('#portOfDestination').val(portOfDestination);
+                            $('#quantityTonase').val(quantityTonase);
+                            $('#jumlahSak').val(jumlahSak);
+                            $('#quantityTimbangan').val(quantityTimbangan);
+                            $('#hargaHppKapal').val(hargaHppKapal);
+                            $('#noSuratJalan').val(noSuratJalan);
+                            $('#fileSuratJalan').attr('href', fileSuratJalan);
+                            $('#fileSuratTimbang').attr('href', fileSuratTimbang);
+                            // Set other form field values in a similar manner
+
+                            // Open your modal or perform other actions as needed
+                            // $('#yourModalId').modal('show');
+                        });
+
                         function matchCustom(params, data) {
                             // If there are no search terms, return all of the data
                             if ($.trim(params.term) === '') {

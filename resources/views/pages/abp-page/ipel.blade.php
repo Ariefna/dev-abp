@@ -169,12 +169,16 @@
                                 <div class="col-lg-12">
                                     <div class="statbox widget box box-shadow">
                                         <div class="widget-content widget-content-area">
+                                            @if (in_array('document-purchase-order-UPDATE',
+                                            Session::get('nama_action')) || Session::get('role') ==
+                                            'superadmin')
                                             <div class="widget-header" style="padding: 1.5%;">
                                                 <div class="row">
                                                     <button id="exportButton"
                                                         class="col-md-1 btn btn-primary _effect--ripple waves-effect waves-light"><span>Excel</span></button>
                                                 </div>
                                             </div>
+                                            @endif
                                             <table id="style-3" class="table style-3 dt-table-hover"
                                                 style="width:100%;">
                                                 <thead style="border-bottom: none;">
@@ -294,6 +298,9 @@
                                                                     <rect x="6" y="14" width="12" height="8"></rect>
                                                                 </svg></a>
                                                             @endif
+                                                            @if (in_array('document-purchase-order-UPDATE',
+                                                            Session::get('nama_action')) || Session::get('role') ==
+                                                            'superadmin')
                                                             <a href="#style-3" class="bs-tooltip exportButtonRow"
                                                                 title="Export Excel" data-original-title="Export Excel"
                                                                 data-row="{{ $tdp->id_invoice_pel }}"><svg
@@ -308,6 +315,7 @@
                                                                     <line x1="12" y1="15" x2="12" y2="3"></line>
                                                                 </svg>
                                                                 </svg></a>
+                                                            @endif
 
 
                                                         </td>
@@ -572,11 +580,11 @@
                                 return {
                                     "No Invoice": item.invoice_no,
                                     "Estate": matchingDetail.estate,
-                                    "Total Tonase Dooring": `${Number(matchingDetail.total_tonase_dooring || 0).toLocaleString()} KG`,
-                                    "Total Harga Dooring": `Rp. ${Number(matchingDetail.total_harga_dooring || 0).toLocaleString()}`,
-                                    "Total Tonase Timbang Dooring": `${Number(matchingDetail.total_tonase_timbang || 0).toLocaleString()} KG`,
-                                    "Total Harga Timbang Dooring": `Rp. ${Number(matchingDetail.total_harga_timbang || 0).toLocaleString()}`,
-                                    "Total DP": `Rp. ${Number(matchingDetail.total_invoice_adjusted || 0).toLocaleString()}`,
+                                    "Total Tonase Dooring": `${Number(matchingDetail.total_tonase_dooring || 0)}`,
+                                    "Total Harga Dooring": `${Number(matchingDetail.total_harga_dooring || 0)}`,
+                                    "Total Tonase Timbang Dooring": `${Number(matchingDetail.total_tonase_timbang || 0)}`,
+                                    "Total Harga Timbang Dooring": `${Number(matchingDetail.total_harga_timbang || 0)}`,
+                                    "Total DP": `${Number(matchingDetail.total_invoice_adjusted || 0)}`,
                                 };
                             }
 

@@ -225,13 +225,16 @@
                                     </div>
                                 </div>
                             </div>
+
                             <div class="widget-content widget-content-area">
+                                @if (Session::get('role') == 'superadmin')
                                 <div class="widget-header" style="padding: 1.5%;">
                                     <div class="row">
                                         <button id="exportButton"
                                             class="col-md-1 btn btn-primary _effect--ripple waves-effect waves-light"><span>Excel</span></button>
                                     </div>
                                 </div>
+                                @endif
                                 <table id="style-3" class="table style-3 dt-table-hover">
                                     <thead>
                                         <tr>
@@ -335,6 +338,7 @@
                                                             </svg></a></li>'
                                                     : ''
                                                     !!}
+                                                    @if (Session::get('role') == 'superadmin')
                                                     <li><a href="#style-3" class="bs-tooltip exportButtonRow"
                                                             title="Export Excel" data-original-title="Export Excel"
                                                             data-row="{{ $p->po_muat }}"><svg
@@ -349,6 +353,7 @@
                                                                 <line x1="12" y1="15" x2="12" y2="3"></line>
                                                             </svg>
                                                             </svg></a></li>
+                                                    @endif
                                                 </ul>
                                             </td>
                                         </tr>
@@ -536,6 +541,17 @@
 
                     <script type='text/javascript'>
                     $(document).ready(function() {
+
+                        function convertToNumber(currencyString) {
+                            // Remove non-digit characters from the input string
+                            const numberString = currencyString.replace(/\D/g, '');
+
+                            // Convert the resulting string to a number
+                            const numberValue = parseInt(numberString, 10);
+
+                            return numberValue;
+                        }
+
                         document.getElementById('exportButton').addEventListener('click', function() {
                             exportTableToExcel('style-3', 'Adhipramana Bahari Perkasa.xlsx');
                         });
@@ -563,6 +579,9 @@
                             var selectedIndex = jsonSheet.findIndex(item => item["No PO"] ==
                                 noPO);
                             var selectedData = []; // Initialize an empty array
+
+                            selectedIndex['Total Quantity'] = convertToNumber(selectedIndex['Total Quantity']);
+                            selectedIndex['Total Amount'] = convertToNumber(selectedIndex['Total Amount']);
                             selectedData[0] = jsonSheet[selectedIndex];
 
                             // Convert JSON back to worksheet
@@ -613,6 +632,7 @@
                         }
 
 
+
                         function exportTableToExcel(tableId, filename) {
                             // Convert HTML table to worksheet
                             var ws = XLSX.utils.table_to_sheet(document.getElementById(tableId));
@@ -621,6 +641,8 @@
                             var jsonSheet = XLSX.utils.sheet_to_json(ws, {
                                 raw: false
                             }).map(item => {
+                                item['Total Quantity'] = convertToNumber(item['Total Quantity']);
+                                item['Total Amount'] = convertToNumber(item['Total Amount']);
                                 delete item.Action;
                                 return item;
                             });

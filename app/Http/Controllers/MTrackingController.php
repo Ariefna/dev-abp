@@ -22,10 +22,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Session;
 
 class MTrackingController extends Controller
 {
     public function index() {
+        
         $gudang = GudangMuat::where('status', 1)
                 ->orderBy('id_gudang', 'desc')
                 ->get();
@@ -49,14 +51,14 @@ class MTrackingController extends Controller
                 ->where('purchase_orders.status', '=', 2)
                 ->get();
         $tbl_po = DocTracking::select('doc_tracking.no_po', 'purchase_orders.po_kebun', 'penerimas.estate',
-                'purchase_orders.total_qty', 'port_of_loading.nama_pol', 'port_of_destination.nama_pod',
-                'detail_tracking.status', 'kapals.kode_kapal','kapals.nama_kapal','pt_penerima.nama_penerima',
+                'purchase_orders.total_qty', 'port_of_loading.id as id_pol','port_of_loading.nama_pol','port_of_destination.id as id_pod', 'port_of_destination.nama_pod',
+                'detail_tracking.status', 'kapals.id as id_kapal','kapals.kode_kapal','kapals.nama_kapal','pt_penerima.nama_penerima',
                 'gudang_muats.nama_gudang', 'barangs.nama_barang','purchase_orders.no_pl', 'detail_tracking.tgl_muat',
                 'purchase_orders.po_kebun','detail_tracking.qty_tonase', 'detail_tracking.qty_timbang','detail_tracking.jml_sak',
                 'detail_tracking.nopol','detail_tracking.no_container','detail_tracking.voyage','detail_tracking.td','detail_tracking.td_jkt',
                 'detail_tracking.ta','customers.nama_customer','doc_tracking.status_kapal',
                 'doc_tracking.id_track', 'detail_tracking.id_detail_track','detail_tracking.track_file','detail_tracking.door_file'
-                ,'detail_tracking.sj_file_name','detail_tracking.st_file_name')
+                ,'detail_tracking.sj_file_name','detail_tracking.st_file_name', 'detail_tracking.harga_hpp', 'detail_tracking.no_sj')
                 ->join('detail_tracking','detail_tracking.id_track','=','doc_tracking.id_track')
                 ->join('gudang_muats', 'gudang_muats.id_gudang', '=', 'detail_tracking.id_gudang')
                 ->join('purchase_orders', 'purchase_orders.po_muat', '=', 'doc_tracking.no_po')
@@ -73,9 +75,100 @@ class MTrackingController extends Controller
                 ->whereIn('detail_tracking.status', [2,3,4])
                 ->whereNotIn('purchase_orders.status',[0])
                 ->get();
+        $trackzero = DocTracking::select('*', 'doc_tracking.status', 'doc_tracking.id_track')
+                ->selectSub(function ($query) {
+                    $query->selectRaw('SUM(qty_tonase)')
+                        ->from('detail_tracking')
+                        ->whereColumn('detail_tracking.id_track', 'doc_tracking.id_track')
+                        ->where('status',[2,3])
+                        ->whereNull('no_container')
+                        ->groupBy('detail_tracking.id_track');
+                }, 'qty_curah_track')
+                ->selectSub(function ($query) {
+                    $query->selectRaw('SUM(qty_tonase)')
+                        ->from('detail_tracking')
+                        ->whereColumn('detail_tracking.id_track', 'doc_tracking.id_track')
+                        ->where('status',[2,3])
+                        ->whereNotNull('no_container')
+                        ->groupBy('detail_tracking.id_track');
+                }, 'qty_curah_cont')
+                ->join('port_of_loading', 'port_of_loading.id', '=', 'doc_tracking.id_pol')
+                ->join('port_of_destination', 'port_of_destination.id', '=', 'doc_tracking.id_pod')
+                ->join('purchase_orders', 'purchase_orders.po_muat', '=', 'doc_tracking.no_po')
+                ->join('detail_tracking', 'detail_tracking.id_track', '=', 'doc_tracking.id_track')
+                ->join('detail_tracking_sisa','detail_tracking_sisa.id_track','=','doc_tracking.id_track')
+                ->where('doc_tracking.status', 1)
+                ->whereIn('detail_tracking.status', [1,2,3])
+                ->where('created_by',Session::get('id'))
+                ->groupBy('doc_tracking.id_track')
+                ->orderBy('doc_tracking.id_track', 'desc')
+                ->get();
+        $tracknull = DocTracking::select('*', 'doc_tracking.status', 'doc_tracking.id_track')
+                ->join('port_of_loading', 'port_of_loading.id', '=', 'doc_tracking.id_pol')
+                ->join('port_of_destination', 'port_of_destination.id', '=', 'doc_tracking.id_pod')
+                ->join('purchase_orders', 'purchase_orders.po_muat', '=', 'doc_tracking.no_po')
+                ->where('doc_tracking.status', 1)
+                ->where('created_by',Session::get('id'))
+                ->groupBy('doc_tracking.id_track')
+                ->orderBy('doc_tracking.id_track', 'desc')
+                ->get();
+        $details = DocTracking::select('*', 'doc_tracking.status', 'doc_tracking.id_track')
+                ->join('port_of_loading', 'port_of_loading.id', '=', 'doc_tracking.id_pol')
+                ->join('port_of_destination', 'port_of_destination.id', '=', 'doc_tracking.id_pod')
+                ->join('purchase_orders', 'purchase_orders.po_muat', '=', 'doc_tracking.no_po')
+                ->join('detail_tracking', 'detail_tracking.id_track', '=', 'doc_tracking.id_track')
+                ->where('doc_tracking.status', 1)
+                ->where('detail_tracking.status', 1)
+                ->where('created_by',Session::get('id'))
+                ->groupBy('doc_tracking.id_track')
+                ->orderBy('doc_tracking.id_track', 'desc')
+                ->count();
+        $lastcurah = DetailTracking::join('detail_tracking_sisa', 'detail_tracking_sisa.id_track', '=', 'detail_tracking.id_track')
+                ->join('doc_tracking', 'doc_tracking.id_track', '=', 'detail_tracking.id_track')
+                ->where('detail_tracking.status', 1)
+                ->where('created_by',Session::get('id'))
+                ->whereNull('detail_tracking.no_container')
+                ->where('detail_tracking_sisa.tipe', 'Curah')
+                ->first();
+        $gudang = GudangMuat::where('status', 1)
+                ->orderBy('id_gudang', 'desc')
+                ->get();
+        $kapal = Kapal::select('kapals.id', 'kapals.id_company_port', 'c_ports.nama', 'c_ports.no_telp', 'c_ports.alamat', 'kapals.kode_kapal', 'kapals.nama_kapal')
+                ->join('c_ports', 'c_ports.id_company_port', '=', 'kapals.id_company_port')
+                ->where('kapals.status', 1)
+                ->get();  
+        $pod = PortOfDestination::where('status', 1)
+                ->orderBy('id', 'desc')
+                ->get();
+        $tracksisa = DetailTrackingSisa::select('detail_tracking_sisa.id_track', 'detail_tracking_sisa.tipe', 'detail_tracking_sisa.qty_tonase_sisa')
+                ->join('doc_tracking', 'doc_tracking.id_track', '=', 'detail_tracking_sisa.id_track')
+                ->where('doc_tracking.created_by', Session::get('id'))
+                ->get();
+        $getcurahqty = DocTracking::select('*', 'doc_tracking.status', 'doc_tracking.id_track')
+                ->join('port_of_loading', 'port_of_loading.id', '=', 'doc_tracking.id_pol')
+                ->join('port_of_destination', 'port_of_destination.id', '=', 'doc_tracking.id_pod')
+                ->join('purchase_orders', 'purchase_orders.po_muat', '=', 'doc_tracking.no_po')
+                ->join('detail_tracking', 'detail_tracking.id_track', '=', 'doc_tracking.id_track')
+                ->join('detail_tracking_sisa','detail_tracking_sisa.id_track','=','doc_tracking.id_track')
+                ->where('doc_tracking.status', 1)
+                ->where('detail_tracking_sisa.tipe', 'Curah')
+                ->where('created_by',Session::get('id'))
+                ->groupBy('doc_tracking.id_track')
+                ->orderBy('doc_tracking.id_track', 'desc')
+                ->get();
+        $selectpol = DocTracking::select('id_pol', 'id_track')->where('created_by',Session::get('id'))->get();
+        $selectpod = DocTracking::select('id_pod','id_track')->where('created_by',Session::get('id'))->get();
+        $zerocurah = DocTracking::select('*')
+                    ->join('purchase_orders', 'purchase_orders.po_muat', '=', 'doc_tracking.no_po')
+                    ->where('doc_tracking.status',1)
+          			->whereNotIn('purchase_orders.status', [0])
+                    ->where('created_by',Session::get('id'))
+                    ->get();
+
+
         $title = 'Adhipramana Bahari Perkasa';
         $breadcrumb = 'This Breadcrumb';
-        return view('pages.abp-page.montracking', compact('title', 'breadcrumb','tbl_po',));
+        return view('pages.abp-page.montracking', compact('title', 'breadcrumb','tbl_po','trackzero', 'tracknull', 'details','lastcurah','gudang','kapal','pod','tracksisa','getcurahqty','selectpol','selectpod','pol','zerocurah'));
     }
 
     public function getPoDate($id) {
@@ -134,8 +227,8 @@ class MTrackingController extends Controller
                 ->get();
         $tbl_po = DocTracking::select('doc_tracking.no_po', 'purchase_orders.po_kebun', 
                 'purchase_orders.total_qty', 'port_of_loading.nama_pol', 'port_of_destination.nama_pod',
-                'detail_tracking.status', 'kapals.kode_kapal','kapals.nama_kapal','pt_penerima.nama_penerima',
-                'gudang_muats.nama_gudang', 'barangs.nama_barang','purchase_orders.no_pl', 'detail_tracking.tgl_muat',
+                'detail_tracking.status','kapals.kode_kapal','kapals.nama_kapal','pt_penerima.nama_penerima',
+                'gudang_muats.nama_gudang', 'gudang_muats.id_gudang', 'barangs.nama_barang','purchase_orders.no_pl', 'detail_tracking.tgl_muat',
                 'purchase_orders.po_kebun','detail_tracking.qty_tonase', 'detail_tracking.qty_timbang','detail_tracking.jml_sak',
                 'detail_tracking.nopol','detail_tracking.no_container','detail_tracking.voyage','detail_tracking.td','detail_tracking.td_jkt',
                 'detail_tracking.ta','customers.nama_customer','doc_tracking.status_kapal','doc_tracking.id_track', 'detail_tracking.id_detail_track')

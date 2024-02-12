@@ -9,17 +9,20 @@ use App\Models\DocDooring;
 use App\Models\DocTracking;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Response;
+use App\Models\Kapal;
+use Illuminate\Support\Facades\DB;
 
 class MDooringController extends Controller
 {
     public function index(){
         $title = 'Adhipramana Bahari Perkasa';
         $breadcrumb = 'This Breadcrumb';
+        
         $tbl_po = DocTracking::select('doc_tracking.no_po', 'purchase_orders.po_kebun', 'penerimas.estate',
                 'purchase_orders.total_qty', 'port_of_loading.nama_pol', 'port_of_destination.nama_pod',
                 'detail_tracking.status', 'kapals.kode_kapal','kapals.nama_kapal','pt_penerima.nama_penerima',
                 'gudang_muats.nama_gudang', 'barangs.nama_barang','purchase_orders.no_pl', 'detail_tracking.tgl_muat',
-                'purchase_orders.po_kebun','detail_tracking.qty_tonase', 'detail_tracking.qty_timbang','detail_tracking.jml_sak',
+                'purchase_orders.po_kebun','detail_tracking.qty_tonase','detail_tracking.id_detail_track as id_edit', 'detail_tracking.qty_timbang','detail_tracking.jml_sak',
                 'detail_tracking.nopol','detail_tracking.no_container','detail_tracking.voyage','detail_tracking.td','detail_tracking.td_jkt',
                 'detail_tracking.ta','customers.nama_customer','doc_tracking.status_kapal','doc_dooring.id_dooring',
                 'doc_tracking.id_track', 'detail_tracking.id_detail_track','detail_tracking.track_file','detail_tracking.door_file')
@@ -38,6 +41,7 @@ class MDooringController extends Controller
                 ->join('doc_dooring','doc_dooring.id_track','=','doc_tracking.id_track')
                 ->whereIn('doc_dooring.status', [2,3,4])
                 ->get();
+                // DB::enableQueryLog();
         $monitoringDooring = DocDooring::with([
             'detailDooring' => function($query) {
                 $query->whereIn('detail_dooring.status', [2,3,4]);
@@ -58,14 +62,61 @@ class MDooringController extends Controller
             'detailDooring.detailTracking.portOfDestination',
         ])
         ->get();
-        // dd ($monitoringDooring);
+        $kapal = Kapal::select('kapals.id', 'kapals.id_company_port', 'c_ports.nama', 'c_ports.no_telp', 'c_ports.alamat', 'kapals.kode_kapal', 'kapals.nama_kapal', "detail_tracking.id_track", 'detail_tracking.voyage')
+                ->join('c_ports', 'c_ports.id_company_port', '=', 'kapals.id_company_port')
+                ->join(
+                    "detail_tracking",
+                    "detail_tracking.id_kapal",
+                    "=",
+                    "kapals.id"
+                )
+                ->where('kapals.status', 1)
+                ->whereIn("detail_tracking.status", [2, 3])
+                ->groupBy(
+                    "detail_tracking.id_kapal",
+                )
+                ->get(); 
+                // dd(DB::getQueryLog());
+
         return view('pages.abp-page.mondooring', 
-            compact('title', 'breadcrumb', 'monitoringDooring','tbl_po'
+            compact('title', 'breadcrumb', 'monitoringDooring','tbl_po','kapal'
             )
         );
     }
 
-    public function history(){
+    public function getKapalByTrack(Request $request)
+    {
+        // Validate the request
+        $request->validate([
+            'id_track' => 'required|integer', // Assuming id_track is an integer
+        ]);
+        // DB::enableQueryLog();
+                      $kapal = Kapal::select("*", "detail_tracking.id_track")
+            ->join(
+                "c_ports",
+                "c_ports.id_company_port",
+                "=",
+                "kapals.id_company_port"
+            )
+            ->join(
+                "detail_tracking",
+                "detail_tracking.id_kapal",
+                "=",
+                "kapals.id"
+            )
+            ->where("kapals.status", 1)
+            ->whereIn("detail_tracking.status", [2, 3])
+            ->where('id_track', $request->id_track)
+            ->whereNotNull('no_container')
+            ->groupBy(
+                "detail_tracking.voyage",
+                "detail_tracking.id_kapal",
+            )
+            ->get();
+            // dd(DB::getQueryLog());
+        return response()->json($kapal);
+    }
+        public function history(){
         $title = 'Adhipramana Bahari Perkasa';
         $breadcrumb = 'This Breadcrumb';
         

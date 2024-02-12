@@ -124,6 +124,7 @@ foreach ($prefixRouters as $prefixRouter) {
              */
 
             Route::prefix('document')->group(function () {
+                Route::match(['put','post'], '/tracking/updatecontainer', [\App\Http\Controllers\DocTrackingController::class, 'updatecontainer'])->name('tracking.updatecontainer');
                 Route::get('/penawaran-harga', function () {
                     return view('pages.abp-page.dph', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
                 })->name('penawaran-harga');
@@ -161,6 +162,7 @@ foreach ($prefixRouters as $prefixRouter) {
                 Route::resource('/tracking', \App\Http\Controllers\DocTrackingController::class);
                 Route::get('/tracking/tr/getPo/{id}', [\App\Http\Controllers\DocTrackingController::class, 'getPo'])->name('getPo');
                 Route::match(['get', 'post'], '/tracking/savecontainer', [\App\Http\Controllers\DocTrackingController::class, 'savecontainer'])->name('tracking.savecontainer');
+               
                 Route::match(['get', 'post'], '/tracking/savecurah', [\App\Http\Controllers\DocTrackingController::class, 'savecurah'])->name('tracking.savecurah');
                 Route::match(['put'], '/tracking/cek/batal', [\App\Http\Controllers\DocTrackingController::class, 'batal'])->name('tracking.batal');
                 Route::put('/tracking/tr/deletedata/{id_track}/{id_detail_track}/{tonase}', [\App\Http\Controllers\DocTrackingController::class, 'deletedata'])->name('tracking.deletedata');
@@ -175,10 +177,13 @@ foreach ($prefixRouters as $prefixRouter) {
                 Route::get('/dooring/dr/getContainer/{id}', [\App\Http\Controllers\DooringController::class, 'getContainer'])->name('getContainer');            
                 Route::get('/dooring/dr/getPoDooring/{id}', [\App\Http\Controllers\DooringController::class, 'getPoDooring'])->name('getPoDooring');
                 Route::match(['get', 'post'], '/dooring/savecurah', [\App\Http\Controllers\DooringController::class, 'savecurah'])->name('dooring.savecurah');
+               
                 Route::match(['get', 'post'], '/dooring/savecontainer', [\App\Http\Controllers\DooringController::class, 'savecontainer'])->name('dooring.savecontainer');
+                Route::match(['put', 'post'], '/dooring-detail/updatecontainer', [\App\Http\Controllers\DooringController::class, 'updatecontainer'])->name('dooring.updatecontainer');
                 // Route::match(['delete'], '/dooring/deletedata/{$id}/{$tonase}', [\App\Http\Controllers\DooringController::class, 'deletedata'])->name('dooring.deletedata');
                 Route::put('/dooring/dr/deletedata/{id_dooring}/{id_detail_door}/{tonase}', [\App\Http\Controllers\DooringController::class, 'deletedata'])->name('dooring.deletedata');
                 // Route::match(['PUT', 'PATCH'], '/dooring/deletedata/{id}/{tonase}', [\App\Http\Controllers\DooringController::class, 'updatedata'])->name('dooring.updatedata');
+               
             });
 
             /**
@@ -211,6 +216,10 @@ foreach ($prefixRouters as $prefixRouter) {
                 Route::resource('/mon-dooring', \App\Http\Controllers\MDooringController::class);
                 Route::put('/mon-dooring', [\App\Http\Controllers\MDooringController::class, 'update'])->name('mon-dooring.update');
                 Route::get('/mon-dooring/dr/downloadfile/{path}', [\App\Http\Controllers\MDooringController::class, 'downloadfile'])->name('downloadfile');
+                Route::get('/kapal', [\App\Http\Controllers\MDooringController::class, 'getKapalByTrack'])->name('dooring.getKapalByTrack');
+                Route::post('/updatecurah', [\App\Http\Controllers\DooringController::class, 'updateCurah'])->name('dooring.updatecurah');
+                
+                
             });
 
             // routes/web.php

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class DetailDooring extends Model
 {
     use HasFactory;
+    protected $primaryKey = 'id_detail_door';
     protected $fillable = [
         'id_dooring',
         'tgl_muat',
