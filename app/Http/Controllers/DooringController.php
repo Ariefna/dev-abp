@@ -1144,7 +1144,6 @@ class DooringController extends Controller
     public function updateCurah(Request $request)
     {
 
-        return $request;
         $request->validate([
             "file_notiket" => "nullable|mimes:jpeg,png,pdf",
             "file_nosj" => "nullable|mimes:jpeg,png,pdf",
@@ -1211,120 +1210,45 @@ class DooringController extends Controller
     {
         $qty_sisa_curah2 = $request->qty_sisa_curah2;
         $qty = $request->qty;
-        $updateData =
-            $qty_sisa_curah2 !== $qty
+        $updateData = $qty_sisa_curah2 !== $qty
                 ? ["qty_tonase_sisa" => $request->qty]
-                : ["qty_tonase_sisa" => $request->qty_sisa_curah];
-
-        DetailDooringSisa::where("id_dooring", $request->id_door)
+                : [];
+        if (count($updateData) > 0) {
+            DetailDooringSisa::where("id_dooring", $request->id_door)
             ->where("tipe", "Curah")
             ->update($updateData);
+        }   
     }
 
     public function savecurah(Request $request)
     {
+        // Validate the incoming request data
         $request->validate([
-            "file_notiket" => "required|mimes:jpeg,png,pdf",
-            "file_nosj" => "required|mimes:jpeg,png,pdf",
+            "file_notiket" => "nullable|mimes:jpeg,png,pdf",
+            "file_nosj" => "nullable|mimes:jpeg,png,pdf",
         ]);
-
-        $file = $request->file("file_notiket");
-        $fileName = time() . "_" . $file->getClientOriginalName();
-        $fileType = $file->getMimeType(); // Get the MIME type of the file
-
-        $file2 = $request->file("file_nosj"); // Change variable name to $file2
-        $fileName2 = time() . "_" . $file2->getClientOriginalName();
-        $fileType2 = $file2->getMimeType(); // Get the MIME type of the file
-
-        if (in_array($fileType, ["image/jpeg", "image/jpg", "image/png"])) {
-            // It's an image, so perform resize and compression
-
-            $imgInfo = getimagesize($file->getPathname());
-            $mime = $imgInfo["mime"];
-            $quality = 50;
-
-            switch ($mime) {
-                case "image/jpeg":
-                    $image = imagecreatefromjpeg($file->getPathname());
-                    break;
-                case "image/png":
-                    $image = imagecreatefrompng($file->getPathname());
-                    break;
-                default:
-                    $image = imagecreatefromjpeg($file->getPathname());
-            }
-
-            $filePath = storage_path("app/public/uploads/dooring/" . $fileName);
-
-            switch ($mime) {
-                case "image/jpeg":
-                    imagejpeg($image, $filePath, $quality);
-                    break;
-                case "image/png":
-                    imagepng($image, $filePath, floor((9 * $quality) / 100));
-                    break;
-                default:
-                    imagejpeg($image, $filePath, $quality);
-            }
-
-            imagedestroy($image);
+    
+        // Process file_notiket
+        if ($request->hasFile("file_notiket")) {
+            $file_notiket = $request->file("file_notiket");
+            $file_notiket_path = $file_notiket->store("uploads/dooring");
         } else {
-            // It's not an image, so don't perform any resize or compression
-            Storage::disk("public")->putFileAs(
-                "uploads/dooring",
-                $file,
-                $fileName
-            );
+            $file_notiket_path = null; // No file provided
         }
-
-        if (in_array($fileType2, ["image/jpeg", "image/jpg", "image/png"])) {
-            // It's an image, so perform resize and compression for the second file
-
-            $imgInfo2 = getimagesize($file2->getPathname());
-            $mime2 = $imgInfo2["mime"];
-            $quality2 = 50;
-
-            switch ($mime2) {
-                case "image/jpeg":
-                    $image2 = imagecreatefromjpeg($file2->getPathname());
-                    break;
-                case "image/png":
-                    $image2 = imagecreatefrompng($file2->getPathname());
-                    break;
-                default:
-                    $image2 = imagecreatefromjpeg($file2->getPathname());
-            }
-
-            $filePath2 = storage_path(
-                "app/public/uploads/dooring/" . $fileName2
-            );
-
-            switch ($mime2) {
-                case "image/jpeg":
-                    imagejpeg($image2, $filePath2, $quality2);
-                    break;
-                case "image/png":
-                    imagepng($image2, $filePath2, floor((9 * $quality2) / 100));
-                    break;
-                default:
-                    imagejpeg($image2, $filePath2, $quality2);
-            }
-
-            imagedestroy($image2);
+    
+        // Process file_nosj
+        if ($request->hasFile("file_nosj")) {
+            $file_nosj = $request->file("file_nosj");
+            $file_nosj_path = $file_nosj->store("uploads/dooring");
         } else {
-            // It's not an image, so don't perform any resize or compression for the second file
-            Storage::disk("public")->putFileAs(
-                "uploads/dooring",
-                $file2,
-                $fileName2
-            );
+            $file_nosj_path = null; // No file provided
         }
-
-        list($id_kapal, $id_detail_track) = explode(
-            "-",
-            $request->input("kpl_id")
-        );
-        DetailDooring::create([
+    
+        // Extracting data from the request
+        list($id_kapal, $id_detail_track) = explode("-", $request->input("kpl_id"));
+        
+        // Create a new DetailDooring record
+        $detailDooring = DetailDooring::create([
             "id_dooring" => $request->id_door,
             "id_kapal" => $id_kapal,
             "id_detail_track" => $id_detail_track,
@@ -1337,148 +1261,53 @@ class DooringController extends Controller
             "qty_tonase_bap" => $request->qty_tonase_bap,
             "jml_sak" => $request->sak,
             "no_tiket" => $request->notiket,
-            "st_file_name" => $fileName,
-            "st_file_path" => "uploads/dooring" . $fileName,
+            "st_file_name" => $file_notiket_path ? basename($file_notiket_path) : null,
+            "st_file_path" => $file_notiket_path,
             "no_sj" => $request->no_surat,
-            "sj_file_name" => $fileName2,
-            "sj_file_path" => "uploads/dooring" . $fileName2,
+            "sj_file_name" => $file_nosj_path ? basename($file_nosj_path) : null,
+            "sj_file_path" => $file_nosj_path,
             "tipe" => "Curah",
             "status" => 1,
         ]);
-
-        $c = $request->qty_sisa_curah2;
-        $b = $request->qty;
-        $cekid = DetailDooringSisa::where("id_dooring", $request->id_door)
-            ->where("tipe", "Curah")
-            ->value("id_dooring");
-        if ($cekid == $request->id_door) {
-            if ($c !== $b) {
-                DetailDooringSisa::where("id_dooring", $request->id_door)
-                    ->where("tipe", "Curah")
-                    ->update([
-                        "qty_tonase_sisa" => $request->qty,
-                    ]);
-            } elseif ($c === $b) {
-                DetailDooringSisa::where("id_dooring", $request->id_door)
-                    ->where("tipe", "Curah")
-                    ->update([
-                        "qty_tonase_sisa" => $request->qty_sisa_curah,
-                    ]);
-            }
-        } elseif ($cekid != $request->id_door) {
-            if ($c === $b) {
-                DetailDooringSisa::create([
-                    "id_dooring" => $request->id_door,
-                    "qty_tonase_sisa" => $request->qty_sisa_curah,
-                    "qty_total_tonase" => $request->qty_curah_total,
-                    "status" => 1,
-                    "tipe" => "Curah",
-                ]);
-            }
-        }
+    
+        // Updating DetailDooringSisa record
+        $qty_sisa_curah2 = $request->qty_sisa_curah2;
+        $qty = $request->qty;
+        $qty_curah_total = $request->qty_curah_total;
+    
+        DetailDooringSisa::updateOrCreate(
+            ["id_dooring" => $request->id_door, "tipe" => "Curah"],
+            ["qty_tonase_sisa" => $qty == $qty_sisa_curah2 ? $qty_curah_total : $qty]
+        );
+    
+        // Redirect back
         return redirect()->back();
     }
 
     public function savecontainer(Request $request)
     {
+        // Validate the incoming request data
         $request->validate([
-            "file_notiket" => "required|mimes:jpeg,png,pdf",
-            "file_surat_jalan" => "required|mimes:jpeg,png,pdf",
+            "file_notiket" => "nullable|mimes:jpeg,png,pdf",
+            "file_surat_jalan" => "nullable|mimes:jpeg,png,pdf",
         ]);
-
-        $file = $request->file("file_notiket");
-        $fileName = time() . "_" . $file->getClientOriginalName();
-        $fileType = $file->getMimeType(); // Get the MIME type of the file
-
-        $file2 = $request->file("file_surat_jalan"); // Change variable name to $file2
-        $fileName2 = time() . "_" . $file2->getClientOriginalName();
-        $fileType2 = $file2->getMimeType(); // Get the MIME type of the file
-
-        if (in_array($fileType, ["image/jpeg", "image/jpg", "image/png"])) {
-            // It's an image, so perform resize and compression
-
-            $imgInfo = getimagesize($file->getPathname());
-            $mime = $imgInfo["mime"];
-            $quality = 50;
-
-            switch ($mime) {
-                case "image/jpeg":
-                    $image = imagecreatefromjpeg($file->getPathname());
-                    break;
-                case "image/png":
-                    $image = imagecreatefrompng($file->getPathname());
-                    break;
-                default:
-                    $image = imagecreatefromjpeg($file->getPathname());
-            }
-
-            $filePath = storage_path("app/public/uploads/dooring/" . $fileName);
-
-            switch ($mime) {
-                case "image/jpeg":
-                    imagejpeg($image, $filePath, $quality);
-                    break;
-                case "image/png":
-                    imagepng($image, $filePath, floor((9 * $quality) / 100));
-                    break;
-                default:
-                    imagejpeg($image, $filePath, $quality);
-            }
-
-            imagedestroy($image);
-        } else {
-            // It's not an image, so don't perform any resize or compression
-            Storage::disk("public")->putFileAs(
-                "uploads/dooring",
-                $file,
-                $fileName
-            );
+    
+        // Process file_notiket
+        $file_notiket_path = null;
+        if ($request->hasFile("file_notiket")) {
+            $file_notiket = $request->file("file_notiket");
+            $file_notiket_path = $file_notiket->store("uploads/dooring");
         }
-
-        if (in_array($fileType2, ["image/jpeg", "image/jpg", "image/png"])) {
-            // It's an image, so perform resize and compression for the second file
-
-            $imgInfo2 = getimagesize($file2->getPathname());
-            $mime2 = $imgInfo2["mime"];
-            $quality2 = 50;
-
-            switch ($mime2) {
-                case "image/jpeg":
-                    $image2 = imagecreatefromjpeg($file2->getPathname());
-                    break;
-                case "image/png":
-                    $image2 = imagecreatefrompng($file2->getPathname());
-                    break;
-                default:
-                    $image2 = imagecreatefromjpeg($file2->getPathname());
-            }
-
-            $filePath2 = storage_path(
-                "app/public/uploads/dooring/" . $fileName2
-            );
-
-            switch ($mime2) {
-                case "image/jpeg":
-                    imagejpeg($image2, $filePath2, $quality2);
-                    break;
-                case "image/png":
-                    imagepng($image2, $filePath2, floor((9 * $quality2) / 100));
-                    break;
-                default:
-                    imagejpeg($image2, $filePath2, $quality2);
-            }
-
-            imagedestroy($image2);
-        } else {
-            // It's not an image, so don't perform any resize or compression for the second file
-            Storage::disk("public")->putFileAs(
-                "uploads/dooring",
-                $file2,
-                $fileName2
-            );
+    
+        // Process file_surat_jalan
+        $file_surat_jalan_path = null;
+        if ($request->hasFile("file_surat_jalan")) {
+            $file_surat_jalan = $request->file("file_surat_jalan");
+            $file_surat_jalan_path = $file_surat_jalan->store("uploads/dooring");
         }
-
-        DetailDooring::create([
+    
+        // Create a new DetailDooring record
+        $detailDooring = DetailDooring::create([
             "id_dooring" => $request->id_door,
             "id_detail_track" => $request->id_dtl,
             "id_kapal" => $request->id_kpl,
@@ -1491,47 +1320,29 @@ class DooringController extends Controller
             "qty_tonase_bap" => $request->qty_tonase_bap,
             "jml_sak" => $request->simb,
             "no_tiket" => $request->notiket,
-            "st_file_name" => $fileName,
-            "st_file_path" => "uploads/dooring" . $fileName,
+            "st_file_name" => $file_notiket_path ? basename($file_notiket_path) : null,
+            "st_file_path" => $file_notiket_path,
             "no_sj" => $request->no_surat,
-            "sj_file_name" => $fileName2,
-            "sj_file_path" => "uploads/dooring" . $fileName2,
+            "sj_file_name" => $file_surat_jalan_path ? basename($file_surat_jalan_path) : null,
+            "sj_file_path" => $file_surat_jalan_path,
             "tipe" => "Container",
             "status" => 1,
         ]);
-
-        $c = $request->qty_sisa_container2;
-        $b = $request->qty;
-        $cekid = DetailDooringSisa::where("id_dooring", $request->id_door)
-            ->where("tipe", "Container")
-            ->value("id_dooring");
-        if ($cekid == $request->id_door) {
-            if ($c !== $b) {
-                DetailDooringSisa::where("id_dooring", $request->id_door)
-                    ->where("tipe", "Container")
-                    ->update([
-                        "qty_tonase_sisa" => $request->qty,
-                    ]);
-            } elseif ($c === $b) {
-                DetailDooringSisa::where("id_dooring", $request->id_door)
-                    ->where("tipe", "Container")
-                    ->update([
-                        "qty_tonase_sisa" => $request->qty_sisa_container,
-                    ]);
-            }
-        } elseif ($cekid != $request->id_door) {
-            if ($c === $b) {
-                DetailDooringSisa::create([
-                    "id_dooring" => $request->id_door,
-                    "qty_tonase_sisa" => $request->qty_sisa_container,
-                    "qty_total_tonase" => $request->qty_container_total,
-                    "status" => 1,
-                    "tipe" => "Container",
-                ]);
-            }
-        }
+    
+        // Updating DetailDooringSisa record
+        $qty_sisa_container2 = $request->qty_sisa_container2;
+        $qty = $request->qty;
+        $qty_container_total = $request->qty_container_total;
+    
+        DetailDooringSisa::updateOrCreate(
+            ["id_dooring" => $request->id_door, "tipe" => "Container"],
+            ["qty_tonase_sisa" => $qty == $qty_sisa_container2 ? $qty_container_total : $qty]
+        );
+    
+        // Redirect back
         return redirect()->back();
     }
+    
 
     public function destroy(Request $request, $id)
     {
@@ -1559,12 +1370,14 @@ class DooringController extends Controller
         return redirect()->back();
     }
 
-    public function updateContainer(Request $request, $id)
+    public function updateContainer(Request $request)
 {
     $request->validate([
         "file_notiket" => "nullable|mimes:jpeg,png,pdf",
         "file_surat_jalan" => "nullable|mimes:jpeg,png,pdf",
     ]);
+
+    $id = $request->id;
 
     $detailDooring = DetailDooring::findOrFail($id);
 
