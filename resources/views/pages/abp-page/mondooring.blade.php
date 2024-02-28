@@ -374,8 +374,8 @@
                                                                     data-qty_tonase_sisa="{{$md->sisa->qty_tonase_sisa??0}}"
                                                                     data-no_tiket_timbang="{{ $md->no_tiket }}"
                                                                     data-no_surat_jalan="{{ $md->no_sj }}"
-                                                                    data-file_no_tiket="{{route('downloadfile', ['path' => $md->st_file_name])}}"
-                                                                    data-file_surat_jalan="{{route('downloadfile', ['path' => $md->sj_file_name])}}">Curah</a>
+                                                                    data-file_no_tiket="{{ $md->st_file_name ? route('downloadfile', ['path' => $md->st_file_name]) : '' }}"
+                                                                    data-file_surat_jalan="{{$md->sj_file_name ? route('downloadfile', ['path' => $md->sj_file_name]) : ''}}">Curah</a>
                                                                 @endif
                                                                 @if ($md->tipe == "Container")
                                                                 <a href="#detailcontainer"
@@ -398,8 +398,8 @@
                                                                     data-qty_tonase_sisa="{{$md->sisa->qty_tonase_sisa??0}}"
                                                                     data-no_tiket_timbang="{{ $md->no_tiket }}"
                                                                     data-no_surat_jalan="{{ $md->no_sj }}"
-                                                                    data-file_no_tiket="{{route('downloadfile', ['path' => $md->st_file_name])}}"
-                                                                    data-file_surat_jalan="{{route('downloadfile', ['path' => $md->sj_file_name])}}">Container</a>
+                                                                    data-file_no_tiket="{{$md->st_file_name ? route('downloadfile', ['path' => $md->st_file_name]) :''}}"
+                                                                    data-file_surat_jalan="{{$md->sj_file_name ? route('downloadfile', ['path' => $md->sj_file_name]):''}}">Container</a>
                                                                 @endif
 
 
