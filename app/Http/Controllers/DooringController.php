@@ -995,6 +995,27 @@ class DooringController extends Controller
         return response()->json($kapal);
     }
 
+    public function getKapalDooringByID(Request $request)
+    {
+        $id = $request->id;
+        // DB::enableQueryLog();
+        $detailDooring = DetailDooring::select(
+            'detail_dooring.id_dooring',
+            'detail_dooring.id_detail_door',
+            'kapals.nama_kapal',
+            'detail_tracking.no_container',
+            'detail_tracking.voyage',
+            'detail_tracking.no_segel'
+        )
+        ->join('detail_tracking', 'detail_dooring.id_detail_track', '=', 'detail_tracking.id_detail_track')
+        ->join('kapals', 'kapals.id', '=', 'detail_dooring.id_kapal')
+        ->where('detail_dooring.id_detail_door', $id)
+        ->whereIn('detail_dooring.status', [2, 3])
+        ->get();
+        // dd(DB::getQueryLog());
+        return response()->json($detailDooring);
+    }
+
     public function getKapalDooring($id, $voyage)
     {
         // DB::enableQueryLog();
