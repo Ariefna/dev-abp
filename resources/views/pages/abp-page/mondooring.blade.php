@@ -358,6 +358,8 @@
                                                                 : ''
                                                                 !!}
                                                                 @if ($md->tipe == "Curah")
+                                                                @if ($md->st_file_name != null && $md->sj_file_name !=
+                                                                null)
                                                                 <a href="#detailcur"
                                                                     class="btn btn-outline-primary bs-tooltip me-2 editcurah"
                                                                     data-bs-toggle="modal" data-placement="top"
@@ -374,10 +376,30 @@
                                                                     data-qty_tonase_sisa="{{$md->sisa->qty_tonase_sisa??0}}"
                                                                     data-no_tiket_timbang="{{ $md->no_tiket }}"
                                                                     data-no_surat_jalan="{{ $md->no_sj }}"
-                                                                    data-file_no_tiket="{{ $md->st_file_name ? route('downloadfile', ['path' => $md->st_file_name]) : '' }}"
-                                                                    data-file_surat_jalan="{{$md->sj_file_name ? route('downloadfile', ['path' => $md->sj_file_name]) : ''}}">Curah</a>
+                                                                    data-file_no_tiket="{{route('downloadfile', ['path' => $md->st_file_name])}}"
+                                                                    data-file_surat_jalan="{{route('downloadfile', ['path' => $md->sj_file_name])}}">Curah</a>
+                                                                @else
+                                                                <a href="#detailcur"
+                                                                    class="btn btn-outline-primary bs-tooltip me-2 editcurah"
+                                                                    data-bs-toggle="modal" data-placement="top"
+                                                                    data-id="{{ $md->id_detail_door }}"
+                                                                    data-kapal="{{ $md->id_kapal }}"
+                                                                    data-date_berangkat="{{ $md->tgl_muat }}"
+                                                                    data-date_tiba="{{ $md->tgl_tiba }}"
+                                                                    data-estate="{{ $md->estate }}"
+                                                                    data-nopol_dooring="{{ $md->nopol }}"
+                                                                    data-qty_tonase_dooring="{{ $md->qty_tonase }}"
+                                                                    data-qty_timbang_dooring="{{ $md->qty_timbang }}"
+                                                                    data-qty_tonase_bap="{{ $md->qty_tonase_bap }}"
+                                                                    data-sak="{{ $md->jml_sak }}"
+                                                                    data-qty_tonase_sisa="{{$md->sisa->qty_tonase_sisa??0}}"
+                                                                    data-no_tiket_timbang="{{ $md->no_tiket }}"
+                                                                    data-no_surat_jalan="{{ $md->no_sj }}">Curah</a>
+                                                                @endif
                                                                 @endif
                                                                 @if ($md->tipe == "Container")
+                                                                @if ($md->st_file_name != null && $md->sj_file_name !=
+                                                                null)
                                                                 <a href="#detailcontainer"
                                                                     class="btn btn-outline-primary bs-tooltip me-2 editcontainer"
                                                                     data-bs-toggle="modal" data-placement="top"
@@ -398,8 +420,30 @@
                                                                     data-qty_tonase_sisa="{{$md->sisa->qty_tonase_sisa??0}}"
                                                                     data-no_tiket_timbang="{{ $md->no_tiket }}"
                                                                     data-no_surat_jalan="{{ $md->no_sj }}"
-                                                                    data-file_no_tiket="{{$md->st_file_name ? route('downloadfile', ['path' => $md->st_file_name]) :''}}"
-                                                                    data-file_surat_jalan="{{$md->sj_file_name ? route('downloadfile', ['path' => $md->sj_file_name]):''}}">Container</a>
+                                                                    data-file_no_tiket="{{route('downloadfile', ['path' => $md->st_file_name])}}"
+                                                                    data-file_surat_jalan="{{route('downloadfile', ['path' => $md->sj_file_name])}}">Container</a>
+                                                                @else
+                                                                <a href="#detailcontainer"
+                                                                    class="btn btn-outline-primary bs-tooltip me-2 editcontainer"
+                                                                    data-bs-toggle="modal" data-placement="top"
+                                                                    data-id="{{ $md->id_detail_door }}"
+                                                                    data-id_track="{{ $md->docDooring->docTracking->id_track }}"
+                                                                    data-id_detail_track="{{ $md->detailTracking->id_detail_track }}"
+                                                                    data-kapal="{{ $md->id_kapal }}"
+                                                                    data-no_segel="{{ $md->detailTracking->no_segel }}"
+                                                                    data-date_berangkat="{{ $md->tgl_muat }}"
+                                                                    data-date_tiba="{{ $md->tgl_tiba }}"
+                                                                    data-estate="{{ $md->estate }}"
+                                                                    data-nopol_dooring="{{ $md->nopol }}"
+                                                                    data-qty_tonase_dooring="{{ $md->qty_tonase }}"
+                                                                    data-qty_timbang_dooring="{{ $md->qty_timbang }}"
+                                                                    data-qty_tonase_bap="{{ $md->qty_tonase_bap }}"
+                                                                    data-sak="{{ $md->jml_sak }}"
+                                                                    data-vogaye="{{ $md->detailTracking->voyage }}"
+                                                                    data-qty_tonase_sisa="{{$md->sisa->qty_tonase_sisa??0}}"
+                                                                    data-no_tiket_timbang="{{ $md->no_tiket }}"
+                                                                    data-no_surat_jalan="{{ $md->no_sj }}">Container</a>
+                                                                @endif
                                                                 @endif
 
 
@@ -432,12 +476,7 @@
                                     action="{{ route('dooring.updatecontainer') }}" method="POST"
                                     enctype="multipart/form-data" novalidate>
                                     @csrf
-                                    <!-- <input name="id_track" value="" type="hidden" class="form-control"
-                                        id="validationCustom01" required>
-                                    <input name="id_door" value="" type="hidden" class="form-control"
-                                        id="validationCustom01" required>
-                                    <input name="id_detail" value="" type="hidden" class="form-control" id="id_detail"
-                                        required> -->
+                                    <input type="hidden" id="idContainer" name="id">
                                     <div class="col-md-6">
                                         <label for="validationCustom03" class="form-label">Date Berangkat</label>
                                         <input name="tgl_brkt" id="tgl_mcont" value="2022-09-04"
@@ -616,13 +655,11 @@
                                         </div>
                                         <span class="shadow-none badge badge-danger mt-2" id="qtyTonaseSisaCurah">Sisa:
                                         </span>
-                                        <input name="qty_curah_total" id="qty_curah_total" value="" type="hidden"
-                                            step="any" min="0">
                                         <input name="qty" id="qty_sisa_curah" value="0" type="hidden" step="any"
                                             min="0">
                                         <div class="validationMessage"></div>
-                                        <input name="qty_curah_total" id="qty_curah_total" value="" type="hidden"
-                                            step="any" min="0">
+                                        <!-- <input name="qty_curah_total" id="qtyCurahTotal" value="" type="hidden"
+                                            step="any" min="0"> -->
                                         <input name="qty_sisa_curah" id="qty_sisa_curah" value="0" type="hidden"
                                             step="any" min="0">
                                         <div class="validationMessage"></div>
@@ -717,6 +754,10 @@
 
                     <script type='text/javascript'>
                     $(document).ready(function() {
+                        function removeDecimal(number) {
+                            return Math.floor(number);
+                        }
+
                         function convertToZero(value) {
                             // Parse the value to float and then round it to 2 decimal places
                             var parsedValue = parseFloat(value).toFixed(2);
@@ -749,7 +790,7 @@
                                 var fileSuratJalan = $(event.target).data('file_surat_jalan');
                                 var voyage = $(event.target).data('vogaye');
                                 // Set form field values
-                                $('#id').val(id);
+                                $('#idContainer').val(id);
                                 $('#dateBerangkat').val(dateBerangkat);
                                 $('#dateTiba').val(dateTiba);
                                 $('#kapal').val(kapal);
@@ -757,10 +798,10 @@
                                 $('#noSegel').val(noSegel);
                                 $('#estate').val(estate);
                                 $('#nopolDooring').val(nopolDooring);
-                                $('#qtyTonaseDooring').val(qtyTonaseDooring);
-                                $('#qtyTimbangDooring').val(qtyTimbangDooring);
-                                $('#qtyTonaseBap').val(qtyTonaseBap);
-                                $('#sak').val(sak);
+                                $('#qtyTonaseDooring').val(removeDecimal(qtyTonaseDooring));
+                                $('#qtyTimbangDooring').val(removeDecimal(qtyTimbangDooring));
+                                $('#qtyTonaseBap').val(removeDecimal(qtyTonaseBap));
+                                $('#sak').val(removeDecimal(sak));
                                 $('#noTiketTimbang').val(noTiketTimbang);
                                 $('#noSuratJalan').val(noSuratJalan);
                                 $('#qtyTonaseSisa').text('sisa:' + convertToZero(qtyTonaseSisa));
@@ -768,15 +809,77 @@
 
                                 $('#fileNoTiket').attr('href', fileNoTiket);
                                 $('#fileSuratJalan').attr('href', fileSuratJalan);
-                                fetchKapalData(id_track, id_track + '-' + voyage);
-                                getKapalDooring(id_track, voyage, id_track_detail);
-
+                                fetchKapalData(id_track, id);
+                                // getKapalDooring(id_track, voyage, id_track_detail);
+                                setkapaldannocontainer(id);
                             }
                         });
 
 
-                        function fetchKapalData(idTrack, selection = '') {
+                        function setkapaldannocontainer(idDetailDooring) {
+                            $.ajax({
+                                url: "{{ route('geteditcontainer', ['detail_dooring' => ':id']) }}"
+                                    .replace(':id',
+                                        idDetailDooring),
+                                type: 'GET',
+                                success: function(response) {
+                                    var cbKapalContainerIsExist = false;
+                                    var cbNoContainerIsExist = false;
+                                    $('#cb_kplcont option').each(function() {
+                                        if ($(this).val() == response[0].id_track + '-' +
+                                            response[0].voyage) {
+                                            cbKapalContainerIsExist = true;
+                                            $('#cb_kplcont').val(response[0].id_track +
+                                                '-' + response[0].voyage);
+                                        }
+                                    });
+                                    if (!cbKapalContainerIsExist) {
+                                        $('#cb_kplcont').append('<option value="' + response[0]
+                                            .id_track + '-' + response[0].voyage + '">' +
+                                            response[0].nama_kapal + ' ' + response[0].voyage +
+                                            '</option>');
+                                        $('#cb_kplcont').val(response[0].id_track +
+                                            '-' + response[0].voyage);
+                                    }
+                                    $('#cb_cont option').each(function() {
+                                        console.log($(this).val() + "cb_cont value")
+                                        if ($(this).val() == response[0].id_detail_track) {
+                                            console.log("sini1");
+                                            cbNoContainerIsExist = true;
+                                            $("#cb_cont").empty();
+                                            $('#cb_cont').append('<option value="' +
+                                                response[0]
+                                                .id_detail_track + '">' +
+                                                response[0].no_container +
+                                                '</option>');
+                                            $('#cb_cont').val(response[0]
+                                                .id_detail_track);
+                                        }
+                                    });
+                                    if (!cbNoContainerIsExist) {
+                                        console.log("sini2");
+                                        $('#cb_cont').append('<option value="' + response[0]
+                                            .id_detail_track + '">' +
+                                            response[0].no_container +
+                                            '</option>');
+                                        $('#cb_cont').val(response[0]
+                                            .id_detail_track);
+                                    }
+                                    console.log(response[0].id_track + '-' + response[0].voyage);
+                                    console.log(response[0].nama_kapal + ' ' + response[0].voyage)
+
+                                    console.log(response[0].id_detail_track);
+                                    console.log(response[0].no_container);
+                                },
+                                error: function(xhr, status, error) {
+                                    console.error('Error fetching Kapal data:', error);
+                                }
+                            });
+                        }
+
+                        function fetchKapalData(idTrack, idDooring = '') {
                             var getKapalByTrackRoute = "{{ route('dooring.getKapalByTrack') }}";
+                            var setvalue = "";
                             $.ajax({
                                 url: getKapalByTrackRoute,
                                 type: 'GET',
@@ -795,35 +898,24 @@
                                             .id_track + '-' + kapal.voyage + '">' +
                                             kapal.nama_kapal + ' ' + kapal.voyage +
                                             '</option>');
+                                        if (kapal.id_detail_door == idDooring &&
+                                            idDooring != "") {
+                                            setvalue = kapal
+                                                .id_track + '-' + kapal.voyage
+                                        }
                                     });
-                                    if (selection != '') {
-                                        $('#cb_kplcont').val(selection);
+                                    if (response.length == 1 && setvalue == "") {
+                                        setvalue = response[0].id_track + '-' + response[0].voyage;
+                                    } else {
+                                        setvalue = response[0].id_track + '-' + response[0].voyage;
                                     }
+                                    $('#cb_kplcont').val(setvalue);
                                 },
                                 error: function(xhr, status, error) {
                                     console.error('Error fetching Kapal data:', error);
                                 }
                             });
                         }
-
-                        // var id_track = $(this).data('id_track');
-                        // var fileSuratJalan = $(this).data('file_surat_jalan');
-                        // var dateBerangkat = $(this).data('date_berangkat');
-                        // var dateTiba = $(this).data('date_tiba');
-                        // var kapal = $(this).data('kapal');
-                        // var noCont = $(this).data('no_cont');
-                        // var noSegel = $(this).data('no_segel');
-                        // var estate = $(this).data('estate');
-                        // var nopolDooring = $(this).data('nopol_dooring');
-                        // var qtyTonaseDooring = $(this).data('qty_tonase_dooring');
-                        // var qtyTimbangDooring = $(this).data('qty_timbang_dooring');
-                        // var qtyTonaseBap = $(this).data('qty_tonase_bap');
-                        // var sak = $(this).data('sak');
-                        // var noTiketTimbang = $(this).data('no_tiket_timbang');
-                        // var noSuratJalan = $(this).data('no_surat_jalan');
-                        // var fileNoTiket = $(this).data('file_no_tiket');
-
-
 
 
                         $('.editcurah').on('click', function() {
@@ -845,7 +937,6 @@
                             var fileSuratJalan = $(this).data('file_surat_jalan');
 
                             // Retrieve other data attributes in a similar manner
-
                             // Set form field values
                             $('#idCurah').val(id);
                             $('#tanggalMuat').val(tanggalMuat);
@@ -853,15 +944,17 @@
                             $('#kapal').val(kapal);
                             $('#estateCurah').val(estate);
                             $('#nopolDooringCurah').val(nopolDooring);
-                            $('#quantityTonaseDooring').val(quantityTonaseDooring);
-                            $('#quantityTimbangDooring').val(quantityTimbangDooring);
-                            $('#quantityTonaseBap').val(quantityTonaseBap);
-                            $('#jumlahSak').val(jumlahSak);
+                            $('#quantityTonaseDooring').val(removeDecimal(quantityTonaseDooring));
+                            $('#quantityTimbangDooring').val(removeDecimal(quantityTimbangDooring));
+                            $('#quantityTonaseBap').val(removeDecimal(quantityTonaseBap));
+                            $('#jumlahSak').val(removeDecimal(jumlahSak));
                             $('#noTiketTimbangCurah').val(noTiketTimbang);
                             $('#noSuratJalanCurah').val(noSuratJalan);
+                            // $('#qtyCurahTotal').val(qtyCurahTotal);
                             $('#qtyTonaseSisaCurah').text('sisa:' + convertToZero(qtyTonaseSisa));
                             $('#fileNoTiketCurah').attr('href', fileNoTiket);
                             $('#fileSuratJalanCurah').attr('href', fileSuratJalan);
+
                         });
 
                         function matchCustom(params, data) {
@@ -982,7 +1075,6 @@
                         var selectedId = $(this).val();
                         var id_dt = $('#id_detail').val();
                         var parts = selectedId.split('-');
-                        console.log(parts);
                         var id_track = parts[0];
                         var voyage = escape(parts[1]);
                         if (selectedId !== '') {

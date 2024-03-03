@@ -363,23 +363,50 @@
                                                                 </svg></a>'
                                                             : ''
                                                             !!}
-                                                            <a href="#detailcur" id="editcurah"
-                                                                class="btn btn-outline-primary bs-tooltip me-2"
+                                                            @if ($tra->tipe == "Curah")
+                                                            <a href="#detailcur"
+                                                                class="btn btn-outline-primary bs-tooltip me-2 editcurah"
                                                                 data-bs-toggle="modal" data-placement="top"
                                                                 data-id="{{$tra->id_detail_track}}"
                                                                 data-tanggal_muat="{{ $tra->tgl_muat }}"
-                                                                data-gudang_muat="{{ $tra->id_gudang }}"
                                                                 data-kapal="{{ $tra->id_kapal }}"
                                                                 data-nopol="{{ $tra->nopol }}"
+                                                                data-gudang_muat="{{ $tra->id_gudang }}"
                                                                 data-port_of_loading="{{ $tra->id_pol }}"
                                                                 data-port_of_destination="{{ $tra->id_pod }}"
                                                                 data-quantity_tonase="{{ $tra->qty_tonase }}"
+                                                                data-qty_tonase_sisa="{{ $tra->qty_tonase_sisa }}"
                                                                 data-jumlah_sak="{{ $tra->jml_sak }}"
                                                                 data-quantity_timbangan="{{ $tra->qty_timbang }}"
                                                                 data-file_surat_timbang="{{ route('downloadspktrack', ['path' => $tra->st_file_name]) }}"
                                                                 data-harga_hpp_kapal="{{ $tra->harga_hpp }}"
                                                                 data-no_surat_jalan="{{ $tra->no_sj }}"
                                                                 data-file_surat_jalan title="Edit Curah">Curah</a>
+                                                            @endif
+                                                            @if ($tra->tipe == "Container")
+                                                            <a href="#detailcontainer"
+                                                                class="btn btn-outline-primary bs-tooltip me-2 editcontainer"
+                                                                data-bs-toggle="modal" data-placement="top"
+                                                                data-id="{{$tra->id_detail_track}}"
+                                                                data-tanggal_muat="{{ $tra->tgl_muat }}"
+                                                                data-kapal="{{ $tra->id_kapal }}"
+                                                                data-nopol="{{ $tra->nopol }}"
+                                                                data-no_segel="{{ $tra->no_segel }}"
+                                                                data-voyage="{{ $tra->voyage }}"
+                                                                data-no_container="{{ $tra->no_container }}"
+                                                                data-gudang_muat="{{ $tra->id_gudang }}"
+                                                                data-port_of_loading="{{ $tra->id_pol }}"
+                                                                data-port_of_destination="{{ $tra->id_pod }}"
+                                                                data-quantity_tonase="{{ $tra->qty_tonase }}"
+                                                                data-qty_tonase_sisa="{{ $tra->qty_tonase_sisa }}"
+                                                                data-jumlah_sak="{{ $tra->jml_sak }}"
+                                                                data-quantity_timbangan="{{ $tra->qty_timbang }}"
+                                                                data-file_surat_timbang="{{ route('downloadspktrack', ['path' => $tra->st_file_name]) }}"
+                                                                data-harga_hpp_kapal="{{ $tra->harga_hpp }}"
+                                                                data-no_surat_jalan="{{ $tra->no_sj }}"
+                                                                data-file_surat_jalan
+                                                                title="Edit Container">Container</a>
+                                                            @endif
                                                         </td>
                                                     </tr>
                                                     @endforeach
@@ -392,6 +419,170 @@
                         </div>
                     </div>
                 </div>
+                <div class="modal fade bd-example-modal-xl" id="detailcontainer" tabindex="-1" role="dialog"
+                    aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-xl" role="document">
+                        <div class="modal-content">
+                            <div class="modal-body">
+                                <h5>Edit Detail Tracking Kapal Container</h5>
+                                <form class="row g-3 needs-validation" action="{{ route('tracking.updatecontainer') }}"
+                                    method="POST" enctype="multipart/form-data" novalidate>
+                                    @csrf
+                                    <input name="id" value="" type="hidden" class="form-control" id="id_container"
+                                        required>
+
+                                    <div class="col-md-3">
+                                        <label for="validationCustom04" class="form-label">Tanggal Muat</label>
+                                        <div class="input-group has-validation">
+                                            <input name="tgl_muat" id="tanggalMuat_container" value="2022-09-04"
+                                                class="form-control flatpickr flatpickr-input active" type="text"
+                                                placeholder="Select Date..">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label for="validationCustom03" class="form-label">Gudang Muat</label>
+                                        <select class="form-select" name="id_gudang" id="gudangMuat_container" required>
+                                            <option selected disabled value="">Pilih...</option>
+                                            @foreach ($gudang as $gd)
+                                            <option value="{{ $gd->id_gudang }}">{{ $gd->nama_gudang }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="validationCustom03" class="form-label">Kapal</label>
+                                        <select class="form-select" name="id_kapal" id="kapal_container" required>
+                                            <option selected disabled value="">Pilih...</option>
+                                            @foreach ($kapal as $kpl)
+                                            <option value="{{ $kpl->id }}">{{ $kpl->kode_kapal }} {{ $kpl->nama_kapal }}
+                                            </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="validationCustom03" class="form-label">Voyage</label>
+                                        <input name="voyage" type="text" value="" class="form-control" id="voyage"
+                                            placeholder="Masukkan Voyage" required>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="validationCustom03" class="form-label">Nopol</label>
+                                        <input name="nopol" type="text" class="form-control" id="nopol_container"
+                                            placeholder="Masukkan Nopol" required>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="validationCustom04" class="form-label">No Container</label>
+                                        <div class="input-group has-validation">
+                                            <input name="no_container" value="" type="text" value=""
+                                                class="form-control" id="no_container"
+                                                placeholder="Masukkan Nomor Container" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="validationCustom03" class="form-label">No Segel</label>
+                                        <input name="no_segel" value="" type="text" class="form-control"
+                                            placeholder="Masukkan No Segel" id="noSegel" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="validationCustom03" class="form-label">Port Of Loading</label>
+                                        <select class="form-select" name="cont_pol" id="portOfLoading_container"
+                                            required>
+                                            <option selected disabled value="">Pilih...</option>
+                                            @foreach ($pol as $item)
+                                            <option value="{{ $item->id }}">{{ $item->nama_pol }}</option>
+                                            @endforeach
+
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="validationCustom03" class="form-label">Port Of
+                                            Destination</label>
+                                        <select class="form-select" name="cont_pod" id="portOfDestination_container"
+                                            required>
+                                            <option selected disabled value="">Pilih...</option>
+                                            @foreach ($pod as $item)
+                                            <option value="{{ $item->id }}">{{ $item->nama_pod }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="notAllowCont" class="form-label">Quantity Tonases</label>
+                                        <div class="input-group">
+                                            <input name="qty_tonase" step="any" min="0" id="quantityTonase_container"
+                                                type="number" class="form-control qty_cont" placeholder="QTY Tonase"
+                                                required>
+                                            <span class="input-group-text" id="inputGroupPrepend">KG</span>
+                                        </div>
+                                        <span class="shadow-none badge badge-danger mt-2"
+                                            id="qtyTonaseSisa_container">Sisa:</span>
+                                        <div class="notAllowCont"></div>
+                                        <input name="qty_cont_total" id="qty_cont_total" value="" type="hidden"
+                                            step="any" min="0">
+                                        <input type="hidden" name="qty_cont_ada" id="qty_sisa_cont" value="0" step="any"
+                                            min="0">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="validationCustom03" class="form-label">Jumlah Sak</label>
+                                        <input name="jml_sak" type="number" class="form-control"
+                                            id="jumlahSak_container" placeholder="Jumlah Sak" required>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="validationCustom03" class="form-label">Quantity
+                                            Timbangan</label>
+                                        <div class="input-group">
+                                            <input name="qty_timbang" id="quantityTimbangan_container" step="any"
+                                                min="0" type="number" class="form-control" placeholder="QTY Timbang"
+                                                required>
+                                            <span class="input-group-text" id="inputGroupPrepend">KG</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="validationCustom03" class="form-label">Upload File Surat
+                                            Timbang <a href="" id="fileSuratTimbang_container" target="_blank"
+                                                class="shadow-none badge badge-success text-white">Lihat</a></label>
+                                        <div class="mb-3">
+                                            <input name="file_tbg" accept=".jpg, .png, .pdf"
+                                                class="form-control file-upload-input"
+                                                style="height: 48px; padding: 0.75rem 1.25rem;" type="file"
+                                                id="formFile">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="validationCustom04" class="form-label">Harga HPP Kapal</label>
+                                        <div class="input-group has-validation">
+                                            <input name="hpp_kpl" type="number" value="" class="form-control"
+                                                id="hargaHppKapal_container" placeholder="Masukkan HPP Kapal" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="validationCustom04" class="form-label">No Surat Jalan</label>
+                                        <div class="input-group has-validation">
+                                            <input name="no_sj" type="text" value="" class="form-control"
+                                                id="noSuratJalan_container" placeholder="Masukkan Nomor Surat Jalan"
+                                                required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="validationCustom03" class="form-label">Upload File Surat
+                                            Jalan <a href="" id="fileSuratJalan_container" target="_blank"
+                                                class="shadow-none badge badge-success text-white">Lihat</a></label>
+                                        <div class="mb-3">
+                                            <input name="file" accept=".jpg, .png, .pdf"
+                                                class="form-control file-upload-input"
+                                                style="height: 48px; padding: 0.75rem 1.25rem;" type="file"
+                                                id="formFile">
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer justify-content-center">
+                                        <button type="submit" id="btn-modal-cont"
+                                            class="btn btn-primary">Submit</button>
+                                        <button type="button" class="btn btn btn-light-dark" data-bs-dismiss="modal"><i
+                                                class="flaticon-cancel-12"></i>Batal</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="modal fade bd-example-modal-xl" id="detailcur" tabindex="-1" role="dialog"
                     aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-xl" role="document">
@@ -399,7 +590,7 @@
                             <div class="modal-body">
                                 <h5>Edit Detail Tracking Kapal Curah</h5>
                                 <form name="modal-tracking-ada" class="row g-3 needs-validation"
-                                    action="{{ route('tracking.updatecontainer') }}" method="POST"
+                                    action="{{ route('tracking.updatecurah') }}" method="POST"
                                     enctype="multipart/form-data" novalidate>
                                     @csrf
                                     @method('put')
@@ -508,13 +699,6 @@
                                     @endif
 
                                     <div class="col-lg-3 col-md-6 col-sm-12">
-                                        @foreach($tracknull as $tra)
-                                        @php
-                                        $match = $tracksisa->where('id_track',
-                                        $tra->id_track)->where('tipe','Curah')->count() > 0;
-                                        @endphp
-                                        @if ($lastcurah || $match)
-                                        @foreach ($getcurahqty as $tra)
                                         <label for="validationMessage" class="form-label">Quantity Tonase </label>
                                         <div class="input-group">
                                             <input name="qty_tonase" id="quantityTonase" type="number" step="any"
@@ -522,32 +706,8 @@
                                                 required>
                                             <span class="input-group-text" id="inputGroupPrepend">KG</span>
                                         </div>
-                                        <span class="shadow-none badge badge-danger mt-2">Sisa:
-                                            {{ number_format($tra->qty_tonase_sisa , 0, ',', '.') }}</span>
-                                        <div class="validationMessage"></div>
-                                        <input name="qty_curah_total" id="qty_curah_total"
-                                            value="{{ $tra->qty_tonase_sisa }}" type="hidden" step="any" min="0">
-                                        <input type="hidden" name="qty" id="qty_sisa_curah" step="any" min="0">
-                                        @endforeach
-                                        @elseif($lastcurah==0 || $match->count()==0)
-                                        @foreach ($zerocurah as $tra)
-                                        <label for="validationMessage" class="form-label">Quantity Tonase</label>
-                                        <div class="input-group">
-                                            <input name="qty_tonase" id="quantityTonase" type="number" value="0"
-                                                step="any" min="0" class="form-control qty_curah"
-                                                placeholder="QTY Tonase" required>
-                                            <span class="input-group-text" id="inputGroupPrepend">KG</span>
-                                        </div>
-                                        <span class="shadow-none badge badge-danger mt-2">Sisa:
-                                            {{ number_format($tra->qty , 0, ',', '.') }}</span>
-                                        <input name="qty_curah_total" id="qty_curah_total" value="{{ $tra->qty }}"
-                                            type="hidden" step="any" min="0">
-                                        <input name="qty_sisa_curah" id="qty_sisa_curah" value="0" type="hidden"
-                                            step="any" min="0">
-                                        <div class="validationMessage"></div>
-                                        @endforeach
-                                        @endif
-                                        @endforeach
+                                        <span class="shadow-none badge badge-danger mt-2" id="qtyTonaseSisa">Sisa:
+                                        </span>
                                     </div>
                                     <div class="col-lg-3 col-md-6 col-sm-12">
                                         <label for="validationCustom03" class="form-label">Jumlah Sak</label>
@@ -657,197 +817,283 @@
                     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
                     <script type='text/javascript'>
                     $(document).ready(function() {
-                        $('#editcurah').on('click', function() {
-                            // Get data attributes
-                            var id = $(this).data('id');
-                            var tanggalMuat = $(this).data('tanggal_muat');
-                            var kapal = $(this).data('kapal');
-                            var nopol = $(this).data('nopol');
-                            var portOfLoading = $(this).data('port_of_loading');
-                            var portOfDestination = $(this).data('port_of_destination');
-                            var quantityTonase = $(this).data('quantity_tonase');
-                            var jumlahSak = $(this).data('jumlah_sak');
-                            var quantityTimbangan = $(this).data('quantity_timbangan');
-                            var fileSuratTimbang = $(this).data('file_surat_timbang');
-                            var hargaHppKapal = $(this).data('harga_hpp_kapal');
-                            var noSuratJalan = $(this).data('no_surat_jalan');
-                            var fileSuratJalan = $(this).data('file_surat_jalan');
+                                function removeDecimal(number) {
+                                    return Math.floor(number);
+                                }
+                                $(document).on('click', '#show-hide-col', function(event) {
+                                    // Periksa apakah elemen yang diklik adalah .editcontainer
+                                    $(document).on('click', '#show-hide-col', function(event) {
+                                        // Periksa apakah elemen yang diklik adalah .editcontainer
+                                        if ($(event.target).hasClass('editcontainer')) {
+                                            // Get data attributes
 
-                            // Retrieve other data attributes in a similar manner
-
-                            // Set form field values
-                            $('#id_edit').val(id);
-                            $('#kapal').val(kapal);
-                            $('#nopol').val(nopol);
-                            $('#tanggalMuat').val(tanggalMuat);
-                            $('#portOfLoading').val(portOfLoading);
-                            $('#portOfDestination').val(portOfDestination);
-                            $('#quantityTonase').val(quantityTonase);
-                            $('#jumlahSak').val(jumlahSak);
-                            $('#quantityTimbangan').val(quantityTimbangan);
-                            $('#hargaHppKapal').val(hargaHppKapal);
-                            $('#noSuratJalan').val(noSuratJalan);
-                            $('#fileSuratJalan').attr('href', fileSuratJalan);
-                            $('#fileSuratTimbang').attr('href', fileSuratTimbang);
-                            // Set other form field values in a similar manner
-
-                            // Open your modal or perform other actions as needed
-                            // $('#yourModalId').modal('show');
-                        });
-
-                        function matchCustom(params, data) {
-                            // If there are no search terms, return all of the data
-                            if ($.trim(params.term) === '') {
-                                return data;
-                            }
-
-                            // Do not display the item if there is no 'text' property
-                            if (typeof data.text === 'undefined') {
-                                return null;
-                            }
-
-                            // `params.term` should be the term that is used for searching
-                            // `data.text` is the text that is displayed for the data object
-                            if (data.text.indexOf(params.term) > -1) {
-                                var modifiedData = $.extend({}, data, true);
+                                            var id = $(event.target).data('id');
+                                            var tanggalMuat = $(event.target).data('tanggal_muat');
+                                            var kapal = $(event.target).data('kapal');
+                                            var nopol = $(event.target).data('nopol');
+                                            var gudangMuat = $(event.target).data('gudang_muat');
+                                            var portOfLoading = $(event.target).data('port_of_loading');
+                                            var portOfDestination = $(event.target).data(
+                                                'port_of_destination');
+                                            var quantityTonase = $(event.target).data(
+                                                'quantity_tonase');
+                                            var qtyTonaseSisa = $(event.target).data('qty_tonase_sisa');
+                                            var jumlahSak = $(event.target).data('jumlah_sak');
+                                            var quantityTimbangan = $(event.target).data(
+                                                'quantity_timbangan');
+                                            var fileSuratTimbang = $(event.target).data(
+                                                'file_surat_timbang');
+                                            var hargaHppKapal = $(event.target).data('harga_hpp_kapal');
+                                            var noSuratJalan = $(event.target).data('no_surat_jalan');
+                                            var fileSuratJalan = $(event.target).data(
+                                                'file_surat_jalan');
+                                            var voyage = $(event.target).data('voyage');
+                                            var noContainer = $(event.target).data('no_container');
+                                            var noSegel = $(event.target).data('no_segel');
 
 
-                                // You can return modified objects from here
-                                // This includes matching the `children` how you want in nested data sets
-                                return modifiedData;
-                            }
+                                            // Retrieve other data attributes in a similar manner
 
-                            // Return `null` if the term should not be displayed
-                            return null;
-                        }
-                        $('#cb_po').select2({
-                            matcher: matchCustom
-                        });
-                        $('#cb_po').change(function() {
-                            var selectedId = $(this).val();
-                            // $('#sel_emp').find('option').not(':first').remove();
-                            if (selectedId !== '') {
-                                $.ajax({
-                                    url: "{{ route('getPoDate', ['id' => ':id']) }}"
-                                        .replace(':id', selectedId),
-                                    type: 'GET',
-                                    dataType: 'json',
-                                    success: function(response) {
-                                        var data = response[0];
-                                        $("#cb_kpl").empty();
-                                        if (response.length > 0) {
-                                            var defaultOption =
-                                                "<option value='0' disabled selected required>Pilih...</option>";
-                                            $("#cb_kpl").append(defaultOption);
-                                            for (var i = 0; i < response
-                                                .length; i++) {
-                                                var idkpl = response[i].id_kapal;
-                                                var voyage = response[i].voyage !=
-                                                    null ?
-                                                    response[i].voyage : '';
-                                                var namakpl = "<option value='" +
-                                                    idkpl +
-                                                    '-' + voyage + "' required>" +
-                                                    response[i].kode_kapal + ' ' +
-                                                    response[i].nama_kapal + ' ' +
-                                                    voyage +
-                                                    "</option>";
-                                                $("#cb_kpl").append(namakpl);
-                                            }
-                                        } else {
-                                            console.log("no data");
+                                            // Set form field values
+                                            $('#id_container').val(id);
+                                            $('#kapal_container').val(kapal);
+                                            $('#voyage').val(voyage);
+                                            $('#noSegel').val(noSegel);
+                                            $('#nopol_container').val(nopol);
+                                            $('#tanggalMuat_container').val(tanggalMuat);
+                                            $('#gudangMuat_container').val(gudangMuat);
+                                            $('#portOfLoading_container').val(portOfLoading);
+                                            $('#portOfDestination_container').val(portOfDestination);
+                                            $('#quantityTonase_container').val(removeDecimal(
+                                                quantityTonase));
+                                            $('#no_container').val(noContainer);
+                                            $('#qtyTonaseSisa_container').text('sisa:' + removeDecimal(
+                                                qtyTonaseSisa));
+                                            $('#jumlahSak_container').val(removeDecimal(jumlahSak));
+                                            $('#quantityTimbangan_container').val(removeDecimal(
+                                                quantityTimbangan));
+                                            $('#hargaHppKapal_container').val(hargaHppKapal);
+                                            $('#noSuratJalan_container').val(noSuratJalan);
+                                            $('#fileSuratJalan_container').attr('href', fileSuratJalan);
+                                            $('#fileSuratTimbang_container').attr('href',
+                                                fileSuratTimbang);
+
                                         }
-                                    },
-                                    error: function(xhr, status, error) {
-                                        console.log("AJAX Error: " + error);
+                                    });
+                                    $('.editcurah').on('click', function() {
+                                        // Get data attributes
+                                        var id = $(this).data('id');
+                                        var tanggalMuat = $(this).data('tanggal_muat');
+                                        var kapal = $(this).data('kapal');
+                                        var nopol = $(this).data('nopol');
+                                        var gudangMuat = $(this).data('gudang_muat');
+                                        var portOfLoading = $(this).data('port_of_loading');
+                                        var portOfDestination = $(this).data('port_of_destination');
+                                        var quantityTonase = $(this).data('quantity_tonase');
+                                        var qtyTonaseSisa = $(this).data('qty_tonase_sisa');
+                                        var jumlahSak = $(this).data('jumlah_sak');
+                                        var quantityTimbangan = $(this).data('quantity_timbangan');
+                                        var fileSuratTimbang = $(this).data('file_surat_timbang');
+                                        var hargaHppKapal = $(this).data('harga_hpp_kapal');
+                                        var noSuratJalan = $(this).data('no_surat_jalan');
+                                        var fileSuratJalan = $(this).data('file_surat_jalan');
+
+                                        // Retrieve other data attributes in a similar manner
+
+                                        // Set form field values
+                                        $('#id_edit').val(id);
+                                        $('#kapal').val(kapal);
+                                        $('#nopol').val(nopol);
+                                        $('#tanggalMuat').val(tanggalMuat);
+                                        $('#gudangMuat').val(gudangMuat);
+                                        $('#portOfLoading').val(portOfLoading);
+                                        $('#portOfDestination').val(portOfDestination);
+                                        $('#quantityTonase').val(removeDecimal(quantityTonase));
+                                        $('#qtyTonaseSisa').text('sisa:' + removeDecimal(
+                                            qtyTonaseSisa));
+                                        $('#jumlahSak').val(removeDecimal(jumlahSak));
+                                        $('#quantityTimbangan').val(removeDecimal(quantityTimbangan));
+                                        $('#hargaHppKapal').val(hargaHppKapal);
+                                        $('#noSuratJalan').val(noSuratJalan);
+                                        $('#fileSuratJalan').attr('href', fileSuratJalan);
+                                        $('#fileSuratTimbang').attr('href', fileSuratTimbang);
+                                        // Set other form field values in a similar manner
+
+                                        // Open your modal or perform other actions as needed
+                                        // $('#yourModalId').modal('show');
+                                    });
+
+                                    function convertToZero(value) {
+                                        // Parse the value to float and then round it to 2 decimal places
+                                        var parsedValue = parseFloat(value).toFixed(2);
+
+                                        // Check if the parsed value is "0.00" and return "0" instead
+                                        return parsedValue === "0.00" ? "0" : parsedValue;
                                     }
+
+                                    function matchCustom(params, data) {
+                                        // If there are no search terms, return all of the data
+                                        if ($.trim(params.term) === '') {
+                                            return data;
+                                        }
+
+                                        // Do not display the item if there is no 'text' property
+                                        if (typeof data.text === 'undefined') {
+                                            return null;
+                                        }
+
+                                        // `params.term` should be the term that is used for searching
+                                        // `data.text` is the text that is displayed for the data object
+                                        if (data.text.indexOf(params.term) > -1) {
+                                            var modifiedData = $.extend({}, data, true);
+
+
+                                            // You can return modified objects from here
+                                            // This includes matching the `children` how you want in nested data sets
+                                            return modifiedData;
+                                        }
+
+                                        // Return `null` if the term should not be displayed
+                                        return null;
+                                    }
+                                    $('#cb_po').select2({
+                                        matcher: matchCustom
+                                    });
+                                    $('#cb_po').change(function() {
+                                        var selectedId = $(this).val();
+                                        // $('#sel_emp').find('option').not(':first').remove();
+                                        if (selectedId !== '') {
+                                            $.ajax({
+                                                url: "{{ route('getPoDate', ['id' => ':id']) }}"
+                                                    .replace(':id', selectedId),
+                                                type: 'GET',
+                                                dataType: 'json',
+                                                success: function(response) {
+                                                    var data = response[0];
+                                                    $("#cb_kpl").empty();
+                                                    if (response.length > 0) {
+                                                        var defaultOption =
+                                                            "<option value='0' disabled selected required>Pilih...</option>";
+                                                        $("#cb_kpl").append(defaultOption);
+                                                        for (var i = 0; i < response
+                                                            .length; i++) {
+                                                            var idkpl = response[i]
+                                                                .id_kapal;
+                                                            var voyage = response[i]
+                                                                .voyage !=
+                                                                null ?
+                                                                response[i].voyage : '';
+                                                            var namakpl =
+                                                                "<option value='" +
+                                                                idkpl +
+                                                                '-' + voyage +
+                                                                "' required>" +
+                                                                response[i].kode_kapal +
+                                                                ' ' +
+                                                                response[i].nama_kapal +
+                                                                ' ' +
+                                                                voyage +
+                                                                "</option>";
+                                                            $("#cb_kpl").append(namakpl);
+                                                        }
+                                                    } else {
+                                                        console.log("no data");
+                                                    }
+                                                },
+                                                error: function(xhr, status, error) {
+                                                    console.log("AJAX Error: " + error);
+                                                }
+                                            });
+                                        } else {
+                                            $("#cb_kpl").val('');
+                                        }
+                                    });
+                                    $('#cb_kpl').change(function() {
+                                        var selectedId = $(this).val();
+                                        var parts = selectedId.split('-');
+                                        var id_kapal = parts[0];
+                                        var voyage = escape(parts[1]);
+                                        var selectedIdT = $('#cb_po').val();
+                                        if (voyage == '') {
+                                            console.log('null');
+                                            var v = 'null';
+                                            if (selectedId !== '' && selectedIdT !== '') {
+                                                $.ajax({
+                                                    url: "{{ route('getPoKapal', ['id_track' => ':id_track', 'id' => ':id', 'voyage' => ':voyage']) }}"
+                                                        .replace(':id_track', selectedIdT)
+                                                        .replace(':id', id_kapal)
+                                                        .replace(':voyage', v),
+                                                    type: 'GET',
+                                                    dataType: 'json',
+                                                    success: function(response) {
+                                                        var data = response[0];
+                                                        $('#td').empty();
+                                                        $('#td_jkt').empty();
+                                                        $('#ta').empty();
+                                                        if (response.length > 0) {
+                                                            for (var i = 0; i < response
+                                                                .length; i++) {
+                                                                $('#td').val(response[i]
+                                                                    .td);
+                                                                $('#td_jkt').val(response[i]
+                                                                    .td_jkt);
+                                                                $('#ta').val(response[i]
+                                                                    .ta);
+                                                            }
+                                                        } else {
+                                                            console.log("no data");
+                                                        }
+                                                    },
+                                                    error: function(xhr, status, error) {
+                                                        console.log("AJAX Error: " + error);
+                                                    }
+                                                });
+                                            } else {
+                                                $('#td').val('');
+                                                $('#td_jkt').val('');
+                                                $('#ta').val('');
+                                            }
+                                        } else if (voyage !== '') {
+                                            console.log(voyage);
+                                            if (selectedId !== '' && selectedIdT !== '') {
+                                                $.ajax({
+                                                    url: "{{ route('getPoKapal', ['id_track' => ':id_track', 'id' => ':id', 'voyage' => ':voyage']) }}"
+                                                        .replace(':id_track', selectedIdT)
+                                                        .replace(':id', id_kapal)
+                                                        .replace(':voyage', voyage),
+                                                    type: 'GET',
+                                                    dataType: 'json',
+                                                    success: function(response) {
+                                                        var data = response[0];
+                                                        $('#td').empty();
+                                                        $('#td_jkt').empty();
+                                                        $('#ta').empty();
+                                                        if (response.length > 0) {
+                                                            for (var i = 0; i < response
+                                                                .length; i++) {
+                                                                $('#td').val(response[i]
+                                                                    .td);
+                                                                $('#td_jkt').val(response[i]
+                                                                    .td_jkt);
+                                                                $('#ta').val(response[i]
+                                                                    .ta);
+                                                            }
+                                                        } else {
+                                                            console.log("no data");
+                                                        }
+                                                    },
+                                                    error: function(xhr, status, error) {
+                                                        console.log("AJAX Error: " + error);
+                                                    }
+                                                });
+                                            } else {
+                                                $('#td').val('');
+                                                $('#td_jkt').val('');
+                                                $('#ta').val('');
+                                            }
+                                        }
+                                    });
                                 });
-                            } else {
-                                $("#cb_kpl").val('');
-                            }
-                        });
-                        $('#cb_kpl').change(function() {
-                            var selectedId = $(this).val();
-                            var parts = selectedId.split('-');
-                            var id_kapal = parts[0];
-                            var voyage = escape(parts[1]);
-                            var selectedIdT = $('#cb_po').val();
-                            if (voyage == '') {
-                                console.log('null');
-                                var v = 'null';
-                                if (selectedId !== '' && selectedIdT !== '') {
-                                    $.ajax({
-                                        url: "{{ route('getPoKapal', ['id_track' => ':id_track', 'id' => ':id', 'voyage' => ':voyage']) }}"
-                                            .replace(':id_track', selectedIdT)
-                                            .replace(':id', id_kapal)
-                                            .replace(':voyage', v),
-                                        type: 'GET',
-                                        dataType: 'json',
-                                        success: function(response) {
-                                            var data = response[0];
-                                            $('#td').empty();
-                                            $('#td_jkt').empty();
-                                            $('#ta').empty();
-                                            if (response.length > 0) {
-                                                for (var i = 0; i < response
-                                                    .length; i++) {
-                                                    $('#td').val(response[i].td);
-                                                    $('#td_jkt').val(response[i]
-                                                        .td_jkt);
-                                                    $('#ta').val(response[i].ta);
-                                                }
-                                            } else {
-                                                console.log("no data");
-                                            }
-                                        },
-                                        error: function(xhr, status, error) {
-                                            console.log("AJAX Error: " + error);
-                                        }
-                                    });
-                                } else {
-                                    $('#td').val('');
-                                    $('#td_jkt').val('');
-                                    $('#ta').val('');
-                                }
-                            } else if (voyage !== '') {
-                                console.log(voyage);
-                                if (selectedId !== '' && selectedIdT !== '') {
-                                    $.ajax({
-                                        url: "{{ route('getPoKapal', ['id_track' => ':id_track', 'id' => ':id', 'voyage' => ':voyage']) }}"
-                                            .replace(':id_track', selectedIdT)
-                                            .replace(':id', id_kapal)
-                                            .replace(':voyage', voyage),
-                                        type: 'GET',
-                                        dataType: 'json',
-                                        success: function(response) {
-                                            var data = response[0];
-                                            $('#td').empty();
-                                            $('#td_jkt').empty();
-                                            $('#ta').empty();
-                                            if (response.length > 0) {
-                                                for (var i = 0; i < response
-                                                    .length; i++) {
-                                                    $('#td').val(response[i].td);
-                                                    $('#td_jkt').val(response[i]
-                                                        .td_jkt);
-                                                    $('#ta').val(response[i].ta);
-                                                }
-                                            } else {
-                                                console.log("no data");
-                                            }
-                                        },
-                                        error: function(xhr, status, error) {
-                                            console.log("AJAX Error: " + error);
-                                        }
-                                    });
-                                } else {
-                                    $('#td').val('');
-                                    $('#td_jkt').val('');
-                                    $('#ta').val('');
-                                }
-                            }
-                        });
-                    });
                     </script>
                     <script>
                     var table = $('#show-hide-col').DataTable({

@@ -27,7 +27,6 @@ use Illuminate\Support\Facades\Session;
 class MTrackingController extends Controller
 {
     public function index() {
-        
         $gudang = GudangMuat::where('status', 1)
                 ->orderBy('id_gudang', 'desc')
                 ->get();
@@ -53,13 +52,14 @@ class MTrackingController extends Controller
         $tbl_po = DocTracking::select('doc_tracking.no_po', 'purchase_orders.po_kebun', 'penerimas.estate',
                 'purchase_orders.total_qty', 'port_of_loading.id as id_pol','port_of_loading.nama_pol','port_of_destination.id as id_pod', 'port_of_destination.nama_pod',
                 'detail_tracking.status', 'kapals.id as id_kapal','kapals.kode_kapal','kapals.nama_kapal','pt_penerima.nama_penerima',
-                'gudang_muats.nama_gudang', 'barangs.nama_barang','purchase_orders.no_pl', 'detail_tracking.tgl_muat',
+                'gudang_muats.nama_gudang','gudang_muats.id_gudang', 'barangs.nama_barang','purchase_orders.no_pl', 'detail_tracking.tgl_muat',
                 'purchase_orders.po_kebun','detail_tracking.qty_tonase', 'detail_tracking.qty_timbang','detail_tracking.jml_sak',
                 'detail_tracking.nopol','detail_tracking.no_container','detail_tracking.voyage','detail_tracking.td','detail_tracking.td_jkt',
-                'detail_tracking.ta','customers.nama_customer','doc_tracking.status_kapal',
+                'detail_tracking.ta','customers.nama_customer','doc_tracking.status_kapal','detail_tracking_sisa.qty_tonase_sisa','detail_tracking_sisa.tipe',
                 'doc_tracking.id_track', 'detail_tracking.id_detail_track','detail_tracking.track_file','detail_tracking.door_file'
-                ,'detail_tracking.sj_file_name','detail_tracking.st_file_name', 'detail_tracking.harga_hpp', 'detail_tracking.no_sj')
+                ,'detail_tracking.sj_file_name','detail_tracking.st_file_name', 'detail_tracking.harga_hpp', 'detail_tracking.no_sj', 'detail_tracking.no_segel')
                 ->join('detail_tracking','detail_tracking.id_track','=','doc_tracking.id_track')
+                ->join('detail_tracking_sisa','detail_tracking_sisa.id_track','=','doc_tracking.id_track')
                 ->join('gudang_muats', 'gudang_muats.id_gudang', '=', 'detail_tracking.id_gudang')
                 ->join('purchase_orders', 'purchase_orders.po_muat', '=', 'doc_tracking.no_po')
                 ->join('port_of_loading', 'port_of_loading.id', '=', 'detail_tracking.id_pol')

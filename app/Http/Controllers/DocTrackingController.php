@@ -242,6 +242,105 @@ class DocTrackingController extends Controller
         ]);
         return redirect()->back();
     }
+    public function updatecurah(Request $request, $id) {
+        $request->validate([
+            'file' => 'mimes:jpeg,png,pdf',
+            'file_tbg' => 'mimes:jpeg,png,pdf',
+        ]);
+    
+        $detailTracking = DetailTracking::findOrFail($id);
+    
+        // Handle file uploads
+        $this->handleFileUploadUpdateCurah($request, $detailTracking);
+    
+        // Update detail tracking information
+        $this->updateDetailTrackingUpdateCurah($request, $detailTracking);
+    
+        // Update DetailTrackingSisa if necessary
+        $this->updateDetailTrackingSisaUpdateCurah($request);
+    
+        return redirect()->back();
+    }
+    protected function handleFileUploadUpdateCurah($request, $detailTracking) {
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $fileName = $this->uploadFileUpdateCurah($file);
+            $detailTracking->sj_file_name = $fileName;
+            $detailTracking->sj_file_path = 'uploads/tracking/' . $fileName;
+        }
+    
+        if ($request->hasFile('file_tbg')) {
+            $file2 = $request->file('file_tbg');
+            $fileName2 = $this->uploadFileUpdateCurah($file2);
+            $detailTracking->st_file_name = $fileName2;
+            $detailTracking->st_file_path = 'uploads/tracking/' . $fileName2;
+        }
+    
+        $detailTracking->save();
+    }
+    
+    protected function uploadFileUpdateCurah($file) {
+        $fileName = time() . '_' . $file->getClientOriginalName();
+        $filePath = storage_path('app/public/uploads/tracking/' . $fileName);
+    
+        if (in_array($file->getMimeType(), ['image/jpeg', 'image/jpg', 'image/png'])) {
+            $this->handleImageUploadUpdateCurah($file, $filePath);
+        } else {
+            Storage::disk('public')->putFileAs('uploads/tracking', $file, $fileName);
+        }
+    
+        return $fileName;
+    }
+    
+    protected function handleImageUploadUpdateCurah($file, $filePath) {
+        $quality = 50;
+        $imgInfo = getimagesize($file->getPathname());
+        $mime = $imgInfo['mime'];
+    
+        switch ($mime) {
+            case 'image/jpeg':
+                $image = imagecreatefromjpeg($file->getPathname());
+                break;
+            case 'image/png':
+                $image = imagecreatefrompng($file->getPathname());
+                break;
+            default:
+                $image = imagecreatefromjpeg($file->getPathname());
+        }
+    
+        if ($mime === 'image/png') {
+            $quality = floor(9 * $quality / 100);
+        }
+    
+        imagejpeg($image, $filePath, $quality);
+        imagedestroy($image);
+    }
+    
+    protected function updateDetailTrackingUpdateCurah($request, $detailTracking) {
+        $detailTracking->fillUpdateCurah($request->except(['file', 'file_tbg', '_token']));
+        $detailTracking->save();
+    }
+    
+    protected function updateDetailTrackingSisaUpdateCurah($request) {
+        $c = $request->qty_sisa_curah2;
+        $b = $request->qty;
+    
+        $detailTrackingSisa = DetailTrackingSisa::where('id_track', $request->id_track)
+            ->where('tipe', 'Curah')->first();
+    
+        if ($detailTrackingSisa) {
+            $detailTrackingSisa->qty_tonase_sisa = ($c !== $b) ? $request->qty : $request->qty_sisa_curah;
+            $detailTrackingSisa->save();
+        } elseif ($c === $b) {
+            DetailTrackingSisa::create([
+                'id_track'          => $request->id_track,
+                'qty_tonase_sisa'   => $request->qty_sisa_curah,
+                'qty_total_tonase'  => $request->qty_curah_total,
+                'status'            => 1,
+                'tipe'              => 'Curah'
+            ]);
+        }
+    }
     public function updateContainer(Request $request) {
         
         $request->validate([

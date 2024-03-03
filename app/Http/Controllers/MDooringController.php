@@ -83,15 +83,39 @@ class MDooringController extends Controller
             )
         );
     }
+    
+   public function geteditcontainer($id)
+    {
+        $detailDooring = DetailDooring::query()
+    ->join('detail_tracking', 'detail_dooring.id_detail_track', '=', 'detail_tracking.id_detail_track')
+    ->join('kapals', 'kapals.id', '=', 'detail_dooring.id_kapal')
+    ->select([
+        'detail_dooring.id_dooring',
+        'detail_dooring.id_detail_door',
+        'kapals.nama_kapal',
+        'detail_tracking.no_container',
+        'detail_tracking.voyage',
+        'detail_tracking.no_segel',
+        'detail_tracking.id_track',
+        'detail_dooring.id_detail_track',
 
-    public function getKapalByTrack(Request $request)
+        
+    ])
+    ->where('detail_dooring.status', '<>', 0)
+    ->where('detail_dooring.id_detail_door', $id)
+    ->get();
+
+// Assuming you want to return the result as JSON
+return response()->json($detailDooring);
+    }
+
+       public function getKapalByTrack(Request $request)
     {
         // Validate the request
         $request->validate([
             'id_track' => 'required|integer', // Assuming id_track is an integer
         ]);
-        // DB::enableQueryLog();
-                      $kapal = Kapal::select("*", "detail_tracking.id_track")
+                      $kapal = Kapal::select("*", "detail_tracking.id_track", "detail_dooring.id_detail_door")
             ->join(
                 "c_ports",
                 "c_ports.id_company_port",
@@ -104,6 +128,9 @@ class MDooringController extends Controller
                 "=",
                 "kapals.id"
             )
+            ->leftJoin('detail_dooring', function ($join) use ($request) {
+                $join->on('detail_dooring.id_detail_track', '=', 'detail_tracking.id_detail_track');
+            })
             ->where("kapals.status", 1)
             ->whereIn("detail_tracking.status", [2, 3])
             ->where('id_track', $request->id_track)
@@ -113,7 +140,6 @@ class MDooringController extends Controller
                 "detail_tracking.id_kapal",
             )
             ->get();
-            // dd(DB::getQueryLog());
         return response()->json($kapal);
     }
         public function history(){
