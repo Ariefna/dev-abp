@@ -785,7 +785,25 @@
                                     </form>
                                 </div>
                             </div>
-                        </div>
+                            <div class="col-md-6">
+                                <label for="validationCustom03" class="form-label">Upload File No Tiket</label>
+                                <div class="mb-3">
+                                    <input name="file_notiket" accept=".jpg, .png, .pdf" class="form-control file-upload-input" style="height: 48px; padding: 0.75rem 1.25rem;" type="file" id="formFile">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="validationCustom03" class="form-label">Upload File Surat Jalan</label>
+                                <div class="mb-3">
+                                    <input name="file_nosj" accept=".jpg, .png, .pdf" class="form-control file-upload-input" style="height: 48px; padding: 0.75rem 1.25rem;" type="file" id="formFile">
+                                </div>
+                            </div>                                                
+                            
+                            
+                            <div class="modal-footer justify-content-center">
+                                <button id ="btn-modal-curah" type="submit" class="btn btn-primary">Tambah</button>
+                                <button type="button" class="btn btn btn-light-dark" data-bs-dismiss="modal"><i class="flaticon-cancel-12"></i>Batal</button>
+                            </div>
+                        </form>
                     </div>
                     {{-- container --}}
                     {{-- @foreach ($doorzero as $tra) --}}

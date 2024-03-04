@@ -1293,13 +1293,28 @@ class DooringController extends Controller
     
         // Updating DetailDooringSisa record
         $qty_sisa_curah2 = $request->qty_sisa_curah2;
-        $qty = $request->qty;
+        $qty = $request->qty_tonase;
         $qty_curah_total = $request->qty_curah_total;
+        $id_door = $request->id_door;
+        $isExistDetail = DetailDooringSisa::where('id_dooring', $id_door)
+                                           ->where('tipe', 'Curah')
+                                           ->first();
+
+        if ($isExistDetail) {
+            // If found, decrease 'qty_tonase_sisa' by $qty
+            $isExistDetail->qty_tonase_sisa -= $qty;
+            $isExistDetail->save();
+        } else {
+            // If not found, create a new record
+            $newDetail = DetailDooringSisa::create([
+                'id_dooring'        => $id_door,
+                'qty_tonase_sisa'   => $request->qty_sisa_curah,
+                'qty_total_tonase'  => $request->qty_curah_total,
+                'status'            => 1,
+                'tipe'              => 'Curah'
+            ]);
+        }
     
-        DetailDooringSisa::updateOrCreate(
-            ["id_dooring" => $request->id_door, "tipe" => "Curah"],
-            ["qty_tonase_sisa" => $qty == $qty_sisa_curah2 ? $qty_curah_total : $qty]
-        );
     
         // Redirect back
         return redirect()->back();
@@ -1352,13 +1367,28 @@ class DooringController extends Controller
     
         // Updating DetailDooringSisa record
         $qty_sisa_container2 = $request->qty_sisa_container2;
-        $qty = $request->qty;
+        $qty = $request->qty_tonase;
         $qty_container_total = $request->qty_container_total;
     
-        DetailDooringSisa::updateOrCreate(
-            ["id_dooring" => $request->id_door, "tipe" => "Container"],
-            ["qty_tonase_sisa" => $qty == $qty_sisa_container2 ? $qty_container_total : $qty]
-        );
+        $id_door = $request->id_door;
+        $isExistDetail = DetailDooringSisa::where('id_dooring', $id_door)
+        ->where('tipe', 'Container')
+        ->first();
+
+if ($isExistDetail) {
+// If found, decrease 'qty_tonase_sisa' by $qty
+$isExistDetail->qty_tonase_sisa -= $qty;
+$isExistDetail->save();
+} else {
+// If not found, create a new record
+$newDetail = DetailDooringSisa::create([
+    "id_dooring" => $id_door,
+    "qty_tonase_sisa" => $request->qty_sisa_container,
+    "qty_total_tonase" => $request->qty_container_total,
+    "status" => 1,
+    "tipe" => "Container",
+]);
+}
     
         // Redirect back
         return redirect()->back();
@@ -1423,7 +1453,7 @@ class DooringController extends Controller
 
     $detailDooring->save();
 
-    $this->updateDetailDooringSisa($request);
+    // $this->updateDetailDooringSisa($request);
 
     return redirect()->back();
 }
