@@ -175,6 +175,7 @@
                                                         <th>Qty Timbang Kebun</th>
                                                         <th>Susut</th>
                                                         <th>Nama Kapal</th>
+                                                        <th>No Surat Jalan</th>
                                                         <th>TD</th>
                                                         <th class="text-center">Status</th>
                                                         <th class="text-center">Action</th>
@@ -264,6 +265,7 @@
                                                             <td>{{ number_format($md->qty_timbang , 0, ',', ',') }}</td>
                                                             <td>{{ number_format($susut , 0, ',', ',') }}</td>
                                                             <td>{{ $namaKapal }}</td>
+                                                            <td>{{ $md->no_sj }}</td>
                                                             <td
                                                                 data-order="{{ $md->docDooring->docTracking->detailTracking->td }}">
                                                                 {{ $md->docDooring->docTracking->detailTracking->td ? date('d-M-Y', strtotime($md->docDooring->docTracking->detailTracking->td)) : '' }}
@@ -1249,7 +1251,7 @@
                                 }
                             },
                             {
-                                text: 'TD',
+                                text: 'No Surat Jalan',
                                 className: 'btn btn-secondary toggle-vis mb-1',
                                 action: function(e, dt, node, config) {
                                     var column = dt.column(18);
@@ -1257,10 +1259,18 @@
                                 }
                             },
                             {
-                                text: 'Status',
+                                text: 'TD',
                                 className: 'btn btn-secondary toggle-vis mb-1',
                                 action: function(e, dt, node, config) {
                                     var column = dt.column(19);
+                                    column.visible(!column.visible());
+                                }
+                            },
+                            {
+                                text: 'Status',
+                                className: 'btn btn-secondary toggle-vis mb-1',
+                                action: function(e, dt, node, config) {
+                                    var column = dt.column(20);
                                     column.visible(!column.visible());
                                 }
                             },
