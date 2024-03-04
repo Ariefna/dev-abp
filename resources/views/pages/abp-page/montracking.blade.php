@@ -210,6 +210,7 @@
                                                         <th>TD</th>
                                                         <th>TD JKT</th>
                                                         <th>TA</th>
+                                                        <th>No Surat Jalan</th>
                                                         <th class="text-center">Status</th>
                                                         <th class="text-center">Action</th>
                                                     </tr>
@@ -250,6 +251,7 @@
                                                         <td data-order="{{ $tra->ta }}">
                                                             {{ $tra->ta ? date('d-M-Y', strtotime($tra->ta)) : '' }}
                                                         </td>
+                                                        <td class="text-center">{{ $tra->no_sj }}</td>
                                                         <td class="text-center">
                                                             @if ($tra->status_kapal == 1)
                                                             <span class="shadow-none badge badge-success">Proses
@@ -508,7 +510,7 @@
                                         <label for="notAllowCont" class="form-label">Quantity Tonases</label>
                                         <div class="input-group">
                                             <input name="qty_tonase" step="any" min="0" id="quantityTonase_container"
-                                                type="number" class="form-control qty_cont" placeholder="QTY Tonase"
+                                                type="number" class="form-control qty_cont" placeholder="QTY Tonase" readonly="readonly"
                                                 required>
                                             <span class="input-group-text" id="inputGroupPrepend">KG</span>
                                         </div>
@@ -522,14 +524,14 @@
                                     </div>
                                     <div class="col-md-3">
                                         <label for="validationCustom03" class="form-label">Jumlah Sak</label>
-                                        <input name="jml_sak" type="number" class="form-control"
+                                        <input name="jml_sak" type="number" class="form-control" readonly="readonly"
                                             id="jumlahSak_container" placeholder="Jumlah Sak" required>
                                     </div>
                                     <div class="col-md-3">
                                         <label for="validationCustom03" class="form-label">Quantity
                                             Timbangan</label>
                                         <div class="input-group">
-                                            <input name="qty_timbang" id="quantityTimbangan_container" step="any"
+                                            <input name="qty_timbang" id="quantityTimbangan_container" step="any" readonly="readonly"
                                                 min="0" type="number" class="form-control" placeholder="QTY Timbang"
                                                 required>
                                             <span class="input-group-text" id="inputGroupPrepend">KG</span>
@@ -702,7 +704,7 @@
                                         <label for="validationMessage" class="form-label">Quantity Tonase </label>
                                         <div class="input-group">
                                             <input name="qty_tonase" id="quantityTonase" type="number" step="any"
-                                                min="0" class="form-control qty_curah" placeholder="QTY Tonase"
+                                                min="0" class="form-control qty_curah" placeholder="QTY Tonase" readonly="readonly"
                                                 required>
                                             <span class="input-group-text" id="inputGroupPrepend">KG</span>
                                         </div>
@@ -711,7 +713,7 @@
                                     </div>
                                     <div class="col-lg-3 col-md-6 col-sm-12">
                                         <label for="validationCustom03" class="form-label">Jumlah Sak</label>
-                                        <input name="jml_sak" type="number" class="form-control" id="jumlahSak"
+                                        <input name="jml_sak" type="number" class="form-control" id="jumlahSak" readonly="readonly"
                                             placeholder="Jumlah Sak" required>
                                     </div>
 
@@ -719,7 +721,7 @@
                                         <label for="validationCustom03" class="form-label">Quantity Timbangan</label>
                                         <div class="input-group">
                                             <input name="qty_timbang" step="any" min="0" type="number"
-                                                class="form-control" placeholder="QTY Timbang" id="quantityTimbangan"
+                                                class="form-control" placeholder="QTY Timbang" id="quantityTimbangan" readonly="readonly"
                                                 required>
                                             <span class="input-group-text" id="inputGroupPrepend">KG</span>
                                         </div>
@@ -879,6 +881,7 @@
                                                 fileSuratTimbang);
 
                                         }
+                                    });
                                     });
                                     $('.editcurah').on('click', function() {
                                         // Get data attributes
@@ -1278,7 +1281,7 @@
                                 }
                             },
                             {
-                                text: 'Status',
+                                text: 'No Surat Jalan',
                                 className: 'btn btn-secondary toggle-vis mb-1',
                                 action: function(e, dt, node, config) {
                                     var column = dt.column(20);
@@ -1286,10 +1289,18 @@
                                 }
                             },
                             {
-                                text: 'Action',
+                                text: 'Status',
                                 className: 'btn btn-secondary toggle-vis mb-1',
                                 action: function(e, dt, node, config) {
                                     var column = dt.column(21);
+                                    column.visible(!column.visible());
+                                }
+                            },
+                            {
+                                text: 'Action',
+                                className: 'btn btn-secondary toggle-vis mb-1',
+                                action: function(e, dt, node, config) {
+                                    var column = dt.column(22);
                                     column.visible(!column.visible());
                                 }
                             },

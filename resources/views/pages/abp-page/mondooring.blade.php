@@ -520,7 +520,7 @@
                                         <label for="validationCustom01" class="form-label">QTY Tonase Dooring</label>
                                         <div class="input-group">
                                             <input type="number" name="qty_tonase" id="qtyTonaseDooring"
-                                                class="form-control qty_container" placeholder="QTY Tonase">
+                                                class="form-control qty_container" placeholder="QTY Tonase" readonly="true">
                                             <span class="input-group-text" id="inputGroupPrepend">KG</span>
                                         </div>
                                         <span class="shadow-none badge badge-danger mt-2" id="qtyTonaseSisa">Sisa:
@@ -540,7 +540,7 @@
                                         <label for="validationCustom01" class="form-label">QTY Timbang Dooring</label>
                                         <div class="input-group">
                                             <input type="number" name="qty_timbang" class="form-control"
-                                                placeholder="QTY Timbang" id="qtyTimbangDooring">
+                                                placeholder="QTY Timbang" id="qtyTimbangDooring"  readonly="true">
                                             <span class="input-group-text" id="inputGroupPrepend">KG</span>
                                         </div>
                                     </div>
@@ -548,7 +548,7 @@
                                         <label for="validationCustom01" class="form-label">QTY Tonase BAP</label>
                                         <div class="input-group">
                                             <input type="number" name="qty_tonase_bap" class="form-control"
-                                                placeholder="QTY BAP" id="qtyTonaseBap">
+                                                placeholder="QTY BAP" id="qtyTonaseBap"  readonly="true">
                                             <span class="input-group-text" id="inputGroupPrepend">KG</span>
                                         </div>
                                     </div>
@@ -650,7 +650,7 @@
                                         <label for="validationCustom01" class="form-label">QTY Tonase Dooring</label>
                                         <div class="input-group">
                                             <input type="number" name="qty_tonase" id="quantityTonaseDooring"
-                                                class="form-control qty_curah" placeholder="QTY Tonase">
+                                                class="form-control qty_curah" placeholder="QTY Tonase" readonly="true">
                                             <span class="input-group-text" id="inputGroupPrepend">KG</span>
                                         </div>
                                         <span class="shadow-none badge badge-danger mt-2" id="qtyTonaseSisaCurah">Sisa:
@@ -668,7 +668,7 @@
                                         <label for="validationCustom01" class="form-label">QTY Timbang Dooring</label>
                                         <div class="input-group">
                                             <input type="number" name="qty_timbang" id="quantityTimbangDooring"
-                                                class="form-control" placeholder="QTY Timbang">
+                                                class="form-control" placeholder="QTY Timbang" readonly="true">
                                             <span class="input-group-text" id="inputGroupPrepend">KG</span>
                                         </div>
                                     </div>
@@ -676,7 +676,7 @@
                                         <label for="validationCustom01" class="form-label">QTY Tonase BAP</label>
                                         <div class="input-group">
                                             <input type="number" name="qty_tonase_bap" class="form-control"
-                                                placeholder="QTY BAP" id="quantityTonaseBap">
+                                                placeholder="QTY BAP" id="quantityTonaseBap" readonly="true">
                                             <span class="input-group-text" id="inputGroupPrepend">KG</span>
                                         </div>
                                     </div>
