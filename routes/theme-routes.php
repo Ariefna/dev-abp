@@ -125,6 +125,7 @@ foreach ($prefixRouters as $prefixRouter) {
 
             Route::prefix('document')->group(function () {
                 Route::match(['put','post'], '/tracking/updatecontainer', [\App\Http\Controllers\DocTrackingController::class, 'updatecontainer'])->name('tracking.updatecontainer');
+                Route::match(['put','post'], '/tracking/updatecurah', [\App\Http\Controllers\DocTrackingController::class, 'updatecurah'])->name('tracking.updatecurah');
                 Route::get('/penawaran-harga', function () {
                     return view('pages.abp-page.dph', ['title' => 'Adhipramana Bahari Perkasa', 'breadcrumb' => 'This Breadcrumb']);
                 })->name('penawaran-harga');
@@ -174,6 +175,9 @@ foreach ($prefixRouters as $prefixRouter) {
                 Route::get('/dooring/dr/getKapalDooring/{id}/{voyage}', [\App\Http\Controllers\DooringController::class, 'getKapalDooring'])
                         ->where('voyage', '(.*)') // Use a wildcard pattern for 'voyage'
                         ->name('getKapalDooring');
+                Route::post('/dooring/dr/getKapalDooring', [\App\Http\Controllers\DooringController::class, 'getKapalDooringByID'])
+                        ->where('voyage', '(.*)') // Use a wildcard pattern for 'voyage'
+                        ->name('getKapalDooringByID');
                 Route::get('/dooring/dr/getContainer/{id}', [\App\Http\Controllers\DooringController::class, 'getContainer'])->name('getContainer');            
                 Route::get('/dooring/dr/getPoDooring/{id}', [\App\Http\Controllers\DooringController::class, 'getPoDooring'])->name('getPoDooring');
                 Route::match(['get', 'post'], '/dooring/savecurah', [\App\Http\Controllers\DooringController::class, 'savecurah'])->name('dooring.savecurah');
