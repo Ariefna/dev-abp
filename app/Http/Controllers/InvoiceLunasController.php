@@ -90,7 +90,7 @@ class InvoiceLunasController extends Controller
     ->leftJoin('c_ports', 'c_ports.id_company_port', '=', 'kapals.id_company_port')
     ->where('invoice_pelunasan.id_invoice_pel', $id)
     ->whereNotIn('detail_invoice_pel.status',[0])
-    ->groupBy('c_ports.nama', 'kapals.kode_kapal')
+    ->groupBy('c_ports.nama', 'kapals.kode_kapal','kapals.id')
     ->get();
     $deskripsi = InvoicePelunasan::select(
         DB::raw('CONCAT("FREIGHT (", ROUND(detail_invoice_pel.total_tonase_dooring, 0), " KG X Rp. ", ROUND(detail_invoice_pel.harga_brg, 0), ") PO ", purchase_orders.po_muat) as name_doring'),
@@ -389,6 +389,50 @@ class InvoiceLunasController extends Controller
         ]);
         return redirect()->back();
     }
+    public function calculatepost(Request $request)
+    {
+        $dooringId = $request->id_dooring;
+        if ($request->cbkapal == 1) {
+            $jenis = 'Container';
+        } else {
+            $jenis = 'Curah';
+        }
+        $details = DB::table('doc_tracking')
+        ->join('purchase_orders', function($join) {
+            $join->on('purchase_orders.po_muat', '=', 'doc_tracking.no_po')
+                 ->where('purchase_orders.status', '=', 2);
+        })
+            ->join('detail_p_h_s', 'purchase_orders.id_detail_ph', '=', 'detail_p_h_s.id_detail_ph')
+            ->join('doc_dooring', 'doc_dooring.id_track', '=', 'doc_tracking.id_track')
+            ->join('detail_dooring', 'detail_dooring.id_dooring', '=', 'doc_dooring.id_dooring')
+            ->select(
+                DB::raw("CONCAT(doc_tracking.no_po, ' (', detail_dooring.estate, ')') as po_muat_estate"),
+                'detail_dooring.estate',
+                'detail_dooring.tipe',
+                DB::raw("SUM(detail_dooring.qty_tonase) as total_qty_tonase"),
+                DB::raw("SUM(detail_dooring.qty_timbang) as total_qty_timbang"),
+                'detail_p_h_s.oa_container as susut',
+                DB::raw("(detail_p_h_s.oa_container * SUM(detail_dooring.qty_tonase)) as hrg_tonase"),
+                DB::raw("(detail_p_h_s.oa_container * SUM(detail_dooring.qty_timbang)) as hrg_timbang"),
+                DB::raw("CASE 
+            WHEN '$jenis' = 'Container' 
+                THEN detail_p_h_s.oa_container
+            ELSE detail_p_h_s.oa_kpl_kayu
+        END AS hrg_frg")
+            )
+            ->where('detail_dooring.tipe', $jenis)
+            ->whereIn('doc_dooring.status', [2, 3])
+            ->whereIn('detail_dooring.status', [2, 3])
+            ->where('detail_dooring.id_dooring', $dooringId)
+            ->where('detail_dooring.estate', '=', $request->estate)
+            ->groupBy('detail_dooring.estate', 'doc_tracking.no_po', 'detail_dooring.tipe')
+            ->first();
+
+        $details->total_qty_tonase ?? 0;
+        $details->total_qty_timbang ?? 0;
+        $details->susut ?? 0;
+        return response()->json($details);
+    }
     public function calculate($dooringId, Request $request)
     {
         if ($request->cbkapal == 1) {
@@ -397,7 +441,10 @@ class InvoiceLunasController extends Controller
             $jenis = 'Curah';
         }
         $details = DB::table('doc_tracking')
-            ->join('purchase_orders', 'purchase_orders.po_muat', '=', 'doc_tracking.no_po')
+        ->join('purchase_orders', function($join) {
+            $join->on('purchase_orders.po_muat', '=', 'doc_tracking.no_po')
+                 ->where('purchase_orders.status', '=', 2);
+        })
             ->join('detail_p_h_s', 'purchase_orders.id_detail_ph', '=', 'detail_p_h_s.id_detail_ph')
             ->join('doc_dooring', 'doc_dooring.id_track', '=', 'doc_tracking.id_track')
             ->join('detail_dooring', 'detail_dooring.id_dooring', '=', 'doc_dooring.id_dooring')
@@ -472,8 +519,9 @@ class InvoiceLunasController extends Controller
                     $query->select('id_track')->from('invoice_dp');
                 })
                 ->whereNotIn('doc_dooring.id_dooring', function ($query) {
-                    $query->select('id_dooring')->from('invoice_pelunasan')->where('doc_dooring.status', 1);
+                    $query->select('id_dooring')->from('invoice_pelunasan');
                 })
+                ->whereIn('doc_dooring.status', [3])
                 ->get();
         }
         return response()->json($data);
