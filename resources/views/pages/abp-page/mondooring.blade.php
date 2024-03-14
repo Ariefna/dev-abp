@@ -613,7 +613,7 @@
                             <div class="modal-body">
                                 <h5>Edit Detail Dooring Kapal Curah</h5>
                                 <form name="modal-tracking-ada" class="row g-3 needs-validation"
-                                    action="{{ route('dooring.updatecurah') }}" method="POST" novalidate>
+                                    action="{{ route('dooring.updatecurah') }}" enctype="multipart/form-data" method="POST" novalidate>
                                     @csrf
                                     <input type="hidden" id="idCurah" name="id">
                                     <div class="col-md-6">

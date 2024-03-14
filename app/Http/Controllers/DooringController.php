@@ -1188,12 +1188,15 @@ class DooringController extends Controller
             $detailDooring->st_file_name = $this->uploadFile(
                 $request->file("file_notiket")
             );
+            $detailDooring->st_file_path = 'uploads/dooring'.$detailDooring->st_file_name;
         }
 
         if ($request->hasFile("file_nosj")) {
             $detailDooring->sj_file_name = $this->uploadFile(
                 $request->file("file_nosj")
             );
+            $detailDooring->sj_file_path = 'uploads/dooring'.$detailDooring->sj_file_name;
+
         }
 
         $detailDooring->save();
@@ -1209,17 +1212,7 @@ class DooringController extends Controller
         $fileType = $file->getMimeType();
 
         if (in_array($fileType, ["image/jpeg", "image/jpg", "image/png"])) {
-            $quality = 50;
-            $image = Image::make($file->getPathname());
-
-            if ($fileType === "image/png") {
-                $quality = floor((9 * $quality) / 100);
-            }
-
-            $image->save(
-                storage_path("app/public/uploads/dooring/" . $fileName),
-                $quality
-            );
+            $file->move(storage_path("app/public/uploads/dooring/"), $fileName);
         } else {
             $file->storeAs("uploads/dooring", $fileName, "public");
         }
@@ -1434,10 +1427,12 @@ $newDetail = DetailDooringSisa::create([
 
     if ($request->hasFile("file_notiket")) {
         $detailDooring->st_file_name = $this->uploadFile($request->file("file_notiket"));
+        $detailDooring->st_file_path = 'uploads/dooring'.$detailDooring->st_file_name;
     }
 
     if ($request->hasFile("file_surat_jalan")) {
         $detailDooring->sj_file_name = $this->uploadFile($request->file("file_surat_jalan"));
+        $detailDooring->sj_file_path = 'uploads/dooring'.$detailDooring->sj_file_name;
     }
 
     $detailDooring->tgl_muat = $request->tgl_brkt;
