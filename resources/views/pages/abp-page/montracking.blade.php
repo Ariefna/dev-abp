@@ -881,49 +881,47 @@
                                                 fileSuratTimbang);
 
                                         }
+                                        if ($(event.target).hasClass('editcurah')) {
+                                            // Get data attributes
+
+                                            var id = $(event.target).data('id');
+                                            var tanggalMuat = $(event.target).data('tanggal_muat');
+                                            var kapal = $(event.target).data('kapal');
+                                            var nopol = $(event.target).data('nopol');
+                                            var gudangMuat = $(event.target).data('gudang_muat');
+                                            var portOfLoading = $(event.target).data('port_of_loading');
+                                            var portOfDestination = $(event.target).data('port_of_destination');
+                                            var quantityTonase = $(event.target).data('quantity_tonase');
+                                            var qtyTonaseSisa = $(event.target).data('qty_tonase_sisa');
+                                            var jumlahSak = $(event.target).data('jumlah_sak');
+                                            var quantityTimbangan = $(event.target).data('quantity_timbangan');
+                                            var fileSuratTimbang = $(event.target).data('file_surat_timbang');
+                                            var hargaHppKapal = $(event.target).data('harga_hpp_kapal');
+                                            var noSuratJalan = $(event.target).data('no_surat_jalan');
+                                            var fileSuratJalan = $(event.target).data('file_surat_jalan');
+
+                                            // Retrieve other data attributes in a similar manner
+
+                                            // Set form field values
+                                            $('#id_edit').val(id);
+                                            $('#kapal').val(kapal);
+                                            $('#nopol').val(nopol);
+                                            $('#tanggalMuat').val(tanggalMuat);
+                                            $('#gudangMuat').val(gudangMuat);
+                                            $('#portOfLoading').val(portOfLoading);
+                                            $('#portOfDestination').val(portOfDestination);
+                                            $('#quantityTonase').val(removeDecimal(quantityTonase));
+                                            $('#qtyTonaseSisa').text('sisa:' + removeDecimal(
+                                                qtyTonaseSisa));
+                                            $('#jumlahSak').val(removeDecimal(jumlahSak));
+                                            $('#quantityTimbangan').val(removeDecimal(quantityTimbangan));
+                                            $('#hargaHppKapal').val(hargaHppKapal);
+                                            $('#noSuratJalan').val(noSuratJalan);
+                                            $('#fileSuratJalan').attr('href', fileSuratJalan);
+                                            $('#fileSuratTimbang').attr('href', fileSuratTimbang);
+
+                                        }
                                     });
-                                    });
-                                    $('.editcurah').on('click', function() {
-                                        // Get data attributes
-                                        var id = $(this).data('id');
-                                        var tanggalMuat = $(this).data('tanggal_muat');
-                                        var kapal = $(this).data('kapal');
-                                        var nopol = $(this).data('nopol');
-                                        var gudangMuat = $(this).data('gudang_muat');
-                                        var portOfLoading = $(this).data('port_of_loading');
-                                        var portOfDestination = $(this).data('port_of_destination');
-                                        var quantityTonase = $(this).data('quantity_tonase');
-                                        var qtyTonaseSisa = $(this).data('qty_tonase_sisa');
-                                        var jumlahSak = $(this).data('jumlah_sak');
-                                        var quantityTimbangan = $(this).data('quantity_timbangan');
-                                        var fileSuratTimbang = $(this).data('file_surat_timbang');
-                                        var hargaHppKapal = $(this).data('harga_hpp_kapal');
-                                        var noSuratJalan = $(this).data('no_surat_jalan');
-                                        var fileSuratJalan = $(this).data('file_surat_jalan');
-
-                                        // Retrieve other data attributes in a similar manner
-
-                                        // Set form field values
-                                        $('#id_edit').val(id);
-                                        $('#kapal').val(kapal);
-                                        $('#nopol').val(nopol);
-                                        $('#tanggalMuat').val(tanggalMuat);
-                                        $('#gudangMuat').val(gudangMuat);
-                                        $('#portOfLoading').val(portOfLoading);
-                                        $('#portOfDestination').val(portOfDestination);
-                                        $('#quantityTonase').val(removeDecimal(quantityTonase));
-                                        $('#qtyTonaseSisa').text('sisa:' + removeDecimal(
-                                            qtyTonaseSisa));
-                                        $('#jumlahSak').val(removeDecimal(jumlahSak));
-                                        $('#quantityTimbangan').val(removeDecimal(quantityTimbangan));
-                                        $('#hargaHppKapal').val(hargaHppKapal);
-                                        $('#noSuratJalan').val(noSuratJalan);
-                                        $('#fileSuratJalan').attr('href', fileSuratJalan);
-                                        $('#fileSuratTimbang').attr('href', fileSuratTimbang);
-                                        // Set other form field values in a similar manner
-
-                                        // Open your modal or perform other actions as needed
-                                        // $('#yourModalId').modal('show');
                                     });
 
                                     function convertToZero(value) {

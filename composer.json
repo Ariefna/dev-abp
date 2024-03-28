@@ -11,7 +11,8 @@
         "laravel/fortify": "^1.13",
         "laravel/framework": "^9.41",
         "laravel/sanctum": "^3.0",
-        "laravel/tinker": "^2.7"
+        "laravel/tinker": "^2.7",
+        "maatwebsite/excel": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",

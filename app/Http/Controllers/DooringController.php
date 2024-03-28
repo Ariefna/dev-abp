@@ -1231,7 +1231,7 @@ class DooringController extends Controller
             DetailDooringSisa::where("id_dooring", $request->id_door)
             ->where("tipe", "Curah")
             ->update($updateData);
-        }   
+        }
     }
 
     public function savecurah(Request $request)
@@ -1241,7 +1241,7 @@ class DooringController extends Controller
             "file_notiket" => "nullable|mimes:jpeg,png,pdf",
             "file_nosj" => "nullable|mimes:jpeg,png,pdf",
         ]);
-    
+
         // Process file_notiket
         if ($request->hasFile("file_notiket")) {
             $file_notiket = $request->file("file_notiket");
@@ -1249,7 +1249,7 @@ class DooringController extends Controller
         } else {
             $file_notiket_path = null; // No file provided
         }
-    
+
         // Process file_nosj
         if ($request->hasFile("file_nosj")) {
             $file_nosj = $request->file("file_nosj");
@@ -1257,10 +1257,10 @@ class DooringController extends Controller
         } else {
             $file_nosj_path = null; // No file provided
         }
-    
+
         // Extracting data from the request
         list($id_kapal, $id_detail_track) = explode("-", $request->input("kpl_id"));
-        
+
         // Create a new DetailDooring record
         $detailDooring = DetailDooring::create([
             "id_dooring" => $request->id_door,
@@ -1283,7 +1283,7 @@ class DooringController extends Controller
             "tipe" => "Curah",
             "status" => 1,
         ]);
-    
+
         // Updating DetailDooringSisa record
         $qty_sisa_curah2 = $request->qty_sisa_curah2;
         $qty = $request->qty_tonase;
@@ -1307,8 +1307,8 @@ class DooringController extends Controller
                 'tipe'              => 'Curah'
             ]);
         }
-    
-    
+
+
         // Redirect back
         return redirect()->back();
     }
@@ -1320,21 +1320,21 @@ class DooringController extends Controller
             "file_notiket" => "nullable|mimes:jpeg,png,pdf",
             "file_surat_jalan" => "nullable|mimes:jpeg,png,pdf",
         ]);
-    
+
         // Process file_notiket
         $file_notiket_path = null;
         if ($request->hasFile("file_notiket")) {
             $file_notiket = $request->file("file_notiket");
             $file_notiket_path = $file_notiket->store("uploads/dooring");
         }
-    
+
         // Process file_surat_jalan
         $file_surat_jalan_path = null;
         if ($request->hasFile("file_surat_jalan")) {
             $file_surat_jalan = $request->file("file_surat_jalan");
             $file_surat_jalan_path = $file_surat_jalan->store("uploads/dooring");
         }
-    
+
         // Create a new DetailDooring record
         $detailDooring = DetailDooring::create([
             "id_dooring" => $request->id_door,
@@ -1357,12 +1357,12 @@ class DooringController extends Controller
             "tipe" => "Container",
             "status" => 1,
         ]);
-    
+
         // Updating DetailDooringSisa record
         $qty_sisa_container2 = $request->qty_sisa_container2;
         $qty = $request->qty_tonase;
         $qty_container_total = $request->qty_container_total;
-    
+
         $id_door = $request->id_door;
         $isExistDetail = DetailDooringSisa::where('id_dooring', $id_door)
         ->where('tipe', 'Container')
@@ -1382,11 +1382,11 @@ $newDetail = DetailDooringSisa::create([
     "tipe" => "Container",
 ]);
 }
-    
+
         // Redirect back
         return redirect()->back();
     }
-    
+
 
     public function destroy(Request $request, $id)
     {
